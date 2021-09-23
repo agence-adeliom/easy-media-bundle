@@ -1,0 +1,35 @@
+{% trans_default_domain 'EasyMediaBundle' %}
+
+{# multi #}
+<template v-if="movableItemsFilter.length && enableMove">
+    <ul>
+        <li class="media link"
+            v-for="(one, i) in movableItemsFilter"
+            :key="one.path"
+            v-tippy="{arrow: true, placement: 'bottom'}"
+            title="{{ 'remove'|trans }}"
+            @click.stop="removeFromMovableList(i)">
+            <figure class="media-left">
+                <span class="icon has-text-link">
+                    <icon-types :file="one" :file-type-is="fileTypeIs"/>
+                </span>
+            </figure>
+            <div class="media-content">
+                <p class="title is-4">
+                    <strong class="has-text-link">{% verbatim %}{{ one.storage_path }}{% endverbatim %}</strong>
+                    <small v-if="one.items" class="has-text-link">"{% verbatim %}{{ one.items }}{% endverbatim %} {{ 'items'|trans }}"</small>
+                </p>
+                <p class="subtitle is-5 has-text-danger">{% verbatim %}{{ getFileSize(one.size) }}{% endverbatim %}</p>
+            </div>
+            <figure class="media-right">
+                <span class="delete"></span>
+            </figure>
+        </li>
+    </ul>
+
+    {# total size #}
+    {#<p v-if="movableItemsFilterSize" class="__modal-delete-total">
+        <span class="title">{% verbatim %}{{ movableItemsFilterSize }}{% endverbatim %}</span>
+        <span class="heading">{{ 'total'|trans }}</span>
+    </p>#}
+</template>

@@ -1,0 +1,87 @@
+/**
+ * https://www.cssscript.com/ios-style-pure-css-switch-buttons-ios-switcher/
+ */
+.form-switcher {
+    input[type='checkbox'] {
+        @apply hidden;
+
+        &:disabled {
+            & + .switcher {
+                @apply cursor-not-allowed opacity-60;
+                @apply shadow-none #{!important};
+
+                &::after {
+                    height: 21px !important;
+                    width: 21px !important;
+                }
+            }
+
+            &:checked {
+                & + .switcher {
+                    &::after {
+                        transform: translateX(18px) !important;
+                    }
+                }
+            }
+        }
+
+        &:checked {
+            &:disabled {
+                & + .switcher {
+                    --tw-shadow: inset 0 0 0 15px rgba(theme('colors.theme'), 0.06);
+                    @apply border-theme-5 shadow-inner #{!important};
+                }
+            }
+
+            & + .switcher {
+                --tw-shadow: inset 0 0 0 12.5px theme('colors.green.500');
+                @apply bg-green-500 border-green-500 shadow-inner;
+                transition: box-shadow 250ms ease, border-color 250ms ease 20ms;
+
+                &::after {
+                    transform: translateX(18px);
+                }
+
+                &:hover {
+                    &:active {
+                        &::after {
+                            transform: translateX(10.65px);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .switcher {
+        @apply bg-theme border-2 border-theme cursor-pointer rounded-full block p-0 relative shadow-md;
+        height: 25px;
+        width: 43px;
+        transition: box-shadow 250ms ease 20ms, border-color 250ms ease;
+
+        &::after {
+            --tw-shadow: 0 0 1px 3px rgba(theme('colors.black'), 0.4);
+            @apply bg-white rounded-full left-0 top-0 absolute transition-all duration-200 transform-gpu translate-x-0 shadow;
+            content: '';
+            height: 21px;
+            width: 21px;
+        }
+
+        &:hover {
+            &:active {
+                --tw-shadow: inset 0 0 0 13px theme('colors.theme');
+                @apply shadow;
+
+                &::after {
+                    width: 28.35px !important;
+                }
+            }
+        }
+    }
+
+    &.is-danger {
+        .switcher {
+            @apply bg-red-500 border-2 border-red-500;
+        }
+    }
+}

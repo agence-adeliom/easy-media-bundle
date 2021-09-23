@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <defaults autowire="true" autoconfigure="true"/>
+        <!-- TODO: Add your controllers here -->
+        <!-- Controller -->
+        <service id="easy_media.controller" class="Adeliom\EasyMediaBundle\Controller\MediaController" public="true" autowire="true">
+            <!-- TODO: Add your controller constructor parameters here -->
+            <argument key="$container" type="service" id="service_container"/>
+            <argument key="$translator" type="service" id="translator.default"/>
+            <argument key="$eventDispatcher" type="service" id="event_dispatcher"/>
+            <tag name="controller.service_arguments"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <!-- TODO: Add the alias for your controllers here -->
+        <service id="Adeliom\EasyMediaBundle\Controller\MediaController" alias="easy_media.controller" public="true"/>
+        <!-- End Controller -->
+
+        <service id="easy_media.service.metas" class="Adeliom\EasyMediaBundle\Service\EasyMediaMetaService" public="true" autowire="true">
+            <argument key="$entityManager" type="service" id="doctrine.orm.entity_manager"/>
+            <argument key="$container" type="service" id="service_container"/>
+        </service>
+
+        <service id="easy_media.event_listener.container_listener" class="Adeliom\EasyMediaBundle\EventListener\ContainerListener" public="true" autowire="true">
+            <argument key="$container" type="service" id="service_container"/>
+            <tag name="doctrine.event_listener" event="getContainer"/>
+        </service>
+
+        <service id="easy_media.twig.easy_media_extension" class="Adeliom\EasyMediaBundle\Twig\EasyMediaExtension" public="true" autowire="true">
+            <argument key="$container" type="service" id="service_container"/>
+            <tag name="twig.extension" />
+        </service>
+
+
+    </services>
+</container>

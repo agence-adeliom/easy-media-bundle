@@ -1,0 +1,39 @@
+{% trans_default_domain 'EasyMediaBundle' %}
+
+<section>
+    <div class="media-manager__dz" :class="{'__dz-active': uploadArea}">
+        <div id="new-upload" :style="uploadPanelImg">
+            <input type="hidden" name="upload_path" :value="files.path">
+            <input type="hidden" name="random_names" :value="useRandomNamesForUpload">
+
+            {# text #}
+            <div class="dz-message title is-4">{{ 'upload.text'|trans|raw }}</div>
+
+            {# randomNames #}
+            <div class="form-switcher"
+                 title="{{ 'upload.use_random_names'|trans }}"
+                 v-tippy="{arrow: true, placement: 'right'}">
+                <input type="checkbox" id="random_names" v-model="useRandomNamesForUpload">
+                <label class="switcher" for="random_names"></label>
+            </div>
+
+            {# urlToUpload #}
+            <div class="save_link" @click.stop="toggleModal('save_link_modal')" v-if="!restrictUpload()">
+                        <span class="icon is-large"
+                              title="{{ 'save.link'|trans }}"
+                              v-tippy="{arrow: true, placement: 'left'}">
+                            <icon>
+                                <icon class="circle" name="circle" scale="2.5"></icon>
+                                <icon class="anchor" name="link"></icon>
+                            </icon>
+                        </span>
+            </div>
+        </div>
+    </div>
+
+    <transition name="mm-list">
+        <div v-show="showProgress" id="uploadProgress" class="progress">
+            <div class="progress-bar is-success progress-bar-striped active" :style="{width: progressCounter}"></div>
+        </div>
+    </transition>
+</section>

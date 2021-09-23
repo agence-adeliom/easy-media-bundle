@@ -1,0 +1,322 @@
+{% trans_default_domain 'EasyMediaBundle' %}
+
+<section>
+    {# preview_modal #}
+    <div v-if="isActiveModal('preview_modal')"
+         class="modal mm-animated fadeIn is-active __modal-preview">
+        <div class="modal-background link" @click.stop="toggleModal()"></div>
+        <div class="mm-animated fadeInDown __modal-content-wrapper">
+            <transition :name="`mm-img-${imageSlideDirection}`"
+                        mode="out-in"
+                        appear>
+                <div class="modal-content" :key="selectedFile.path">
+                    {# card v #}
+                    {% include '@EasyMedia/partials/card.html.twig' %}
+                </div>
+            </transition>
+        </div>
+        <button type="button" class="modal-close is-large" @click.stop="toggleModal()"></button>
+    </div>
+
+    {# image_editor #}
+    <div v-if="isActiveModal('imageEditor_modal') && enableEditor"
+         class="modal mm-animated fadeIn is-active __modal-editor">
+        <v-touch class="modal-background link" @dbltap="toggleModal()"></v-touch>
+        <div class="mm-animated fadeInDown __modal-content-wrapper">
+            <image-editor route="{{ path('media.uploadCropped') }}"
+                          :no-scroll="noScroll"
+                          :file="selectedFile"
+                          :trans="trans">
+            </image-editor>
+        </div>
+        <button type="button" class="modal-close is-large" @click.stop="toggleModal()"></button>
+    </div>
+
+    {# save_link #}
+    <div class="modal mm-animated fadeIn"
+         :class="{'is-active': isActiveModal('save_link_modal')}">
+        <div class="modal-background link" @click.stop="toggleModal()"></div>
+        <div class="modal-card mm-animated fadeInDown">
+            <header class="modal-card-head is-black">
+                <p class="modal-card-title">
+                    <span>{{ 'save.link'|trans }}</span>
+                </p>
+                <button type="button" class="delete" @click.stop="toggleModal()"></button>
+            </header>
+
+            <div action="{{ path('media.uploadLink') }}" >
+                <section class="modal-card-body">
+                    <input class="input" type="text"
+                           v-model="urlToUpload"
+                           placeholder="{{ 'add.url'|trans }}"
+                           ref="save_link_modal_input">
+                </section>
+                <footer class="modal-card-foot">
+                    <button type="reset" class="button" @click.stop="toggleModal()">
+                        {{ 'cancel'|trans }}
+                    </button>
+                    <button type="submit"
+                            class="button is-link"
+                            :disabled="isLoading"
+                            :class="{'is-loading': isLoading}"
+                            @click.prevent="saveLinkForm($event)">
+                        {{ 'upload.main'|trans }}
+                    </button>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    {# new_folder_modal #}
+    <div class="modal mm-animated fadeIn"
+         :class="{'is-active': isActiveModal('new_folder_modal')}"
+            v-if="enableUpload">
+        <div class="modal-background link" @click.stop="toggleModal()"></div>
+        <div class="modal-card mm-animated fadeInDown">
+            <header class="modal-card-head is-link">
+                <p class="modal-card-title">
+                    <span>{{ 'add.new_folder'|trans }}</span>
+                </p>
+                <button type="button" class="delete" @click.stop="toggleModal()"></button>
+            </header>
+
+            <div action="{{ path('media.new_folder') }}">
+                <section class="modal-card-body">
+                    <input class="input" type="text"
+                           v-model="newFolderName"
+                           placeholder="{{ 'new.folder_name'|trans }}"
+                           ref="new_folder_modal_input">
+                </section>
+                <footer class="modal-card-foot">
+                    <button type="reset" class="button" @click.stop="toggleModal()">
+                        {{ 'cancel'|trans }}
+                    </button>
+                    <button type="submit"
+                            class="button is-link"
+                            :disabled="isLoading"
+                            :class="{'is-loading': isLoading}"
+                            @click.prevent="NewFolderForm($event)">
+                        {{ 'new.create_folder'|trans }}
+                    </button>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+
+    {# edit_metas_modal #}
+    <div class="modal mm-animated fadeIn"
+         :class="{'is-active': isActiveModal('edit_metas_modal')}"
+         v-if="enableMetas">
+        <div class="modal-background link" @click.stop="toggleModal()"></div>
+        <div class="modal-card mm-animated fadeInDown">
+            <header class="modal-card-head is-link">
+                <p class="modal-card-title">
+                    <span>{{ 'edit_metas.modal_title'|trans }}</span>
+                </p>
+                <button type="button" class="delete" @click.stop="toggleModal()"></button>
+            </header>
+
+            <div action="{{ path('media.edit_metas_file') }}" >
+                <section class="modal-card-body">
+                    <div class="">
+                        <label class="input-label">{{ 'seo.title'|trans }}</label>
+                        <input class="input" type="text"
+                               v-if="selectedFile"
+                               v-model="newMetas.title"
+                               ref="edit_metas_modal_title_input"
+                               @focus="newMetas.title = selectedFile.metas.title ? selectedFile.metas.title : ''">
+                    </div>
+                    <div class="mt-4">
+                        <label class="input-label">{{ 'seo.alt'|trans }}</label>
+                        <input class="input" type="text"
+                               v-if="selectedFile"
+                               v-model="newMetas.alt"
+                               ref="edit_metas_modal_alt_input"
+                               @focus="newMetas.alt = selectedFile.metas.alt ? selectedFile.metas.alt : ''">
+                    </div>
+                    <div class="mt-4">
+                        <label class="input-label">{{ 'seo.description'|trans }}</label>
+                        <textarea class="textarea"
+                                 v-if="selectedFile"
+                                 v-model="newMetas.description"
+                                  ref="edit_metas_modal_desc_input"
+                                 @focus="newMetas.description = selectedFile.metas.description ? selectedFile.metas.description : ''"></textarea>
+                    </div>
+                </section>
+                <footer class="modal-card-foot">
+                    <button type="reset" class="button" @click.stop="toggleModal()">
+                        {{ 'cancel'|trans }}
+                    </button>
+                    <button type="submit"
+                            class="button is-link"
+                            :disabled="isLoading"
+                            :class="{'is-loading': isLoading}"
+                            @click.prevent="EditMetasFileForm($event)">
+                        {{ 'save.main'|trans }}
+                    </button>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+
+    {# rename_file_modal #}
+    <div class="modal mm-animated fadeIn"
+         :class="{'is-active': isActiveModal('rename_file_modal')}"
+         v-if="enableRename">
+        <div class="modal-background link" @click.stop="toggleModal()"></div>
+        <div class="modal-card mm-animated fadeInDown">
+            <header class="modal-card-head is-warning">
+                <p class="modal-card-title">
+                    <span>{{ 'rename.file_folder'|trans }}</span>
+                </p>
+                <button type="button" class="delete" @click.stop="toggleModal()"></button>
+            </header>
+
+            <div action="{{ path('media.rename_file') }}" >
+                <section class="modal-card-body">
+                    <label class="input-label">{{ 'new.file_folder'|trans }}</label>
+                    <input class="input" type="text"
+                           v-if="selectedFile"
+                           v-model="newFilename"
+                           ref="rename_file_modal_input"
+                           @focus="newFilename = selectedFileIs('folder') ? selectedFile.name : getFileName(selectedFile.name)">
+                </section>
+                <footer class="modal-card-foot">
+                    <button type="reset" class="button" @click.stop="toggleModal()">
+                        {{ 'cancel'|trans }}
+                    </button>
+                    <button type="submit"
+                            class="button is-warning"
+                            :disabled="isLoading"
+                            :class="{'is-loading': isLoading}"
+                            @click.prevent="RenameFileForm($event)">
+                        {{ 'rename.main'|trans }}
+                    </button>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    {# move_file_modal #}
+    <div class="modal mm-animated fadeIn"
+         :class="{'is-active': isActiveModal('move_file_modal')}"
+         v-if="enableMove">
+        <div class="modal-background link" @click.stop="toggleModal()"></div>
+        <div class="modal-card mm-animated fadeInDown"
+              action="{{ path('media.move_file') }}"
+              >
+            <header class="modal-card-head is-warning">
+                <p class="modal-card-title">
+                    <transition :name="copyFilesNotMove ? 'mm-info-in' : 'mm-info-out'" mode="out-in">
+                        <span class="icon" :key="copyFilesNotMove ? 1 : 2">
+                            <icon :name="copyFilesNotMove ? 'regular/clone' : 'share'"></icon>
+                        </span>
+                    </transition>
+
+                    <transition name="mm-list" mode="out-in">
+                        <span key="1" v-if="copyFilesNotMove">{{ 'copy.file_folder'|trans }}</span>
+                        <span key="2" v-else>{{ 'move.file_folder'|trans }}</span>
+                    </transition>
+                </p>
+                <button type="button" class="delete" @click.stop="toggleModal()"></button>
+            </header>
+
+            <section class="modal-card-body">
+                {# destination #}
+                <h5 class="subtitle m-b-20">
+                    {{ 'destination_folder'|trans }} :
+                    <span class="tag is-black is-medium">{% verbatim %}{{ files.path || '/' }}{% endverbatim %}</span>
+                </h5>
+
+                {% include '@EasyMedia/partials/modal/mov-files-info.html.twig' %}
+            </section>
+
+            <footer class="modal-card-foot">
+                <div class="level is-mobile full-width">
+                    {# switcher #}
+                    <div class="level-left">
+                        <div class="level-item">
+                            <div class="form-switcher">
+                                <input type="checkbox" name="use_copy" id="use_copy" v-model="copyFilesNotMove">
+                                <label class="switcher" for="use_copy"></label>
+                            </div>
+                        </div>
+                        <div class="level-item">
+                            <label class="label" for="use_copy">{{ 'copy.files'|trans }}</label>
+                        </div>
+                    </div>
+
+                    {# btns #}
+                    <div class="level-right">
+                        <div class="level-item">
+                            <button type="reset"
+                                    class="button"
+                                    @click.stop="toggleModal()">
+                                {{ 'cancel'|trans }}
+                            </button>
+                        </div>
+                        <div class="level-item">
+                            <button type="reset"
+                                    class="button is-danger"
+                                    @click.stop="clearMovableList()">
+                                {{ 'crop.reset'|trans }}
+                            </button>
+                        </div>
+                        <div class="level-item">
+                            <button type="submit"
+                                    ref="move_file_modal_submit"
+                                    class="button is-warning"
+                                    :disabled="isLoading"
+                                    :class="{'is-loading': isLoading}"
+                                    @click.prevent="MoveFileForm($event)">
+                                <span>{{ 'paste'|trans }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    {# confirm_delete_modal #}
+    <div class="modal mm-animated fadeIn"
+         :class="{'is-active': isActiveModal('confirm_delete_modal')}" v-if="enableDelete">
+        <div class="modal-background link" @click.stop="toggleModal()"></div>
+        <div class="modal-card mm-animated fadeInDown">
+            <header class="modal-card-head is-danger">
+                <p class="modal-card-title">
+                    <span>{{ 'are_you_sure_delete'|trans }}</span>
+                </p>
+                <button type="button" class="delete" @click.stop="toggleModal()"></button>
+            </header>
+
+            <div action="{{ path('media.delete_file') }}" >
+                <section class="modal-card-body">
+                    {% include '@EasyMedia/partials/modal/del-files-info.html.twig' %}
+
+                    {# deleting folder warning #}
+                    <h5 v-show="folderDeleteWarning" class="__modal-folder-warning">
+                        <span class="icon is-medium"><icon name="exclamation-triangle" scale="1.2"></icon></span>
+                        <span>{{ 'delete.folder'|trans }}</span>
+                    </h5>
+                </section>
+
+                <footer class="modal-card-foot">
+                    <button type="reset" class="button" @click.stop="toggleModal()">
+                        {{ 'cancel'|trans }}
+                    </button>
+                    <button type="submit"
+                            ref="confirm_delete_modal_submit"
+                            class="button is-danger"
+                            :disabled="isLoading"
+                            :class="{'is-loading': isLoading}"
+                            @click.prevent="DeleteFileForm($event)">
+                        {{ 'delete.confirm'|trans }}
+                    </button>
+                </footer>
+            </div>
+        </div>
+    </div>
+</section>

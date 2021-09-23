@@ -1,0 +1,13 @@
+.dropdown {
+  @apply relative inline-flex align-top;
+  .dropdown-menu{
+    min-width: 12rem;
+    padding-top: 4px;
+    top: 100%;
+    @apply hidden absolute left-0;
+  }
+  &.is-active .dropdown-menu,
+  &.is-hoverable:hover .dropdown-menu{
+    @apply block;
+  }
+}

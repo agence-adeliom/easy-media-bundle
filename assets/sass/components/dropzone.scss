@@ -1,0 +1,149 @@
+#new-upload {
+  @apply bg-center bg-repeat rounded cursor-pointer overflow-hidden relative bg-gray-900 transition-all duration-200;
+
+  &::before {
+    content: '';
+    background-image: var(--gradient);
+    @apply absolute rounded-full left-1/2 top-1/2 opacity-90 transition-all duration-200 w-80 h-80 transform -translate-x-1/2 -translate-y-1/2;
+  }
+
+  &:hover {
+    @apply shadow-lg;
+
+    &::before {
+      @apply shadow-lg;
+    }
+  }
+
+  .dz-message {
+    @apply font-normal text-xl m-0 relative text-center text-white p-8 md:py-10;
+  }
+
+  .form-switcher,
+  .save_link {
+    @apply absolute z-1;
+  }
+
+  .form-switcher {
+    @apply absolute bottom-2 left-2;
+  }
+
+  .save_link {
+    @apply bottom-0 right-2 filter drop-shadow;
+
+    .circle,
+    .anchor {
+      @apply transition-all duration-200;
+    }
+
+    .circle {
+      @apply text-theme;
+    }
+
+    .anchor {
+      @apply text-theme-50
+    }
+
+    &:hover {
+      .anchor {
+        @apply text-theme;
+      }
+
+      .circle {
+        @apply text-theme-50
+      }
+    }
+  }
+}
+
+#uploadProgress {
+  @apply mx-6 my-4 mt-0;
+}
+
+#uploadPreview {
+  @apply hidden;
+
+  &.show {
+    @apply flex h-full left-0 overflow-hidden absolute top-0 w-full bg-theme;
+    z-index: 12;
+
+    & ~ .__stack-files,
+    & ~ .__stack-sidebar {
+      @apply filter blur opacity-25
+    }
+  }
+
+  .dz-preview-ops {
+    @apply flex flex-col;
+  }
+
+  .icon-btn {
+    @apply text-black
+  }
+
+  .btn-animate {
+    button {
+      @apply opacity-90 text-white transition-all duration-200 ease-out;
+
+      &:hover {
+        @apply opacity-100 filter drop-shadow transform -translate-y-1;
+      }
+    }
+  }
+
+  .sidebar-container {
+    @apply h-full overflow-y-scroll border-r border-gray-200;
+    width: 180px;
+
+    .sidebar {
+      @apply flex flex-wrap;
+      min-height: unset;
+      height: auto;
+      background: none;
+    }
+  }
+
+  .preview-container{
+
+    & > div:first-child{
+      @apply h-full overflow-hidden;
+      img{
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC');
+        @apply h-full w-full max-h-full max-w-full overflow-hidden object-scale-down;
+      }
+    }
+  }
+}
+
+
+
+.dz-success-mark,
+.dz-error-message,
+.dz-error-mark,
+.dz-details {
+  @apply hidden;
+}
+
+.dz-preview {
+  @apply flex p-4 relative flex-initial flex-shrink-0;
+
+  .dz-image{
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC');
+    img {
+      @apply rounded-sm cursor-pointer block transition-all duration-200 opacity-75;
+    }
+  }
+
+  .dz-remove {
+    @apply block absolute bottom-4 right-4;
+    .button{
+      @apply rounded-none;
+    }
+  }
+
+  .is-previewing {
+    @apply shadow-xl opacity-100;
+
+    //transform: translateY(-10px);
+  }
+}

@@ -1,0 +1,89 @@
+$list: (mm-list, mm-img-prv, mm-img-nxt, mm-img-dwn, mm-img-up, mm-info-in, mm-info-out, mm-slide, mm-gs);
+
+@each $class in $list {
+    .#{$class}-enter-active,
+    .#{$class}-leave-active {
+        @apply transition-all duration-200;
+    }
+
+    .#{$class}-enter-active {
+        @apply z-1;
+    }
+
+    .#{$class}-leave-active {
+        @apply z-0;
+    }
+
+    .#{$class}-enter,
+    .#{$class}-leave-to {
+        @apply opacity-0;
+    }
+}
+
+/* files */
+.mm-list-enter,
+.mm-list-leave-to {
+    transform: translateY(30px);
+}
+
+/* image */
+.mm-img-prv-enter {
+    transform: translateX(-0.7rem);
+}
+
+.mm-img-prv-leave-to {
+    transform: translateX(90px);
+}
+
+.mm-img-nxt-enter {
+    transform: translateX(0.7rem);
+}
+
+.mm-img-nxt-leave-to {
+    transform: translateX(-90px);
+}
+
+.mm-img-dwn-enter {
+    transform: translateY(-0.7rem);
+}
+
+.mm-img-dwn-leave-to {
+    transform: translateY(90px);
+}
+
+.mm-img-up-enter {
+    transform: translateY(0.7rem);
+}
+
+.mm-img-up-leave-to {
+    transform: translateY(-90px);
+}
+
+/* info toggle btn */
+.mm-info-in-enter,
+.mm-info-in-leave-to {
+    transform: translateX(0.7rem);
+}
+
+.mm-info-out-enter,
+.mm-info-out-leave-to {
+    transform: translateX(-0.7rem);
+}
+
+/* global search panel */
+.mm-gs-enter,
+.mm-gs-leave-to {
+    transform: translateY(30px);
+}
+
+.mm-gs-leave-active {
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+}
+
+/* info panel */
+.mm-slide-enter,
+.mm-slide-leave-to {
+    transform: translateX(-0.7rem);
+}

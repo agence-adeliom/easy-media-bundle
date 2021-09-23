@@ -1,0 +1,33 @@
+{
+    "name": "agence-adeliom/easy-media-bundle",
+    "type": "symfony-bundle",
+    "require": {
+        "php": ">=7.4",
+        "symfony/config": "^4.0|^5.0",
+        "symfony/dependency-injection": "^4.0|^5.0",
+        "symfony/form": "^4.0|^5.0",
+        "symfony/http-foundation": "^4.0|^5.0",
+        "symfony/http-kernel": "^4.0|^5.0",
+        "symfony/options-resolver": "^4.0|^5.0",
+        "symfony/property-access": "^4.0|^5.0",
+        "symfony/routing": "^4.0|^5.0",
+        "symfony/twig-bundle": "^4.0|^5.0",
+        "league/flysystem": "^2.1",
+        "symfony/filesystem": "^5.3",
+        "symfony/framework-bundle": ">=5.0",
+        "symfony/translation": ">=5.0",
+        "symfony/yaml": ">=5.0",
+        "maennchen/zipstream-php": "^2.1.0",
+        "illuminate/support": "^8.49",
+        "easycorp/easyadmin-bundle": "^3.5",
+        "twig/twig": "^2.12|^3.0",
+        "doctrine/annotations": "^1.0",
+        "doctrine/orm": "^2.9",
+        "stof/doctrine-extensions-bundle": "^1.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Adeliom\\EasyMediaBundle\\": "src/"
+        }
+    }
+}

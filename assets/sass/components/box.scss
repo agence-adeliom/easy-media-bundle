@@ -1,0 +1,98 @@
+.__file-box {
+  @apply rounded cursor-pointer flex m-3 overflow-hidden p-0 relative w-full transition-all duration-200 bg-theme border-theme text-theme-60 shadow-sm;
+
+  @screen md{
+    @apply p-3
+  }
+
+  &.selected,
+  &.bulk-selected,
+  &:hover {
+    @apply text-white bg-blue-500 border-blue-600;
+
+    h4,
+    i,
+    svg {
+      @apply text-white;
+    }
+  }
+
+  &:hover {
+    @apply bg-blue-400 border-blue-500;
+  }
+}
+
+.__box-lock-icon {
+  @apply h-2 p-0 absolute w-2 border-0 rounded-full z-1 top-2 right-2;
+
+  &:disabled {
+    @apply cursor-not-allowed;
+  }
+}
+
+.__box-copy-link {
+  @apply absolute right-2 bottom-2 cursor-copy;
+}
+
+.__box-data {
+  @apply items-center flex flex-col justify-start overflow-hidden w-full;
+  align-self: unset;
+
+  @screen md{
+    @apply flex-row;
+  }
+
+  .__box-preview {
+    @apply items-center flex justify-center m-0 w-full text-theme-50;
+    flex: 4;
+
+    @screen md{
+      @apply overflow-hidden h-12 w-12 flex-none;
+    }
+
+    svg {
+      @apply transform-gpu scale-125;
+      @screen md{
+        @apply transform-gpu scale-100;
+      }
+    }
+
+    .icon {
+      @apply flex;
+    }
+
+    .__box-img {
+      @apply rounded-none h-full w-full overflow-hidden relative border-0;
+      @screen md{
+        @apply rounded h-12 w-12 border border-dashed border-theme-25;
+      }
+
+      img {
+        @apply h-full left-0 object-top absolute top-0 w-full;
+        @screen md{
+          @apply object-center;
+        }
+      }
+    }
+  }
+
+  .__box-info {
+    @apply overflow-hidden p-3 w-full;
+
+    h4 {
+      @apply text-base m-0 overflow-hidden whitespace-nowrap overflow-ellipsis;
+    }
+
+    small {
+      @apply text-xs;
+      span{
+        @apply block;
+      }
+    }
+
+    .__info-file-size {
+      @apply font-bold;
+      margin-left: 2px;
+    }
+  }
+}

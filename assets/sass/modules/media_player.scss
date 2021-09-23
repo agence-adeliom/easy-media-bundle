@@ -1,0 +1,25 @@
+@import '~plyr/dist/plyr.css';
+
+.plyr--video,
+.plyr--audio {
+    .plyr__control {
+        &.plyr__tab-focus,
+        &:hover,
+        &[aria-expanded='true'] {
+            @apply bg-blue-500 #{!important};
+        }
+    }
+}
+
+.plyr--full-ui input[type=range] {
+    @apply text-blue-500;
+}
+
+.plyr__control--overlaid {
+    @apply text-black bg-white;
+}
+
+.plyr__control.plyr__tab-focus,
+.plyr--full-ui input[type=range].plyr__tab-focus::-webkit-slider-runnable-track {
+    @apply shadow-none;
+}

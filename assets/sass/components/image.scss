@@ -1,0 +1,6 @@
+.image {
+  @apply block absolute w-full h-full object-contain;
+  img{
+    @apply block w-full h-full object-contain;
+  }
+}

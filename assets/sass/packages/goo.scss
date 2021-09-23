@@ -1,0 +1,46 @@
+// https://codepen.io/rahul-rai-the-styleful/pen/JgRoeY
+.circular-menu {
+    @apply absolute bottom-4 left-4;
+
+    .floating-btn {
+        @apply rounded-full text-white cursor-pointer transition-all bg-indigo-600;
+
+        &:hover {
+            @apply shadow transform-gpu -translate-y-2;
+        }
+    }
+
+    .menu-item {
+        @apply rounded-full text-white cursor-pointer transition-all bg-indigo-600;
+        @apply absolute right-0 top-0 -z-1 h-full w-full opacity-0;
+        .btn-plain {
+            @apply text-white h-full w-full;
+            .icon.is-large {
+                @apply h-12 w-12;
+            }
+        }
+    }
+
+    .items-wrapper {
+        @apply m-0 p-0;
+    }
+
+    &.active {
+        .floating-btn {
+            &:hover {
+                @apply transform-gpu -translate-y-2 rotate-45;
+            }
+        }
+
+        .menu-item {
+            @apply opacity-100 z-1 transform-gpu;
+            @for $i from 1 through 5 {
+                &:nth-child(#{$i}) { --tw-translate-x: #{((($i - 1) * 4) + 5)}em; }
+            }
+
+            .button{
+                @apply bg-transparent p-0;
+            }
+        }
+    }
+}
