@@ -142,8 +142,7 @@ composer require agence-adeliom/easy-media-bundle
 
 ## Documentation
 
-TODO
-
+[Check it here](doc/index.md)
 
 ## License
 
