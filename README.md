@@ -8,112 +8,299 @@ A VueJS media-manager for Easyadmin.
 
 ## Features
 
-- image editor
-- multi
-    + upload
-    + move/copy
-    + delete
-- upload by either
-    + using the upload panel
-    + drag & drop anywhere
-    + click & hold on an empty area **"items container"**
-    + from a url **"images only"**
-- preview files before uploading
-- toggle between `random/original` names for uploaded files
-- bulk selection
-- bookmark visited directories for quicker navigation
-- change item/s visibility
-- update the page url on navigation
-- show audio files info **"artist, album, year, etc.."**
-- dynamically hide files / folders
-- restrict access to path
-- download selected "including bulk selection"
-- directly copy selected file link
-- use the manager
+- Image editor
+- Multi
+    + Upload
+    + Move/Copy
+    + Delete
+- Upload by either
+    + Using the upload panel
+    + Drag&Drop anywhere
+    + Click&Hold on an empty area **"items container"**
+    + From a url **"images only"**
+- Preview files before uploading
+- Toggle between `random/original` names for uploaded files
+- Bulk selection
+- Bookmark visited directories for quicker navigation
+- Change item/s visibility
+- Update the page url on navigation
+- Show audio files info **"artist, album, year, etc.."**
+- Dynamically hide files / folders
+- Restrict access to path
+- Download selected "including bulk selection"
+- Directly copy selected file link
+- Use the manager
     + from modal
     + with any wysiwyg editor
-- auto scroll to selected item using **"left, up, right, down, home, end"**
-- lock/unlock item/s.
-- filter by
-    + folder
-    + image
-    + audio
-    + video
+- Auto scroll to selected item using **"left, up, right, down, home, end"**
+- Lock/Unlock item/s.
+- Filter by
+    + Folder
+    + Image
+    + Audio
+    + Video
     + text/pdf
     + application/archive
-    + locked items
-    + selected items
-- sort by
-    + name
-    + size
-    + last modified
-- items count for
-    + all
-    + selected
-    + search found
-- file name sanitization for
-    + upload
-    + rename
-    + new folder
-- disable/enable buttons depend on the usage to avoid noise & keep the user focused
-- shortcuts / gestures
-    + if no more **rows** available, pressing `down` will go to the last item in the list **"same as native file manager"**.
-    + when viewing a `audio/video` file in the preview card, pressing `space` will **play/pause** the item instead of closing the modal.
-    + dbl click/tap
+    + Locked items
+    + Selected items
+- Sort by
+    + Name
+    + Size
+    + Last modified
+- Items count for
+    + All
+    + Selected
+    + Search found
+- File name sanitization for
+    + Upload
+    + Rename
+    + New folder
+- Disable/Enable buttons depend on the usage to avoid noise & keep the user focused
+- [Shortcuts / Gestures](doc/shortcuts.md)
+    + If no more **rows** available, pressing `down` will go to the last item in the list **"same as native file manager"**.
+    + When viewing a `audio/video` file in the preview card, pressing `space` will **play/pause** the item instead of closing the modal.
+    + Double click/tap
         + any file of type `audio/video` when sidebar is hidden, will open it in the preview card **"same as images"**.
         + any file of type `application/archive` will download it.
-    + all the **left/right** gestures have their counterparts available as well.
-    + pressing `esc` while using the ***image editor*** wont close the modal but you can ***dbl click/tap*** the `modal background` to do so. **"to avoid accidentally canceling your changes"**.
+    + All the **left/right** gestures have their counterparts available as well.
+    + Pressing `esc` while using the ***image editor*** wont close the modal but you can ***dbl click/tap*** the `modal background` to do so. **"to avoid accidentally canceling your changes"**.
 
->\- the info sidebar is only available on big screens **"> 1023px"**.<br>
->\- to stop interfering with other `keydown` events you can toggle the manager listener through<br>
->`EventHub.fire('disable-global-keys', true/false)`.
+> The info sidebar is only available on big screens **"> 1023px"**.<br>
+> To stop interfering with other `keydown` events you can toggle the manager listener through `EventHub.fire('disable-global-keys', true/false)`.
 
-<br>
+## Installation
 
-| navigation           | button                                              | keyboard         | click / tap                  | touch                           |
-| -------------------- | --------------------------------------------------- | ---------------- | ---------------------------- | ------------------------------- |
-|                      | toggle upload panel *(toolbar)*                     | u                |                              |                                 |
-|                      | refresh *(toolbar)*                                 | r                | hold *"clear cache"*         | pinch in *(items container)*    |
-|                      | move/show movable list *(toolbar)*       | m / p            |                              |                                 |
-|                      | image editor *(toolbar)*                            | e                |                              |                                 |
-|                      | delete *(toolbar)*                                  | d / del          |                              |                                 |
-|                      | lock/unlock *(toolbar)*                             | l                | hold *"anything but images"* |                                 |
-|                      | change visibility *(toolbar)*                       | v                |                              |                                 |
-|                      | toggle bulk selection *(toolbar)*                   | b                |                              |                                 |
-|                      | (reset) bulk select all *(toolbar)*                 | a                |                              |                                 |
-|                      | add to movable list *(shopping cart)*               | c / x            | *                            |                                 |
-|                      | move/show movable list *(shopping cart)* |                  | **                           |                                 |
-|                      | clear movable list *(shopping cart)*                |                  | hold                         |                                 |
-|                      | toggle sidebar *(path bar)*                         | t                | *                            | swipe left/right *(sidebar)*    |
-|                      | confirm *(modal)*                                   | enter            |                              |                                 |
-|                      | toggle preview image/pdf/text *(item)*              | space            | **                           |                                 |
-|                      | play/pause media *(item)*                           | space            | **                           |                                 |
-|                      | hide (modal / upload-panel)                         | esc              |                              |                                 |
-|                      | reset (search / bulk selection / filter / sorting)  | esc              |                              |                                 |
-|                      | reset upload showPreview          | esc              |                              |                                 |
-|                      | confirm upload showPreview          | enter            |                              |                                 |
-|                      | &nbsp;                                              |                  |                              |                                 |
-|                      | add to movable list *(item)*                        |                  |                              | swipe up                        |
-|                      | delete *(item)*                                     |                  |                              | swipe down                      |
-|                      | rename *(item)*                                     |                  |                              | swipe left                      |
-|                      | image editor *(item)*                               |                  | hold                         |                                 |
-|                      | current ++ selected *(item)*                        | shift + click    |                              |                                 |
-|                      | current + selected *(item)*                         | alt/meta + click |                              |                                 |
-|                      | create new folder                                   |                  | ** *(items container)*       |                                 |
-|                      | &nbsp;                                              |                  |                              |                                 |
-| go to next *"item"*  |                                                     | right            | *                            | swipe left  *(preview)*         |
-| go to prev *"item"*  |                                                     | left             | *                            | swipe right *(preview)*         |
-| go to first *"item"* |                                                     | home             |                              |                                 |
-| go to last *"item"*  |                                                     | end              |                              |                                 |
-| go to next *"row"*   |                                                     | down             |                              | swipe up *(preview)*            |
-| go to prev *"row"*   |                                                     | up               |                              | swipe down *(preview)*          |
-| open folder          |                                                     | enter            | **                           |                                 |
-| go to prev *"dir"*   | folderName *(path bar)*                             | backspace        | *                            | swipe right *(items container)* |
+Install with composer
 
-<br>
+```bash
+composer require agence-adeliom/easy-media-bundle
+```
 
-## Events
+### Setup database
+
+#### Using doctrine migrations
+
+```bash
+php bin/console doctrine:migration:diff
+php bin/console doctrine:migration:migrate
+```
+
+#### Without
+
+```bash
+php bin/console doctrine:schema:update --force
+```
+
+## Documentation
+
+### Manage medias in your Easyadmin dashboard
+
+Go to your dashboard controller, example : `src/Controller/Admin/DashboardController.php`
+
+```php
+<?php
+
+namespace App\Controller\Admin;
+
+...
+class DashboardController extends AbstractDashboardController
+{
+    ...
+    public function configureMenuItems(): iterable
+    {
+        ...
+        yield MenuItem::linkToRoute('Medias', 'fa fa-picture-o', 'media.index');
+
+        ...
+```
+
+### Integrate with FOS CKEditor
+
+```yaml
+#config/packages/fos_ck_editor.yaml
+fos_ck_editor:
+    configs:
+        main_config:
+            ...
+            filebrowserBrowseRoute: media.browse
+            filebrowserImageBrowseRoute: media.browse
+            filebrowserImageBrowseRouteParameters:
+                provider: 'image'
+                restrict:
+                    uploadTypes:
+                        - 'image/*'
+                    uploadSize: 5
+```
+
+### Integrate with LiipImagineBundle
+
+```yaml
+#config/packages/liip_imagine.yaml
+liip_imagine:
+  loaders:
+    default:
+      filesystem:
+        data_root: '%kernel.project_dir%/public'
+```
+
+```twig
+{{ object.media|resolve_media|imagine_filter('filter_name') }}
+```
+
+### Field's usage
+
+#### Usage
+
+```php
+use Adeliom\EasyMediaBundle\Admin\Field\EasyMediaField;
+...
+yield EasyMediaField::new('property', "label")
+    // Apply restrictions by mime-types
+    ->setFormTypeOption("restrictions_uploadTypes", ["image/*"])
+    // Apply restrictions to upload size in MB
+    ->setFormTypeOption("restrictions_uploadSize", 5)
+    // Apply restrictions to path
+    ->setFormTypeOption("restrictions_path", "users/" . $userID)
+    // Hide fiels with extensions (null or array)
+    ->setFormTypeOption("hideExt", ["svg"])
+    // Hide folders (null or array)
+    ->setFormTypeOption("hidePath", ['others', 'users/testing'])
+    // Enable/Disable actions
+    ->setFormTypeOption("editor", true)
+    ->setFormTypeOption("upload", true)
+    ->setFormTypeOption("bulk_selection", true)
+    ->setFormTypeOption("move", true)
+    ->setFormTypeOption("rename", true)
+    ->setFormTypeOption("metas", true)
+    ->setFormTypeOption("delete", true)
+    ;
+```
+
+### Twig usage
+
+```twig
+# Get media URL
+{{ object.media|resolve_media }}
+
+# Get media metadatas
+{{ object.media|media_meta }}
+
+# Get complete media informations
+{{ object.media|media_infos }}
+
+# Get test file type
+# type_to_test: can be a mime_type or 
+# image for any image type
+# pdf for pdf files
+# compressed for archives files
+{{ file_is_type(object.media, type_to_test) }}
+
+# Get mimetype icon (font-awesome)
+{{ mime_icon("text/plain") }}
+```
+
+### Use the Doctrine type (optional)
+
+It automatically converts the stored path into a File object
+
+```yaml
+# config/packages/doctrine.yaml
+doctrine:
+  dbal:
+    ...
+    types:
+      easy_media_type: Adeliom\EasyMediaBundle\Types\EasyMediaType
+```
+
+In your entity
+
+```php
+class Article
+{
+    /**
+     * @ORM\Column(type="easy_media_type", nullable=true)
+     * @Assert\NotBlank()
+     */
+    private $file;
+    
+    ...
+```
+
+### Configurations
+
+```yaml
+# config/packages/easy_media.yaml
+easy_media:
+    storage:              '%kernel.project_dir%/public/upload'
+    base_url:             /upload/
+    
+    # ignore any file starts with "."
+    ignore_files:         '/^\..*/'
+    
+    # remove any file special chars except
+    # dot .
+    # dash -
+    # underscore _
+    # single quote ''
+    # white space
+    # parentheses ()
+    # comma ,
+    allowed_fileNames_chars: '\._\-\''\s\(\),'
+    
+    # remove any folder special chars except
+    # dash -
+    # underscore _
+    # white space
+    #
+    # to add & nest folders in one go add '\/'
+    # avoid using '#' as browser interpret it as an anchor
+    allowed_folderNames_chars: _\-\s
+    
+    # disallow uploading files with the following mimetypes (https://www.iana.org/assignments/media-types/media-types.xhtml)
+    unallowed_mimes:
+        # Defaults:
+        - php
+        - java
+    
+    # disallow uploading files with the following extensions (https://en.wikipedia.org/wiki/List_of_filename_extensions)
+    unallowed_ext:
+        # Defaults:
+        - php
+        - jav
+        - py
+
+    extended_mimes:
+        # any extra mime-types that doesnt have "image" in it
+        image:                # Required
+            # Default:
+            - binary/octet-stream
+        # any extra mime-types that doesnt have "compressed" in it
+        archive:              # Required
+            # Defaults:
+            - application/x-tar
+            - application/zip
+    
+    # display file last modification time as
+    last_modified_format: Y-m-d
+    
+    # hide file extension in files list
+    hide_files_ext:       true
+    
+    # in-order to get the folder items count & size
+    # we need to recursively get all the files inside the folders
+    # which could make the request take longer
+    get_folder_info:      true
+    
+    # preview files base64 uploading
+    preview_files_before_upload: true
+    
+    # loaded chunk amount "pagination"
+    pagination_amount:    50
+
+```
+
+
+### Events
 
 | type            | event-name                                         | description                                                                |
 | --------------- | -------------------------------------------------- | -------------------------------------------------------------------------- |
@@ -132,18 +319,6 @@ A VueJS media-manager for Easyadmin.
 
 [js]: https://github.com/gocanto/vuemit
 [symfony]: https://symfony.com/doc/current/event_dispatcher.html
-
-## Installation
-
-Install with composer
-
-```bash
-composer require agence-adeliom/easy-media-bundle
-```
-
-## Documentation
-
-[Check it here](doc/index.md)
 
 ## License
 
