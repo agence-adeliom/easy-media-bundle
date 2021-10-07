@@ -106,6 +106,15 @@ namespace App\Controller\Admin;
 class DashboardController extends AbstractDashboardController
 {
     ...
+    
+    // Add the custom form theme
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->addFormTheme('@EasyMedia/form/easy-media.html.twig')
+            ;
+    }
+    
     public function configureMenuItems(): iterable
     {
         ...
