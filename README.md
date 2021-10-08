@@ -152,7 +152,7 @@ liip_imagine:
         data_root: '%kernel.project_dir%/public'
 ```
 
-```twig
+```php
 {{ object.media|resolve_media|imagine_filter('filter_name') }}
 ```
 
@@ -187,7 +187,7 @@ yield EasyMediaField::new('property', "label")
 
 ### Twig usage
 
-```twig
+```php
 # Get media URL
 {{ object.media|resolve_media }}
 
