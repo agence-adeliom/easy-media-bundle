@@ -3,8 +3,8 @@ export default {
         getUrlWithoutQuery() {
             let params = new URLSearchParams(location.search)
 
-            return params.has('path')
-                ? location.href.replace(new RegExp(`[?&]path=${params.get('path')}`), '')
+            return params.has('folder_id')
+                ? location.href.replace(new RegExp(`[?&]folder_id=${params.get('folder_id')}`), '')
                 : location.href
         },
         clearUrlQuery() {
@@ -14,9 +14,9 @@ export default {
             return new Promise((resolve) => {
                 if (!this.inModal) {
                     let params = new URLSearchParams(location.search)
-
-                    this.folders = params.has('path')
-                        ? this.arrayFilter(params.get('path').replace(/#/g, '').split('/'))
+                    console.log(params);
+                    this.foldersIds = params.has('folder_id')
+                        ? this.arrayFilter(params.get('folder_id').replace(/#/g, '').split('/'))
                         : []
                 }
 
@@ -30,9 +30,13 @@ export default {
                 let params = new URLSearchParams(current_qs)
                 let base = full_url.replace(current_qs, '')
                 let folders = this.folders
+                let id = null;
+                if(this.foldersIds.length){
+                    id = this.foldersIds[this.foldersIds.length - 1];
+                }
 
-                if (folders.length) {
-                    params.append('path', folders.join('/'))
+                if (id) {
+                    params.append('folder_id', id)
                 }
 
                 history.pushState(

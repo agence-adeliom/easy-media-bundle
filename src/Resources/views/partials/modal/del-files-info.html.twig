@@ -15,7 +15,7 @@
                     <strong class="has-text-link">{% verbatim %}{{ one.name }}{% endverbatim %}</strong>
                     <small v-if="one.items" class="has-text-link">"{% verbatim %}{{ one.items }}{% endverbatim %} {{ 'items'|trans }}"</small>
                 </p>
-                <p class="subtitle is-5 has-text-danger">{% verbatim %}{{ getFileSize(one.size) }}{% endverbatim %}</p>
+                <p class="subtitle is-5 has-text-danger" v-if="one.size">{% verbatim %}{{ getFileSize(one.size) }}{% endverbatim %}</p>
             </div>
         </div>
     </template>
@@ -36,12 +36,6 @@
             </div>
         </div>
     </template>
-
-    {# total size #}
-    <p v-if="bulkItemsFilterSize" class="__modal-delete-total">
-        <span class="title">{% verbatim %}{{ bulkItemsFilterSize }}{% endverbatim %}</span>
-        <span class="heading">{{ 'total'|trans }}</span>
-    </p>
 </template>
 
 {# single #}
@@ -60,7 +54,7 @@
                         "{% verbatim %}{{ selectedFile.items }}{% endverbatim %} {{ 'items'|trans }}"
                     </small>
                 </p>
-                <p class="subtitle is-5 has-text-danger">{% verbatim %}{{ getFileSize(selectedFile.size) }}{% endverbatim %}</p>
+                <p class="subtitle is-5 has-text-danger"  v-if="selectedFile.size">{% verbatim %}{{ getFileSize(selectedFile.size) }}{% endverbatim %}</p>
             </div>
         </div>
     </template>

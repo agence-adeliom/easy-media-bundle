@@ -448,10 +448,9 @@ export default {
             const parent = this.$parent
             parent.toggleLoading()
             parent.showNotif(this.trans('stand_by'), 'info')
-
             axios.post(this.route, {
                 data      : data,
-                path      : parent.files.path,
+              folder      : parent.files.folder,
                 name      : this.file.name,
                 mime_type : this.file.type
             }).then(({data}) => {

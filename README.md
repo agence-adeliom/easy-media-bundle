@@ -295,14 +295,6 @@ easy_media:
     # hide file extension in files list
     hide_files_ext:       true
     
-    # in-order to get the folder items count & size
-    # we need to recursively get all the files inside the folders
-    # which could make the request take longer
-    get_folder_info:      true
-    
-    # preview files base64 uploading
-    preview_files_before_upload: true
-    
     # loaded chunk amount "pagination"
     pagination_amount:    50
 

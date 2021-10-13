@@ -3,12 +3,10 @@ import uniq from 'lodash/uniq'
 export default {
     computed: {
         movableItemsCount() {
-            return this.movableList.length
+            return this.movableList.length;
         },
         movableItemsFilter() {
-            return this.lockedList.length
-                ? this.movableList.filter((e) => !this.IsLocked(e.path))
-                : this.movableList
+            return this.movableList;
         },
         movableItemsFilterSize() {
             return this.getListTotalSize(this.movableItemsFilter)
@@ -52,9 +50,8 @@ export default {
             let action = event.target.closest("[action]").getAttribute("action");
 
             let hasErrors = false
-            let destination = this.files.path
-            let copy = this.copyFilesNotMove
-            let files = this.checkForNestedLockedItems(this.movableItemsFilter)
+            let destination = this.files.folder
+            let files = this.movableItemsFilter
 
             if (!files.length) {
                 return this.toggleModal()
@@ -64,8 +61,7 @@ export default {
 
             axios.post(action, {
                 destination: destination,
-                moved_files: files,
-                use_copy: copy
+                moved_files: files
             }).then(({data}) => {
                 this.toggleLoading()
                 this.toggleModal()
@@ -84,7 +80,7 @@ export default {
                         : `"${item.name}" to "${destination || '/'}"`
 
                     paths.push(item.old_path)
-                    this.showNotif(`${this.trans(copy ? 'copy_success' : 'move_success')} ${msg}`)
+                    this.showNotif(`${this.trans('move_success')} ${msg}`)
                 })
 
                 if (!hasErrors) {

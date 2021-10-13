@@ -2,6 +2,8 @@
 namespace Adeliom\EasyMediaBundle\Controller\Module;
 
 
+use Adeliom\EasyMediaBundle\Entity\Folder;
+use Adeliom\EasyMediaBundle\Entity\Media;
 use Doctrine\Common\Collections\ArrayCollection;
 use League\Flysystem\DirectoryAttributes;
 use League\Flysystem\DirectoryListing;
@@ -23,22 +25,25 @@ trait GetContent
     public function getFiles(Request $request)
     {
         $data = json_decode($request->getContent(), true);
-        $path = $data["path"] == '/' ? '' : $data["path"];
-        /*if ($path && !$this->filesystem->fileExists($path)) {
+        $folder = $data["folder"];
+        $path = '/';
+        if(!empty($folder)){
+            $folder = $this->folder->find($folder);
+            if($folder){
+                $path = $folder->getPath();
+            }
+        }
+        if (!empty($data["folder"])  && !$folder) {
             return new JsonResponse([
                 'error' => $this->translator->trans('MediaManager::messages.error.doesnt_exist', ['attr' => $path]),
             ]);
-        }*/
-
-        return new JsonResponse(array_merge(
-            $this->lockList(),
-            [
+        }
+        return new JsonResponse([
                 'files' => [
                     'path'  => $path,
-                    'items' => $this->paginate($this->getData($path), $this->paginationAmount),
+                    'items' => $this->paginate($this->getData($folder), $this->paginationAmount),
                 ],
-            ]
-        ));
+            ]);
     }
 
     /**
@@ -46,64 +51,44 @@ trait GetContent
      *
      * @param mixed $dir
      */
-    protected function getData($dir)
+    protected function getData(?Folder $dir)
     {
         $list           = [];
         $dirList        = $this->getFolderContent($dir);
         $storageFolders = array_filter($this->getFolderListByType($dirList, 'dir'), [$this, 'ignoreFiles']);
         $storageFiles   = array_filter($this->getFolderListByType($dirList, 'file'), [$this, 'ignoreFiles']);
+
         // folders
         foreach ($storageFolders as $folder) {
-            /** @var DirectoryAttributes $folder */
-
-            $path = $folder->path();
-            $time = $folder->lastModified() ?? null;
-            $info = $this->GFI ? $this->getFolderInfoFromList($this->getFolderContent($path, true)) : [];
-
+            /** @var Folder $folder */
+            $path = $folder->getPath();
             $list[] = [
-                'name'                   => basename($folder->path()),
+                'id'                     => $folder->getId(),
+                'name'                   => $folder->getName(),
                 'type'                   => 'folder',
-                'size'                   => $info['size'] ?? 0,
-                'count'                  => $info['count'] ?? 0,
                 'path'                   => $this->resolveUrl($path),
                 'storage_path'           => $path,
-                'last_modified'          => $time,
-                'last_modified_formated' => $this->getItemTime($time),
             ];
         }
 
-        $detector = new FinfoMimeTypeDetector();
 
         // files
         foreach ($storageFiles as $file) {
-            /** @var FileAttributes $file */
-            $path = $file->path();
-            $time = $file->lastModified() ?? null;
-            $mimeType = $detector->detectMimeTypeFromFile($this->rootPath . DIRECTORY_SEPARATOR . $path);
-            $metas = $this->metasService->getMetas(DIRECTORY_SEPARATOR . $path);
-
-            $title = current(array_filter($metas, function ($item){return $item->getMetaKey() == "title";}));
-            $alt = current(array_filter($metas, function ($item){return $item->getMetaKey() == "alt";}));
-            $description = current(array_filter($metas, function ($item){return $item->getMetaKey() == "description";}));
-            $extra = current(array_filter($metas, function ($item){return !in_array($item->getMetaKey(), ["title","alt","description","dimensions"]); }));
-
+            /** @var Media $file */
+            $path = $file->getPath();
+            $time = $file->getLastModified() ?? null;
+            $metas = $file->getMetas();
 
             $list[] = [
-                'name'                   => basename($file->path()),
-                'type'                   => $mimeType,
-                'size'                   => $file->fileSize(),
-                'visibility'             => $file->visibility(),
+                'id'                     => $file->getId(),
+                'name'                   => $file->getName(),
+                'type'                   => $file->getMime(),
+                'size'                   => $file->getSize(),
                 'path'                   => $this->resolveUrl($path),
                 'storage_path'           => $path,
                 'last_modified'          => $time,
                 'last_modified_formated' => $this->getItemTime($time),
-                'metas' => [
-                    "title" => $title ? $title->getMetaValue() : null,
-                    "alt" => $alt ? $alt->getMetaValue() : null,
-                    "description" => $description ? $description->getMetaValue() : null,
-                    "extra" => $extra,
-                ]
-
+                'metas' => $metas
             ];
         }
 
@@ -145,7 +130,6 @@ trait GetContent
             'name'                   => basename($path),
             'type'                   => $mimeType,
             'size'                   => $this->filesystem->fileSize($path),
-            'visibility'             => $this->filesystem->visibility($path),
             'path'                   => $this->resolveUrl($path),
             'storage_path'           => $path,
             'last_modified'          => $time,
@@ -165,18 +149,27 @@ trait GetContent
     /**
      * get directory data.
      *
-     * @param mixed $folder
+     * @param int $folder
      * @param mixed $rec
      */
     protected function getFolderContent($folder, $rec = false)
     {
-        /** @var DirectoryListing $contents */
-        return $this->filesystem->listContents($folder, $rec)->toArray();
+        if (!empty($folder)){
+            /** @var Folder $folder */
+            $folder = $this->folder->find($folder);
+            $folders = $folder->getChildren();
+            $medias = $folder->getMedias();
+            return array_merge($folders->toArray(), $medias->toArray());
+        }else{
+            $folders = $this->folder->findBy(["parent" => null]);
+            $medias = $this->medias->findBy(["folder" => null]);
+            return array_merge($folders, $medias);
+        }
     }
 
     protected function ignoreFiles($item)
     {
-        return !preg_grep($this->ignoreFiles, [basename($item->path())]);
+        return !preg_grep($this->ignoreFiles, [$item->getPath()]);
     }
 
     /**
@@ -189,22 +182,15 @@ trait GetContent
     {
         $list = (new ArrayCollection($list))->filter(function ($item) use ($type){
             if($type == "dir"){
-                return $item->isDir();
+                return $item instanceof Folder;
             }
             if($type == "file"){
-                return $item->isFile();
+                return $item instanceof Media;
             }
             return false;
         });
 
-        $sortBy = $list->map(function ($item){
-            return basename($item->path());
-        })->toArray();
-
         $items  = $list->toArray();
-
-        array_multisort($sortBy, SORT_NATURAL, $items);
-
         return $items;
     }
 

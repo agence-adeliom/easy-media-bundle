@@ -2,7 +2,6 @@
 namespace Adeliom\EasyMediaBundle\Service;
 
 
-use Adeliom\EasyMediaBundle\Entity\Metas;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -33,8 +32,8 @@ class EasyMediaMetaService
     {
         $this->entityManager = $entityManager;
         $this->container = $container;
-        $this->metaEntity = $this->container->getParameter("easy_media.metas_entity");
-        $this->repository = $this->entityManager->getRepository($this->metaEntity);
+        $this->mediaEntity = $this->container->getParameter("easy_media.media_entity");
+        $this->repository = $this->entityManager->getRepository($this->mediaEntity);
     }
 
     /**
@@ -43,7 +42,7 @@ class EasyMediaMetaService
      */
     public function saveMetas(string $path, array $metas) : array
     {
-
+        return [];
         $newMetas = [];
         foreach ($metas as $key => $value){
             /** @var Metas $meta */
@@ -78,6 +77,7 @@ class EasyMediaMetaService
 
     public function removeMetas(string $path)
     {
+        return;
         foreach ($this->getMetas($path) as $meta){
             $this->entityManager->remove($meta);
         }
@@ -86,6 +86,7 @@ class EasyMediaMetaService
 
     public function moveMetas(string $oldPath, string $newPath)
     {
+        return;
         foreach ($this->getMetas($oldPath) as $meta){
             $meta->setPath(str_replace($oldPath, $newPath, $meta->getPath()));
             $this->entityManager->persist($meta);
@@ -94,6 +95,7 @@ class EasyMediaMetaService
     }
 
     public function setMeta($key, $value, $instance = null){
+        return;
         if(!$instance){
             $meta = new $this->metaEntity();
             $meta->setMetaKey($key);
@@ -112,6 +114,7 @@ class EasyMediaMetaService
      */
     public function getMetas(string $path) : array
     {
+        return [];
         return $this->repository->findBy([
             "path" => $path
         ]);
@@ -124,6 +127,7 @@ class EasyMediaMetaService
      */
     public function getMeta(string $path, string $key)
     {
+        return null;
         return $this->repository->findOneBy([
             "path" => $path,
             "metaKey" => $key

@@ -2,6 +2,7 @@
 namespace Adeliom\EasyMediaBundle\Controller\Module;
 
 
+use Adeliom\EasyMediaBundle\Entity\Media;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -19,27 +20,16 @@ trait Metas
         $data = json_decode($request->getContent(), true);
         $file = $data["file"];
         $metas = $data["new_metas"];
-
-        $storage_path         = $file['storage_path'];
-        $path         = "/$storage_path";
-
-        $message          = '';
+        $message = '';
 
         try {
-            $metas = $this->metasService->saveMetas($path, $metas);
+            /** @var Media $object */
+            $object = $this->medias->find($file["id"]);
+            $metas = array_merge($object->getMetas(), $metas);
+            $object->setMetas($metas);
+            $this->em->persist($object);
+            $this->em->flush();
 
-            $title = current(array_filter($metas, function ($item){return $item->getMetaKey() == "title";}));
-            $alt = current(array_filter($metas, function ($item){return $item->getMetaKey() == "alt";}));
-            $description = current(array_filter($metas, function ($item){return $item->getMetaKey() == "description";}));
-            $extra = current(array_filter($metas, function ($item){return !in_array($item->getMetaKey(), ["title","alt","description","dimensions"]); }));
-
-
-            $metas = [
-                "title" => $title ? $title->getMetaValue() : null,
-                "alt" => $alt ? $alt->getMetaValue() : null,
-                "description" => $description ? $description->getMetaValue() : null,
-                "extra" => $extra,
-            ];
         } catch (\Exception $e) {
             $message = $e->getMessage();
         }

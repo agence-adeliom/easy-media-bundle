@@ -12,8 +12,6 @@ import Folder         from '../modules/folder'
 import Gestures       from '../modules/gestures'
 import Image          from '../modules/image'
 import ItemFiltration from '../modules/filtration'
-import ItemVisibility from '../modules/visibility'
-import LockItem       from '../modules/lock'
 import Movable        from '../modules/movable'
 import MediaPlayer    from '../modules/media_player'
 import Restriction    from '../modules/restriction'
@@ -33,7 +31,6 @@ export default {
         imageIntersect       : require('./image/lazyLoading.vue').default,
         imagePreview         : require('./image/preview.vue').default,
         InfiniteLoading      : require('vue-infinite-loading').default,
-        uploadPreview        : require('./utils/upload-preview.vue').default,
     },
     name  : 'media-manager',
     mixins: [
@@ -48,8 +45,6 @@ export default {
         Gestures,
         Image,
         ItemFiltration,
-        ItemVisibility,
-        LockItem,
         Movable,
         MediaPlayer,
         Restriction,
@@ -101,7 +96,6 @@ export default {
             toolBar                           : true,
             uploadArea                        : false,
             waitingForUpload                  : false,
-            copyFilesNotMove                  : false,
             uploadPreviewOptionsPanelIsVisible: false,
             globalSearchPanelIsVisible        : false,
 
@@ -132,6 +126,8 @@ export default {
             files                   : [],
             filterdFilesList        : [],
             folders                 : [],
+            foldersIds                : [],
+            currentFolder           : null,
             uploadPreviewList       : [],
             uploadPreviewNamesList  : [],
             uploadPreviewOptionsList: [],
@@ -141,7 +137,6 @@ export default {
                 fs     : false,
                 playing: false
             },
-            lockedList          : [],
             uploadPanelGradients: [
                 'linear-gradient(141deg, #009e6c 0, #00d1b2 71%, #00e7eb 100%)',
                 'linear-gradient(141deg, #04a6d7 0, #209cee 71%, #3287f5 100%)',
@@ -386,18 +381,8 @@ export default {
                             }
 
                             // copy file
-                            if (key == 'c' || key == 'x') {
+                            if (key == 'x') {
                                 this.addToMovableList()
-                            }
-
-                            // lock files
-                            if (key == 'l') {
-                                this.$refs.lock.click()
-                            }
-
-                            // set visibility
-                            if (key == 'v') {
-                                this.$refs.visibility.click()
                             }
                         }
                         // end of we have files

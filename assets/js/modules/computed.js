@@ -46,8 +46,7 @@ export default {
 
             return (this.isBulkSelecting() && !this.bulkItemsFilter.length) ||
                 this.isLoading ||
-                !this.selectedFile ||
-                this.IsLocked(this.selectedFile)
+                !this.selectedFile
         },
         editor_btn_disable() {
             if(this.enableEditor == false){
@@ -56,12 +55,6 @@ export default {
             return this.ops_btn_disable ||
                 !this.selectedFileIs('image') ||
                 (this.selectedFile.type && this.selectedFile.type.includes('gif'))
-        },
-        lock_btn_disable() {
-            return this.searchItemsCount == 0 ||
-                this.isLoading ||
-                !this.allItemsCount ||
-                this.isBulkSelecting() && !this.bulkItemsCount
         },
         vis_btn_disable() {
             return this.searchItemsCount == 0 ||

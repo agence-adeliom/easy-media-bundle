@@ -209,15 +209,14 @@
               >
             <header class="modal-card-head is-warning">
                 <p class="modal-card-title">
-                    <transition :name="copyFilesNotMove ? 'mm-info-in' : 'mm-info-out'" mode="out-in">
-                        <span class="icon" :key="copyFilesNotMove ? 1 : 2">
-                            <icon :name="copyFilesNotMove ? 'regular/clone' : 'share'"></icon>
+                    <transition :name="'mm-info-out'" mode="out-in">
+                        <span class="icon" :key="2">
+                            <icon :name="'share'"></icon>
                         </span>
                     </transition>
 
                     <transition name="mm-list" mode="out-in">
-                        <span key="1" v-if="copyFilesNotMove">{{ 'copy.file_folder'|trans }}</span>
-                        <span key="2" v-else>{{ 'move.file_folder'|trans }}</span>
+                        <span key="2">{{ 'move.file_folder'|trans }}</span>
                     </transition>
                 </p>
                 <button type="button" class="delete" @click.stop="toggleModal()"></button>
@@ -235,19 +234,6 @@
 
             <footer class="modal-card-foot">
                 <div class="level is-mobile full-width">
-                    {# switcher #}
-                    <div class="level-left">
-                        <div class="level-item">
-                            <div class="form-switcher">
-                                <input type="checkbox" name="use_copy" id="use_copy" v-model="copyFilesNotMove">
-                                <label class="switcher" for="use_copy"></label>
-                            </div>
-                        </div>
-                        <div class="level-item">
-                            <label class="label" for="use_copy">{{ 'copy.files'|trans }}</label>
-                        </div>
-                    </div>
-
                     {# btns #}
                     <div class="level-right">
                         <div class="level-item">

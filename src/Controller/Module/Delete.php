@@ -23,28 +23,34 @@ trait Delete
         $toBroadCast = [];
 
         foreach ($data["deleted_files"] as $one) {
+            $id        = $one['id'];
             $name      = $one['name'];
             $type      = $one['type'];
             $item_path = $one['storage_path'];
             $defaults  = [
+                'id' => $id,
                 'name' => $name,
+                'type' => $type,
                 'path' => $item_path,
             ];
 
+            $repo = $this->medias;
+            if ($type == 'folder'){
+                $repo = $this->folder;
+            }
+
+
             try {
-                if($type == 'folder'){
-                    $this->filesystem->deleteDirectory($item_path);
-                }else{
-                    $this->filesystem->delete($item_path);
-                    $this->metasService->removeMetas($item_path);
+                if($entity = $repo->find($id)){
+                    $this->em->remove($entity);
+                    $this->em->flush();
+
+                    $result[]      = array_merge($defaults, ['success' => true]);
+                    $toBroadCast[] = $defaults;
+
+                    // fire event
+                    $this->eventDispatcher->dispatch(new EasyMediaFileDeleted($item_path, $type == 'folder'), EasyMediaFileDeleted::NAME);
                 }
-
-                $result[]      = array_merge($defaults, ['success' => true]);
-                $toBroadCast[] = $defaults;
-
-                // fire event
-                $this->eventDispatcher->dispatch(new EasyMediaFileDeleted($item_path, $type == 'folder'), EasyMediaFileDeleted::NAME);
-
             }catch (\Exception $e){
                 $result[] = array_merge($defaults, [
                     'success' => false,

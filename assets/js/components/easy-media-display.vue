@@ -77,7 +77,7 @@ export default {
     fileTypeIs(item, val) {
       let mimes = this.config.mimeTypes
       let type = item.type || item
-
+      console.log(type);
       if (type) {
         if (val == 'image' && mimes.image.includes(type)) {
           return true

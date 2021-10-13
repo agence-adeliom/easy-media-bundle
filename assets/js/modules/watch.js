@@ -55,7 +55,7 @@ export default {
             }
         },
 
-        // copy
+        // move
         movableItemsCount(val) {
             if (!val && this.isActiveModal('move_file_modal')) {
                 return this.toggleModal()

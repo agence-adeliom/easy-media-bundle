@@ -12,10 +12,13 @@ export default {
                 this.infoSidebar = false
                 this.loadingFiles('show')
             }
-
+            let id = null;
+            if(this.foldersIds.length){
+                id = this.foldersIds[this.foldersIds.length - 1];
+            }
             // get data
             return axios.post(this.routes.files, {
-                path: this.clearDblSlash(`/${this.folders.join('/')}`)
+                folder: id
             }).then(({data}) => {
                 // folder doesnt exist
                 if (data.error) {
@@ -24,11 +27,11 @@ export default {
 
                 // return data
                 this.files = {
+                    folder: id,
                     path: data.files.path,
                     items: data.files.items.data,
                     next: data.files.items.next_page_url
                 }
-                this.lockedList = data.locked
                 this.filesListCheck(prev_folder, prev_file)
 
             }).catch((err) => {
@@ -121,6 +124,7 @@ export default {
 
             let folder_name = this.newFolderName
             let path = this.files.path
+            let folder = this.files.folder
 
             if (!folder_name) {
                 return this.showNotif(this.trans('no_val'), 'warning')
@@ -129,7 +133,7 @@ export default {
             this.toggleLoading()
 
             axios.post(action, {
-                path: path,
+                folder: folder,
                 new_folder_name: folder_name
             }).then(({data}) => {
                 this.toggleLoading()
@@ -202,7 +206,7 @@ export default {
                 return this.showNotif(this.trans('no_val'), 'warning')
             }
 
-            let files = this.checkForNestedLockedItems([selected])
+            let files = [selected];
 
             if (!files.length) {
                 return this.toggleModal()
@@ -245,11 +249,7 @@ export default {
             let action = event.target.closest("[action]").getAttribute("action");
 
             let gls_item = this.global_search_item
-            let files = this.checkForNestedLockedItems(
-                gls_item
-                    ? [gls_item]
-                    : this.delOrMoveList()
-            )
+            let files =  gls_item ? [gls_item] : this.delOrMoveList()
 
             if (!files.length) {
                 return this.toggleModal()

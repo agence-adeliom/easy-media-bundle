@@ -24,26 +24,39 @@ trait Rename
 
         $type             = $file['type'];
         $new_filename     = $this->cleanName($data["new_filename"], $type == 'folder');
-        $old_path         = $file['storage_path'];
-        $new_path         = dirname($old_path) . "/$new_filename";
         $message          = '';
 
-        try {
-            if (!$this->filesystem->fileExists($new_path)) {
-                try {
-                    $this->filesystem->move($old_path, $new_path);
-                    $this->metasService->moveMetas($old_path, $new_path);
+        $repo = $this->medias;
+        if ($type == 'folder'){
+            $repo = $this->folder;
+        }
 
-                    $this->eventDispatcher->dispatch(new EasyMediaFileRenamed($old_path, $new_path), EasyMediaFileRenamed::NAME);
-                } catch (FilesystemException | UnableToMoveFile $exception) {
+        try {
+            if ($entity = $repo->find($file["id"])) {
+                try {
+                    $old_path = $entity->getPath();
+                    $new_path         = dirname($old_path) . "/$new_filename";
+
+
+                    $entity->setName($new_filename);
+                    $this->em->persist($entity);
+                    $this->em->flush();
+
+                    if ($type !== 'folder'){
+                        if (!$this->filesystem->fileExists($new_path)) {
+                            $this->filesystem->move($old_path, $new_path);
+                            $this->eventDispatcher->dispatch(new EasyMediaFileRenamed($old_path, $new_path), EasyMediaFileRenamed::NAME);
+                        } else {
+                            throw new \Exception(
+                                $this->translator->trans('error.already_exists', [] , "EasyMediaBundle")
+                            );
+                        }
+                    }
+                } catch (\Exception $exception) {
                     throw new \Exception(
                         $this->translator->trans('error.moving', [] , "EasyMediaBundle")
                     );
                 }
-            } else {
-                throw new \Exception(
-                    $this->translator->trans('error.already_exists', [] , "EasyMediaBundle")
-                );
             }
         } catch (\Exception $e) {
             $message = $e->getMessage();

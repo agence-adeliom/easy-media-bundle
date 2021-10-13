@@ -18,11 +18,8 @@
     <route methods="POST" id="media.move_file" controller="Adeliom\EasyMediaBundle\Controller\MediaController::moveItem" path="/easymedia/medias/move-file" ></route>
     <route methods="POST" id="media.rename_file" controller="Adeliom\EasyMediaBundle\Controller\MediaController::renameItem" path="/easymedia/medias/rename-file" ></route>
     <route methods="POST" id="media.edit_metas_file" controller="Adeliom\EasyMediaBundle\Controller\MediaController::editMetasItem" path="/easymedia/medias/edit-metas-file" ></route>
-    <route methods="POST" id="media.change_vis" controller="Adeliom\EasyMediaBundle\Controller\MediaController::changeItemVisibility" path="/easymedia/medias/change-visibility" ></route>
-    <route methods="POST" id="media.lock_file" controller="Adeliom\EasyMediaBundle\Controller\MediaController::lockItem" path="/easymedia/medias/lock-file" ></route>
 
     <route methods="GET" id="media.global_search" controller="Adeliom\EasyMediaBundle\Controller\MediaController::globalSearch" path="/easymedia/medias/global-search" ></route>
-    <route methods="POST" id="media.locked_list" controller="Adeliom\EasyMediaBundle\Controller\MediaController::getLockList" path="/easymedia/medias/get-locked-list" ></route>
 
     <route methods="POST" id="media.folder_download" controller="Adeliom\EasyMediaBundle\Controller\MediaController::downloadFolder" path="/easymedia/medias/folder-download" ></route>
     <route methods="POST" id="media.files_download" controller="Adeliom\EasyMediaBundle\Controller\MediaController::downloadFiles" path="/easymedia/medias/files-download" ></route>

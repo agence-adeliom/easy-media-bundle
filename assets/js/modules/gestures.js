@@ -147,11 +147,6 @@ export default {
             if (type == 'hold') {
                 this.setSelected(file, i)
                 this.imageEditor()
-
-                // anything but images, toggle lock
-                if (!this.selectedFileIs('image')) {
-                    this.lockFileForm()
-                }
             }
 
             if (type == 'dbltap') {

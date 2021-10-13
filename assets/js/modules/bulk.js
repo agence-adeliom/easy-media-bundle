@@ -25,9 +25,7 @@ export default {
             return count
         },
         bulkItemsFilter() {
-            return this.lockedList.length
-                ? this.bulkList.filter((e) => !this.IsLocked(e.path))
-                : this.bulkList
+            return this.bulkList;
         },
         bulkItemsFilterSize() {
             return this.getListTotalSize(this.bulkItemsFilter)

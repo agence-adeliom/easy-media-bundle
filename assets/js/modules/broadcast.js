@@ -23,12 +23,6 @@ export default {
                         case 'delete':
                             this.bcDelete(data)
                             break
-                        case 'lock':
-                            this.bcLock()
-                            break
-                        case 'visibility':
-                            this.bcVisibility(data)
-                            break
                     }
                 })
 
@@ -113,32 +107,6 @@ export default {
 
                     this.removeFromLists(storage_path, storage_path == this.selectedFile.storage_path)
                     this.bcNotif(`${this.trans('delete_success')} "${item.name}"`)
-                })
-            }
-        },
-        bcLock() {
-            this.updateLockList()
-        },
-        bcVisibility(data) {
-            // if user is viewing the same dir
-            if (data.path || this.files.path == '') {
-                let files = this.files.items
-                let filterd = this.filteredItemsCount ? this.filterdFilesList : null
-
-                data.items.map((item) => {
-                    files.some((e) => {
-                        if (e.name == item.name) {
-                            return e.visibility = item.visibility
-                        }
-                    })
-
-                    if (filterd) {
-                        filterd.some((e) => {
-                            if (e.name == item.name) {
-                                return e.visibility = item.visibility
-                            }
-                        })
-                    }
                 })
             }
         },

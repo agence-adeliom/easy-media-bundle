@@ -2,8 +2,8 @@
 
 namespace Adeliom\EasyMediaBundle\DependencyInjection;
 
-use Adeliom\EasyMediaBundle\Entity\Lock;
-use Adeliom\EasyMediaBundle\Entity\Metas;
+use Adeliom\EasyMediaBundle\Entity\Folder;
+use Adeliom\EasyMediaBundle\Entity\Media;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -23,30 +23,30 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('base_url')
                 ->defaultValue('/upload/')
             ->end()
-            ->scalarNode('lock_entity')
+            ->scalarNode('media_entity')
                 ->isRequired()
                 ->validate()
                 ->ifString()
                 ->then(function($value) {
-                    if (!class_exists($value) || !is_a($value, Lock::class, true)) {
+                    if (!class_exists($value) || !is_a($value, Media::class, true)) {
                         throw new InvalidConfigurationException(sprintf(
-                            'Media lock class must be a valid class extending %s. "%s" given.',
-                            Lock::class, $value
+                            'Media class must be a valid class extending %s. "%s" given.',
+                            Media::class, $value
                         ));
                     }
                     return $value;
                 })
                 ->end()
             ->end()
-            ->scalarNode('metas_entity')
+            ->scalarNode('folder_entity')
                 ->isRequired()
                 ->validate()
                 ->ifString()
                 ->then(function($value) {
-                    if (!class_exists($value) || !is_a($value, Metas::class, true)) {
+                    if (!class_exists($value) || !is_a($value, Folder::class, true)) {
                         throw new InvalidConfigurationException(sprintf(
-                            'Media metas class must be a valid class extending %s. "%s" given.',
-                            Metas::class, $value
+                            'Media Folder class must be a valid class extending %s. "%s" given.',
+                            Folder::class, $value
                         ));
                     }
                     return $value;
@@ -98,12 +98,6 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->booleanNode('enable_broadcasting')
                 ->defaultFalse()
-            ->end()
-            ->booleanNode('show_ratio_bar')
-                ->defaultTrue()
-            ->end()
-            ->booleanNode('preview_files_before_upload')
-                ->defaultTrue()
             ->end()
             ->integerNode('pagination_amount')
                 ->defaultValue(50)

@@ -20,8 +20,6 @@ export default {
         haveAFileOfType(val) {
             if (val == 'selected') {
                 return Boolean(this.bulkItemsCount)
-            } else if (val == 'locked' && !this.lockedList.length) {
-                return false
             } else {
                 return this.files.items.some((item) => this.fileTypeIs(item, val))
             }
@@ -38,9 +36,6 @@ export default {
             let files = this.files.items
 
             switch (val) {
-                case 'locked':
-                    this.filterdFilesList = files.filter((item) => this.IsLocked(item))
-                    break
                 case 'selected':
                     this.filterdFilesList = this.bulkList
                     break
@@ -66,7 +61,7 @@ export default {
         },
         fileTypeIs(item, val) {
             let mimes = this.config.mimeTypes
-            let type = item.type || item
+            let type = item.type || null;
             if(val.includes('/*')){
                 val = val.split('/')
                 val = val[0];

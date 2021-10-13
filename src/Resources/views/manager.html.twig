@@ -8,17 +8,11 @@
     'hideFilesExt' : easy_media.hide_files_ext,
     'mimeTypes' : easy_media.extended_mimes,
     'broadcasting' : easy_media.enable_broadcasting,
-    'gfi' : easy_media.get_folder_info,
-    'ratioBar' : easy_media.show_ratio_bar,
-    'previewFilesBeforeUpload' : easy_media.preview_files_before_upload|trans()
 } %}
 
 {% set routes = {
     'files' : path('media.get_files'),
-    'lock' : path('media.lock_file'),
-    'visibility' : path('media.change_vis'),
     'upload' : path('media.upload'),
-    'locked_list' : path('media.locked_list')
 } %}
 
 {% set translations = {
@@ -26,6 +20,7 @@
     'added' : 'add.added'|trans,
     'already_exists' : 'error.already_exists'|trans,
     'application' : 'application'|trans,
+    'pdf' : 'filter.type.pdf'|trans,
     'audio' : 'audio.main'|trans,
     'bm_add_to_list' : 'bookmarks.add'|trans,
     'bm' : 'bookmarks.main'|trans,
@@ -284,16 +279,6 @@
                                      @hold="pressGesture($event, file, index)"
                                      @dbltap="pressGesture($event, file, index)">
 
-                                {# lock file #}
-                                <button type="button" v-if="$refs.lock"
-                                        class="__box-lock-icon icon"
-                                        :disabled="isLoading"
-                                        :class="IsLocked(file) ? 'is-danger' : 'is-success'"
-                                        :title="IsLocked(file) ? '{{ 'unlock'|trans }}' : '{{ 'lock'|trans }}'"
-                                        v-tippy="{arrow: true, hideOnClick: false}"
-                                        @click.stop="lockFileForm(file)">
-                                </button>
-
                                 {# copy file link #}
                                 <div v-if="!fileTypeIs(file, 'folder')"
                                      class="__box-copy-link icon"
@@ -330,10 +315,6 @@
                                         {# folder #}
                                         <template v-if="fileTypeIs(file, 'folder')">
                                             <h4>{% verbatim %}{{ file.name }}{% endverbatim %}</h4>
-                                            <small v-if="config.gfi">
-                                                <span>{% verbatim %}{{ file.count }}{% endverbatim %} {{ 'items'|trans|lower }}</span>
-                                                <span v-if="file.size > 0" class="__info-file-size">{% verbatim %}{{ getFileSize(file.size) }}{% endverbatim %}</span>
-                                            </small>
                                         </template>
 
                                         {# any other #}
@@ -585,14 +566,6 @@
                                         </tbody>
                                     </table>
 
-                                    <table>
-                                        <tbody>
-                                        <tr>
-                                            <td class="t-key">{{ 'visibility.main'|trans }}:</td>
-                                            <td class="t-val">{% verbatim %}{{ trans(selectedFile.visibility) }}{% endverbatim %}</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
                                     <table>
                                         <tbody>
                                         <tr>

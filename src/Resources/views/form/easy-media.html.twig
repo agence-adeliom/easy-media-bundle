@@ -10,9 +10,6 @@
         'hideFilesExt' : easy_media.hide_files_ext,
         'mimeTypes' : easy_media.extended_mimes,
         'broadcasting' : easy_media.enable_broadcasting,
-        'gfi' : easy_media.get_folder_info,
-        'ratioBar' : easy_media.show_ratio_bar,
-        'previewFilesBeforeUpload' : easy_media.preview_files_before_upload|trans()
     } %}
 
     {% set routes = {
@@ -64,10 +61,6 @@
                                     {# folder #}
                                     <template v-if="fileTypeIs(selectedFile, 'folder')">
                                         <h4>{% verbatim %}{{ selectedFile.name }}{% endverbatim %}</h4>
-                                        <small v-if="config.gfi">
-                                            <span>{% verbatim %}{{ selectedFile.count }}{% endverbatim %} {{ 'items'|trans }}</span>
-                                            <span v-if="selectedFile.size > 0" class="__info-file-size">"{% verbatim %}{{ getFileSize(selectedFile.size) }}{% endverbatim %}"</span>
-                                        </small>
                                     </template>
 
                                     {# any other #}

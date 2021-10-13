@@ -49,8 +49,8 @@ export default {
                 'audio',
                 'folder',
                 'text',
+                'pdf',
                 'application',
-                'locked',
                 'selected',
                 'non'
             ],

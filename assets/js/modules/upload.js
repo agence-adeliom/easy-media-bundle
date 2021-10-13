@@ -39,102 +39,7 @@ export default {
             let uploadPreview = '#uploadPreview'
             let uploadSize = this.getResrtictedUploadSize() || 256
             let uploadTypes = this.getResrtictedUploadTypes()?.join(',') || null
-            let autoProcess = this.config.previewFilesBeforeUpload
-                ? {
-                    autoProcessQueue: false,
-                    maxThumbnailFilesize: 25, // mb
-                    createImageThumbnails: true,
-                    addRemoveLinks: true,
-                    dictRemoveFile: '<button type="button" class="button is-danger"><span>✘</span></button>',
-                    init: function () {
-                        let previewContainer = document.querySelector(uploadPreview)
-
-                        // cancel pending upload
-                        EventHub.listen('clear-pending-upload', this.removeAllFiles(true))
-
-                        // remove
-                        this.on('removedfile', debounce((file) => {
-                            manager.uploadPreviewOptionsList.some((item, i) => {
-                                if (item.name == file.name) {
-                                    manager.uploadPreviewOptionsList.splice(i, 1)
-                                }
-                            })
-
-                            if (!this.files.length) {
-                                manager.clearUploadPreview(previewContainer)
-                            }
-
-                            manager.uploadPreviewList = this.files
-                        }, 100))
-
-                        // add
-                        this.on('addedfile', (file) => {
-                            let fileList = this.files
-
-                            // remove duplicate files from selection
-                            // https://stackoverflow.com/a/32890783/3574919
-                            if (fileList.length) {
-                                let _i = 0
-                                let _len = fileList.length - 1 // -1 to exclude current file
-                                for (_i; _i < _len; _i++) {
-                                    if (fileList[_i] === file) {
-                                        this.removeFile(file)
-                                    }
-                                }
-                            }
-
-                            let el = file.previewElement
-
-                            manager.addToPreUploadedList(file)
-                            manager.uploadPreviewList = fileList
-                            manager.uploadArea = false
-                            manager.toolBar = false
-                            manager.infoSidebar = false
-                            manager.waitingForUpload = true
-
-                            el.classList.add('is-hidden')
-                            previewContainer.classList.add('show')
-
-                            // get around https://www.dropzonejs.com/#config-maxThumbnailFilesize
-                            if (!file.dataURL) {
-                                let img = el.querySelector('img')
-                                img.src = '/bundles/easymedia/dist/noPreview.jpg'
-                                img.style.height = '120px'
-                                img.style.width = '120px'
-
-                                el.dataset.name = file.name
-                                el.classList.remove('is-hidden')
-
-                                manager.$nextTick(() => {
-                                    el.querySelector('.dz-image').addEventListener('click', manager.changeUploadPreviewFile)
-                                })
-                            }
-                        })
-
-                        // upload preview
-                        this.on('thumbnail', (file, dataUrl) => {
-                            file.previewElement.classList.remove('is-hidden')
-                        })
-
-                        // reset dz
-                        manager.$refs['clear-dropzone'].addEventListener('click', () => {
-                            this.removeAllFiles()
-                            manager.clearUploadPreview(previewContainer)
-                        })
-
-                        // start the upload
-                        manager.$refs['process-dropzone'].addEventListener('click', () => {
-                            // because dz is dump
-                            // https://stackoverflow.com/questions/18059128/dropzone-js-uploads-only-two-files-when-autoprocessqueue-set-to-false
-                            queueFix = true
-                            this.options.autoProcessQueue = true
-
-                            this.processQueue()
-                            manager.clearUploadPreview(previewContainer)
-                        })
-                    }
-                }
-                : {
+            let autoProcess = {
                     init: function () {
                         this.on('addedfile', (file) => {
                             manager.addToPreUploadedList(file)
@@ -172,7 +77,7 @@ export default {
                     uploadProgress += parseFloat(100 / allFiles)
                     manager.progressCounter = `${Math.round(uploadProgress)}%`
 
-                    formData.append('upload_path', manager.files.path)
+                    formData.append('upload_folder', manager.files.folder)
                     formData.append('random_names', manager.useRandomNamesForUpload)
 
                     // send files custom options
@@ -300,7 +205,7 @@ export default {
 
             this.$nextTick(() => {
                 axios.post(action, {
-                    path: this.files.path,
+                    folder: this.files.folder,
                     url: url,
                     random_names: this.useRandomNamesForUpload
                 }).then(({data}) => {

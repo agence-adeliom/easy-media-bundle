@@ -6,14 +6,12 @@ use Adeliom\EasyMediaBundle\Controller\Module\Delete;
 use Adeliom\EasyMediaBundle\Controller\Module\Download;
 use Adeliom\EasyMediaBundle\Controller\Module\GetContent;
 use Adeliom\EasyMediaBundle\Controller\Module\GlobalSearch;
-use Adeliom\EasyMediaBundle\Controller\Module\Lock;
 use Adeliom\EasyMediaBundle\Controller\Module\Metas;
 use Adeliom\EasyMediaBundle\Controller\Module\Move;
 use Adeliom\EasyMediaBundle\Controller\Module\NewFolder;
 use Adeliom\EasyMediaBundle\Controller\Module\Rename;
 use Adeliom\EasyMediaBundle\Controller\Module\Upload;
 use Adeliom\EasyMediaBundle\Controller\Module\Utils;
-use Adeliom\EasyMediaBundle\Controller\Module\Visibility;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
@@ -31,13 +29,11 @@ class MediaController extends AbstractController
         GetContent,
         Delete,
         Download,
-        Lock,
         Move,
         Rename,
         Metas,
         Upload,
         NewFolder,
-        Visibility,
         GlobalSearch;
 
     /**
@@ -56,7 +52,6 @@ class MediaController extends AbstractController
     protected $rootPath;
     protected $baseUrl;
     protected $ignoreFiles;
-    protected $GFI;
     protected $LMF;
     protected $paginationAmount;
 
@@ -77,11 +72,10 @@ class MediaController extends AbstractController
         $this->fileChars = $container->getParameter("easy_media.allowed_fileNames_chars");
         $this->folderChars = $container->getParameter("easy_media.allowed_folderNames_chars");
         $this->sanitizedText = $container->getParameter("easy_media.sanitized_text");
-        $this->lockEntity = $container->getParameter("easy_media.lock_entity");
-        $this->metasEntity = $container->getParameter("easy_media.metas_entity");
+        $this->mediaEntity = $container->getParameter("easy_media.media_entity");
+        $this->folderEntity = $container->getParameter("easy_media.folder_entity");
         $this->metasService = $container->get("easy_media.service.metas");
         $this->ignoreFiles = $container->getParameter("easy_media.ignore_files");
-        $this->GFI = $container->getParameter("easy_media.get_folder_info");
         $this->LMF = $container->getParameter("easy_media.last_modified_format");
         $this->paginationAmount = $container->getParameter("easy_media.pagination_amount");
 
@@ -110,8 +104,8 @@ class MediaController extends AbstractController
 
         $this->em = $em;
 
-        $this->locker = $em->getRepository($this->lockEntity);
-        $this->metas = $em->getRepository($this->metasEntity);
+        $this->medias = $em->getRepository($this->mediaEntity);
+        $this->folder = $em->getRepository($this->folderEntity);
 
         $this->unallowedMimes = $container->getParameter("easy_media.unallowed_mimes");
         $this->unallowedExt = $container->getParameter("easy_media.unallowed_ext");

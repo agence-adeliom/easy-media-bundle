@@ -97,29 +97,6 @@
                         </a-->
                     </p>
                 </div>
-                {# lock / unlock #}
-                <!--div class="level-item">
-                    <span v-if="$refs.lock"
-                          class="icon is-large link"
-                          :class="IsLocked(selectedFile) ? 'is-danger' : 'is-success'"
-                          :title="IsLocked(selectedFile) ? '{{ 'unlock'|trans }}' : '{{ 'lock'|trans }}'"
-                          v-tippy="{arrow: true, hideOnClick: false}"
-                          @click.stop="$refs.lock.click()">
-                        <icon :name="IsLocked(selectedFile) ? 'lock' : 'lock-open'" scale="1.1"></icon>
-                    </span>
-                </div-->
-
-                {# visibility #}
-                <!--div class="level-item">
-                    <span v-if="$refs.visibility"
-                          class="icon is-large link"
-                          :class="IsVisible(selectedFile) ? 'is-success' : 'is-danger'"
-                          title="{{ 'visibility.set'|trans }}"
-                          v-tippy="{arrow: true}"
-                          @click.stop="$refs.visibility.click()">
-                        <icon :name="IsVisible(selectedFile) ? 'eye' : 'eye-slash'" scale="1.1"></icon>
-                    </span>
-                </div-->
             </div>
 
             <div class="level-right hidden sm:flex">

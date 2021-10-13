@@ -4,7 +4,7 @@ export default {
         openFolder(folder) {
             if (this.fileTypeIs(folder, 'folder')) {
                 this.folders.push(folder.name)
-
+                this.foldersIds.push(folder.id);
                 this.$nextTick(() => {
                     this.getFiles().then(this.updatePageUrl())
                 })
@@ -22,8 +22,10 @@ export default {
             if (length) {
                 let index = length - 1
                 let folders = this.folders
+                let foldersIds = this.foldersIds
                 let prev_folder_name = folders[index]
                 this.folders = folders.splice(0, index)
+                this.foldersIds = foldersIds.splice(0, index)
 
                 this.$nextTick(() => {
                     this.getFiles(prev_folder_name).then(this.updatePageUrl())
@@ -33,6 +35,7 @@ export default {
         goToFolder(index) {
             if (!this.isBulkSelecting() && !this.waitingForUpload) {
                 let folders = this.folders
+                let foldersIds = this.foldersIds
                 let prev_folder_name = null
 
                 if (this.restrictModeIsOn) {
@@ -45,10 +48,12 @@ export default {
                         index = index + this.getRestrictedPathArray().length
                         prev_folder_name = folders[index]
                         this.folders = folders.splice(0, index)
+                        this.foldersIds = foldersIds.splice(0, index)
                     }
                 } else {
                     prev_folder_name = folders[index]
                     this.folders = folders.splice(0, index)
+                    this.foldersIds = foldersIds.splice(0, index)
                 }
 
                 this.$nextTick(() => {

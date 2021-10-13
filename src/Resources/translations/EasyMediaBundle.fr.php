@@ -127,6 +127,9 @@ return [
         'main'       => 'Filtrer',
         'by'         => 'Filtrer par attr',
         'filtration' => 'Filtres et tri',
+        'type' => [
+            'pdf' => 'PDF'
+        ],
     ],
     'find'          => 'Rechercher ...',
     'folder'        => 'Dossier',

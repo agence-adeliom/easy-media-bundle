@@ -1,7 +1,11 @@
 .media{
-  @apply items-center flex gap-x-4 w-full;
+  @apply items-center flex gap-x-4 w-full mb-4;
+
+  &-left{
+    @apply w-8;
+  }
   &-content{
-    @apply flex-grow;
+    @apply flex-1;
 
     .title {
       @apply text-lg font-bold text-theme-50;
