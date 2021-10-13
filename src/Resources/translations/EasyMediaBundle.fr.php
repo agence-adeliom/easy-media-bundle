@@ -184,7 +184,7 @@ return [
         'edit_metas'       => 'Métadonnées mise à jours',
     ],
     'save' => [
-        'link'    => 'Télécharger l\'image à partir de l\'URL',
+        'link'    => 'Import à partir d\'une URL',
         'main'    => 'Enregistrer',
         'success' => 'Enregistré avec succès sous',
     ],
