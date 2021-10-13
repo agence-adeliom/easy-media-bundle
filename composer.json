@@ -35,6 +35,7 @@
         "maennchen/zipstream-php": "^2.1.0",
         "illuminate/support": "^8.49",
         "stof/doctrine-extensions-bundle": "^1.5",
+        "symfony/psr-http-message-bridge" : "^2.0",
         "embed/embed": "^4.2"
     },
     "suggest": {
