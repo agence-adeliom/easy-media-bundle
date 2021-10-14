@@ -11,6 +11,8 @@
         <div class="flex-shrink-0 ratio ratio-1x1" style="height: 48px;width: 48px" {% if ea.crud.currentAction == 'detail' %}data-bs-toggle="tooltip" data-bs-placement="top" title="{{ field.value|media_meta("title") ?: (infos ? infos.name : '') }}"{% endif %}>
             {% if file_is_type(field.value, "image") %}
                 <img src="{{ field.value|resolve_media }}" alt="{{ field.value|media_meta("alt") }}" title="{{ field.value|media_meta("title") }}" class="align-self-center mr-3 rounded" style="object-fit:cover;">
+            {% elseif file_is_type(field.value, "oembed") and field.value|media_meta("icon") %}
+                <img src="{{ field.value|media_meta("icon") }}" alt="{{ field.value|media_meta("alt") }}" title="{{ field.value|media_meta("title") }}" class="align-self-center mr-3 rounded" style="object-fit:cover;">
             {% else %}
                 <span class="align-self-center mr-3 d-inline-flex align-items-center justify-content-center">
                     {% if field.value|media_infos %}
@@ -23,8 +25,10 @@
         <div class="flex-grow-1 ms-3">
             <span class="fs-5 d-block">{{ infos ? infos.name : '' }}</span>
             {% if field.value|media_meta("title") and file_is_type(field.value, "image") %}
-                <span class="d-block">{{ 'seo.title'|trans }} : {{ field.value|media_meta("title") }}</span>
-                <span class="d-block">{{ 'seo.alt'|trans }} : {{ field.value|media_meta("alt") }}</span>
+                <span class="d-block"><b>{{ 'seo.title'|trans }} :</b> {{ field.value|media_meta("title") }}</span>
+            {% endif %}
+            {% if field.value|media_meta("alt") and file_is_type(field.value, "image") %}
+                <span class="d-block"><b>{{ 'seo.alt'|trans }} :</b> {{ field.value|media_meta("alt") }}</span>
             {% endif %}
         </div>
         {% endif %}
@@ -40,6 +44,11 @@
                 <div class="modal-body">
                     {% if file_is_type(field.value, "image") %}
                         <img src="{{ field.value|resolve_media }}" alt="{{ field.value|media_meta("alt") }}" title="{{ field.value|media_meta("title") }}" class="img-fluid">
+                    {% elseif file_is_type(field.value, "oembed") %}
+                        {% set code = field.value|media_meta("code") %}
+                        <div class="ratio ratio-16x9 w-100">
+                            {{ code.html|raw }}
+                        </div>
                     {% else %}
                         <div class="ratio ratio-16x9 w-100">
                             {% if field.value|media_infos %}

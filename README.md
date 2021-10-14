@@ -208,33 +208,6 @@ yield EasyMediaField::new('property', "label")
 {{ mime_icon("text/plain") }}
 ```
 
-### Use the Doctrine type (optional)
-
-It automatically converts the stored path into a File object
-
-```yaml
-# config/packages/doctrine.yaml
-doctrine:
-  dbal:
-    ...
-    types:
-      easy_media_type: Adeliom\EasyMediaBundle\Types\EasyMediaType
-```
-
-In your entity
-
-```php
-class Article
-{
-    /**
-     * @ORM\Column(type="easy_media_type", nullable=true)
-     * @Assert\NotBlank()
-     */
-    private $file;
-    
-    ...
-```
-
 ### Configurations
 
 ```yaml

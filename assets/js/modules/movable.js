@@ -77,7 +77,7 @@ export default {
 
                     let msg = this.restrictModeIsOn
                         ? `"${item.name}"`
-                        : `"${item.name}" to "${destination || '/'}"`
+                        : `"${item.name}" -> "${destination || '/'}"`
 
                     paths.push(item.old_path)
                     this.showNotif(`${this.trans('move_success')} ${msg}`)

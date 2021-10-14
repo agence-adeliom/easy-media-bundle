@@ -25,8 +25,12 @@ export default {
                     icon : 'folder'
                 },
                 {
-                    type : 'application',
-                    icon : 'cogs'
+                  type : 'oembed',
+                  icon : 'external-link-alt'
+                },
+                {
+                  type : 'application',
+                  icon : 'cogs'
                 },
                 {
                     type : 'compressed',

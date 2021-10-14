@@ -122,14 +122,22 @@ return [
         'moving_cloud'   => 'Les dossiers cloud ne peuvent pas être "renommés, déplacés ou copiés"',
         'move_into_self' => 'Le dossier ne peut pas être "déplacé ou copié" dans lui-même',
         'no_file'        => 'Aucun fichier à télécharger',
+        'provider_not_found' => "Ce fournisseur n'est pas valide"
     ],
     'filter' => [
         'main'       => 'Filtrer',
         'by'         => 'Filtrer par attr',
         'filtration' => 'Filtres et tri',
         'type' => [
-            'pdf' => 'PDF'
+            'pdf' => 'PDF',
+            'oembed' => 'Intégration'
         ],
+    ],
+    'oembed' => [
+        'provider' => 'Fournisseur',
+        'author' => 'Auteur',
+        'type' => 'Type d\'intégration',
+        'url' => 'Lien du média',
     ],
     'find'          => 'Rechercher ...',
     'folder'        => 'Dossier',

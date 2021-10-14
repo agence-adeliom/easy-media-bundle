@@ -28,6 +28,11 @@
             <argument key="$container" type="service" id="service_container"/>
         </service>
 
+        <service id="easy_media.form.media" class="Adeliom\EasyMediaBundle\Form\EasyMediaType" public="true" autowire="true">
+            <argument key="$entityManager" type="service" id="doctrine.orm.entity_manager"/>
+            <argument key="$parameterBag" type="service" id="parameter_bag"/>
+        </service>
+
         <service id="easy_media.event_listener.container_listener" class="Adeliom\EasyMediaBundle\EventListener\ContainerListener" public="true" autowire="true">
             <argument key="$container" type="service" id="service_container"/>
             <tag name="doctrine.event_listener" event="getContainer"/>

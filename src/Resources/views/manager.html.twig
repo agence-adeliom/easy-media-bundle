@@ -21,6 +21,7 @@
     'already_exists' : 'error.already_exists'|trans,
     'application' : 'application'|trans,
     'pdf' : 'filter.type.pdf'|trans,
+    'oembed' : 'filter.type.oembed'|trans,
     'audio' : 'audio.main'|trans,
     'bm_add_to_list' : 'bookmarks.add'|trans,
     'bm' : 'bookmarks.main'|trans,
@@ -280,7 +281,7 @@
                                      @dbltap="pressGesture($event, file, index)">
 
                                 {# copy file link #}
-                                <div v-if="!fileTypeIs(file, 'folder')"
+                                <div v-if="!fileTypeIs(file, 'folder') && !fileTypeIs(file, 'oembed')"
                                      class="__box-copy-link icon"
                                      @click.stop="copyLink(file.path)"
                                      :title="linkCopied ? trans('copied') : trans('to_cp')"
@@ -298,6 +299,11 @@
                                                     :browser-support="browserSupport"
                                                     root-el=".__stack-files">
                                             </image-intersect>
+                                        </template>
+
+                                        <template v-else-if="fileTypeIs(file, 'oembed')">
+                                            <img v-if="file.metas.icon" :src="file.metas.icon">
+                                            <icon v-else name="external-link-alt" scale="2.6"></icon>
                                         </template>
 
                                         <span v-else class="icon is-large">
@@ -319,8 +325,8 @@
 
                                         {# any other #}
                                         <template v-else>
-                                            <h4>{% verbatim %}{{ getFileName(file.name) }}{% endverbatim %}</h4>
-                                            <small class="__info-file-size">{% verbatim %}{{ getFileSize(file.size) }}{% endverbatim %}</small>
+                                            <h4>{% verbatim %}{{ file.name }}{% endverbatim %}</h4>
+                                            <small class="__info-file-size" v-if="file.size">{% verbatim %}{{ getFileSize(file.size) }}{% endverbatim %}</small>
                                         </template>
                                     </div>
                                 </div>

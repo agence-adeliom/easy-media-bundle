@@ -219,6 +219,10 @@ trait Upload
                 $folder = $this->folder->find($upload_folder_id);
             }
             $upload_path = $folder ? $folder->getPath() : "";
+
+            /** @var Media $media */
+            $media = new $this->mediaEntity();
+            $result = null;
             if($imageType = @exif_imagetype($url)){
                 $random_name = filter_var($data["random_names"], FILTER_VALIDATE_BOOLEAN);
                 $urlPath = parse_url($url, PHP_URL_PATH);
@@ -257,7 +261,12 @@ trait Upload
                     $this->filesystem->write($destination, $data);
                     $file = new File($this->rootPath . DIRECTORY_SEPARATOR . $destination);
 
-                    dump($file);
+                    $media->setName($file_name);
+                    $media->setSlug($final_name_slug);
+                    $media->setFolder($folder);
+                    $media->setSize($file->getSize());
+                    $media->setLastModified($file->getMTime());
+                    $media->setMime($file->getMimeType());
 
                 } catch (\Exception $e) {
                     $result = [
@@ -269,42 +278,51 @@ trait Upload
                 try {
                     $embed = new Embed();
                     $infos = $embed->get($url);
-                    dump($url, $infos);
-
-                }catch (\RuntimeException $exception){
-                    dump($exception);
+                    if($infos->getOEmbed() && !empty($infos->getOEmbed()->all())){
+                        $oembed = $infos->getOEmbed();
+                        $media->setName($oembed->get('title'));
+                        $media->setFolder($folder);
+                        $media->setMime("application/json+oembed");
+                        $media->setMetas([
+                            "provider" => [
+                                "name" => $infos->providerName,
+                                "url" => (string) $infos->providerUrl
+                            ],
+                            "author" => [
+                                "name" => $infos->authorName,
+                                "url" => (string) $infos->authorUrl
+                            ],
+                            "url" => (string) $infos->url,
+                            "image" => (string) $infos->image,
+                            "icon" => (string) ($infos->icon ?: $infos->favicon),
+                            "type" => $oembed->get('type'),
+                            'code' => [
+                                'html' => $infos->code ? $infos->code->html : null,
+                                'width' => $infos->code ? $infos->code->width : null,
+                                'height' => $infos->code ? $infos->code->height : null,
+                                'ratio' => $infos->code ? $infos->code->ratio : null
+                            ]
+                        ]);
+                    }else{
+                        throw new \Exception(
+                            $this->translator->trans('error.provider_not_found', [] , "EasyMediaBundle")
+                        );
+                    }
+                }catch (\Exception $e){
+                    $result = [
+                        'success' => false,
+                        'message' => $e->getMessage(),
+                    ];
                 }
             }
 
-            exit;
-
-
-            try {
-
-
-                /** @var Media $media */
-                $media = new $this->mediaEntity();
-                $media->setName($file_name);
-                $media->setSlug($final_name_slug);
-                $media->setFolder($folder);
-                $media->setSize($file->getSize());
-                $media->setLastModified($file->getMTime());
-                $media->setMime($file->getMimeType());
+            if(!$result && $media->getName()){
                 $this->em->persist($media);
                 $this->em->flush();
-
-                // fire event
-                $this->eventDispatcher->dispatch(new EasyMediaFileSaved($destination, $file_type), EasyMediaFileSaved::NAME);
-
-
+                $this->eventDispatcher->dispatch(new EasyMediaFileSaved($media->getPath(), $media->getMime()), EasyMediaFileSaved::NAME);
                 $result = [
                     'success' => true,
-                    'message' => $file_name,
-                ];
-            } catch (\Exception $e) {
-                $result = [
-                    'success' => false,
-                    'message' => $e->getMessage(),
+                    'message' => $media->getName(),
                 ];
             }
         } else {
@@ -316,7 +334,6 @@ trait Upload
 
         return new JsonResponse($result);
     }
-
 
     /**
      * save file to disk.

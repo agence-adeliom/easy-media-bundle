@@ -20,13 +20,12 @@ class EasyMediaType extends Type
     {
         $listeners = $platform->getEventManager()->getListeners('getContainer');
         $listener = array_shift($listeners);
+        /** @var ContainerInterface $container */
         $container = $listener->getContainer();
-        $root = $container->getParameter("easy_media.storage");
+        $class = $container->getParameter("easy_media.media_entity");
 
         if($value){
-            if(file_exists(dirname($root) . $value)){
-                return new File(dirname($root) . $value);
-            }
+            return $container->get("doctrine.orm.entity_manager")->getRepository($class)->find($value);
         }
         return null;
     }

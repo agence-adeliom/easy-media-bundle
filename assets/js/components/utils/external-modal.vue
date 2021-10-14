@@ -37,31 +37,36 @@ export default {
         EventHub.fire('external_modal_restrict', this.restrict)
     },
     mounted() {
+        console.log(this)
         if (this.old) {
             this.updateParent(this.old)
         }
 
         EventHub.listen('file_modal_selected', (data) => {
             if (this.item == this.name && this.type !== 'folder' && !this.multi) {
-              this.updateParent(data.path)
+              this.updateParent(data.id)
               this.$parent.hideInputModal();
             }
         })
 
         EventHub.listen('multi_file_selected', (paths) => {
-            if (this.item == this.name && this.type !== 'folder' && this.multi) {
+          console.log(paths);
+          if (this.item == this.name && this.type !== 'folder' && this.multi) {
                 this.updateParent(paths)
             }
         })
 
         EventHub.listen('folder_selected', (path) => {
-            if (this.item == this.name && this.type == 'folder') {
+          console.log(path);
+
+          if (this.item == this.name && this.type == 'folder') {
                 this.updateParent(path)
             }
         })
     },
     methods: {
         updateParent(path) {
+          console.log(this.$parent, this.item)
           return this.$parent[this.item] = path
         }
     },

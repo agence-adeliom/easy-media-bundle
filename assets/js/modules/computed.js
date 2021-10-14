@@ -43,7 +43,6 @@ export default {
                 return true;
             }
 
-
             return (this.isBulkSelecting() && !this.bulkItemsFilter.length) ||
                 this.isLoading ||
                 !this.selectedFile

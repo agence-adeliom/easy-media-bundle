@@ -105,45 +105,31 @@ trait GetContent
     public function getItemInfos(Request $request)
     {
         $data = json_decode($request->getContent(), true);
-        $path = str_replace($this->baseUrl, "", $data["path"]);
+        $mediaId = $data["item"];
 
-        if ($path && !$this->filesystem->fileExists($path)) {
+        if ($media = $this->medias->findOneBy(["id" => $mediaId])) {
+            /** @var Media $media */
+            $path = $media->getPath();
+            $time = $media->getLastModified() ?? null;
+            $metas = $media->getMetas();
+
+            $item = [
+                'id'                     => $media->getId(),
+                'name'                   => $media->getName(),
+                'type'                   => $media->getMime(),
+                'size'                   => $media->getSize(),
+                'path'                   => $this->resolveUrl($path),
+                'storage_path'           => $path,
+                'last_modified'          => $time,
+                'last_modified_formated' => $this->getItemTime($time),
+                'metas' => $metas
+            ];
+            return new JsonResponse($item);
+        }else{
             return new JsonResponse([
-                'error' => $this->translator->trans('error.doesnt_exist', ['attr' => $path] , "EasyMediaBundle"),
+                'error' => $this->translator->trans('error.doesnt_exist', ['attr' => $mediaId] , "EasyMediaBundle"),
             ]);
         }
-
-        $detector = new FinfoMimeTypeDetector();
-
-        /** @var FileAttributes $file */
-        $time = $this->filesystem->lastModified($path) ?? null;
-        $mimeType = $detector->detectMimeTypeFromFile($this->rootPath . DIRECTORY_SEPARATOR . $path);
-        $metas = $this->metasService->getMetas(DIRECTORY_SEPARATOR . $path);
-
-        $title = current(array_filter($metas, function ($item){return $item->getMetaKey() == "title";}));
-        $alt = current(array_filter($metas, function ($item){return $item->getMetaKey() == "alt";}));
-        $description = current(array_filter($metas, function ($item){return $item->getMetaKey() == "description";}));
-        $extra = current(array_filter($metas, function ($item){return !in_array($item->getMetaKey(), ["title","alt","description","dimensions"]); }));
-
-
-        $item = [
-            'name'                   => basename($path),
-            'type'                   => $mimeType,
-            'size'                   => $this->filesystem->fileSize($path),
-            'path'                   => $this->resolveUrl($path),
-            'storage_path'           => $path,
-            'last_modified'          => $time,
-            'last_modified_formated' => $this->getItemTime($time),
-            'metas' => [
-                "title" => $title ? $title->getMetaValue() : null,
-                "alt" => $alt ? $alt->getMetaValue() : null,
-                "description" => $description ? $description->getMetaValue() : null,
-                "extra" => $extra,
-            ]
-
-        ];
-
-        return new JsonResponse($item);
     }
 
     /**

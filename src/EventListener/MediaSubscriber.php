@@ -86,5 +86,13 @@ class MediaSubscriber implements EventSubscriberInterface
         if (!$media instanceof Media) {
             return;
         }
+
+        if($args->hasChangedField("folder")){
+            $oldPath = ($args->getOldValue("folder") ? $args->getOldValue("folder")->getPath() : "") . DIRECTORY_SEPARATOR . $media->getSlug();
+            $newPath = ($args->getNewValue("folder") ? $args->getNewValue("folder")->getPath() : "") . DIRECTORY_SEPARATOR . $media->getSlug();
+            if($this->filesystem->fileExists($oldPath)){
+                $this->filesystem->move($oldPath, $newPath);
+            }
+        }
     }
 }

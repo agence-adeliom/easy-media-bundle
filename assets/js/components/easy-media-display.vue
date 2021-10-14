@@ -77,10 +77,15 @@ export default {
     fileTypeIs(item, val) {
       let mimes = this.config.mimeTypes
       let type = item.type || item
-      console.log(type);
+
       if (type) {
         if (val == 'image' && mimes.image.includes(type)) {
           return true
+        }
+
+        // because "oembed" shows up as "application"
+        if ((type && type.includes('oembed')) && val != 'oembed') {
+          return false
         }
 
         // because "pdf" shows up as "application"

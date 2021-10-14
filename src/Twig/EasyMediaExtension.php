@@ -20,10 +20,17 @@ class EasyMediaExtension extends AbstractExtension
      * @var ContainerInterface
      */
     protected $container;
+    protected $rootPath;
+    protected $basePath;
+    protected $class;
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+
+        $this->rootPath = $this->container->getParameter("easy_media.storage");
+        $this->basePath = $this->container->getParameter("easy_media.base_url");
+        $this->class = $this->container->getParameter("easy_media.media_entity");
     }
 
     public function getFilters()
@@ -43,157 +50,106 @@ class EasyMediaExtension extends AbstractExtension
         ];
     }
 
+    private function getMedia($file){
+        $class = $this->class;
+        if(!($file instanceof $class)){
+            $file = $this->container->get("doctrine.orm.entity_manager")->getRepository($class)->find($file);
+        }
+
+        if(null === $file){
+            return null;
+        }
+
+        return $file;
+    }
+
     public function resolveMedia($file)
     {
-        if(is_string($file) && !empty($file)){
-            $rootPath = $this->container->getParameter("easy_media.storage");
-            $basePath = $this->container->getParameter("easy_media.base_url");
-            $path = $rootPath . DIRECTORY_SEPARATOR . str_replace($basePath, "", $file);
-            if (file_exists($path) && is_file($path)){
-                $file = new File($path);
-            }
+        $file = $this->getMedia($file);
+        if(null === $file){
+            return null;
         }
+        return $this->buildPath($file);
+    }
 
-        if($file instanceof File){
-            $baseUrl = $this->container->getParameter("easy_media.base_url");
-            $storage = $this->container->getParameter("easy_media.storage");
-
-            $path = $file->getPathname();
-            $path = str_replace($storage, "", $path);
-            $str = "{$baseUrl}/{$path}";
-            $str = preg_replace('/\/+/', '/', $str);
-            $str = str_replace(':/', '://', $str);
-            return $str;
-        }
-        return null;
+    private function buildPath($media){
+        $path = $this->basePath . '/' . $media->getPath();
+        $path = preg_replace('/\/+/', '/', $path);
+        return str_replace(':/', '://', $path);
     }
 
     public function mediaMeta($file, ?string $key = null){
 
-        if(is_string($file) && !empty($file)){
-            $rootPath = $this->container->getParameter("easy_media.storage");
-            $basePath = $this->container->getParameter("easy_media.base_url");
-            $path = $rootPath . DIRECTORY_SEPARATOR . str_replace($basePath, "", $file);
-            if (file_exists($path) && is_file($path)){
-                $file = new File($path);
-            }
+        $file = $this->getMedia($file);
+        if(null === $file){
+            return null;
         }
-
-        if($file instanceof File){
-            if($path = $this->resolveMedia($file)) {
-                $metasService = $this->container->get("easy_media.service.metas");
-                $basePath = $this->container->getParameter("easy_media.base_url");
-                $rootPath = $this->container->getParameter("easy_media.storage");
-                $path = DIRECTORY_SEPARATOR . str_replace($basePath, "", $path);
-                $meta = null;
-
-                if($key){
-                    if($meta = $metasService->getMeta($path, $key)){
-                        return $meta->getMetaValue();
-                    }
-                }else{
-                    $metas = [];
-                    if($meta = $metasService->getMetas($path)){
-                        foreach ($meta as $item){
-                            $metas[$item->getMetaKey()] = $item->getMetaValue();
-                        }
-                        return $metas;
-                    }
-                }
-            }
+        $metas = $file->getMetas();
+        if($key){
+            return $metas[$key] ?? null;
         }
-        return null;
+        return $metas;
     }
 
     public function mediaInfos($file)
     {
-        if(is_string($file) && !empty($file)){
-            $rootPath = $this->container->getParameter("easy_media.storage");
-            $basePath = $this->container->getParameter("easy_media.base_url");
-            $path = $rootPath . DIRECTORY_SEPARATOR . str_replace($basePath, "", $file);
-            if (file_exists($path) && is_file($path)){
-                $file = new File($path);
-            }
+        $file = $this->getMedia($file);
+        if(null === $file){
+            return null;
         }
 
-        if($file instanceof File){
-            if($path = $this->resolveMedia($file)){
-                $basePath = $this->container->getParameter("easy_media.base_url");
-                $rootPath = $this->container->getParameter("easy_media.storage");
-                $path = str_replace($basePath, "", $path);
+        $LMF = $this->container->getParameter("easy_media.last_modified_format");
 
-                $adapter = new LocalFilesystemAdapter($rootPath);
-                $filesystem = new Filesystem($adapter);
-                $metasService = $this->container->get("easy_media.service.metas");
-                $LMF = $this->container->getParameter("easy_media.last_modified_format");
+        $path = $file->getPath();
+        $time = $file->getLastModified() ?? null;
+        $metas = $file->getMetas();
 
-                $detector = new FinfoMimeTypeDetector();
+        return [
+            'id'                     => $file->getId(),
+            'name'                   => $file->getName(),
+            'type'                   => $file->getMime(),
+            'size'                   => $file->getSize(),
+            'path'                   => $this->buildPath($file),
+            'storage_path'           => $path,
+            'last_modified'          => $time,
+            'last_modified_formated' => $time ? (new \DateTime("@$time"))->format($LMF) : null,
+            'metas' => $metas
+        ];
 
-                /** @var FileAttributes $file */
-                $time = $filesystem->lastModified($path) ?? null;
-                $mimeType = $detector->detectMimeTypeFromFile($rootPath . DIRECTORY_SEPARATOR . $path);
-                $metas = $metasService->getMetas(DIRECTORY_SEPARATOR . $path);
-
-                $title = current(array_filter($metas, function ($item){return $item->getMetaKey() == "title";}));
-                $alt = current(array_filter($metas, function ($item){return $item->getMetaKey() == "alt";}));
-                $description = current(array_filter($metas, function ($item){return $item->getMetaKey() == "description";}));
-                $extra = current(array_filter($metas, function ($item){return !in_array($item->getMetaKey(), ["title","alt","description","dimensions"]); }));
-
-
-                return [
-                    'name'                   => basename($path),
-                    'type'                   => $mimeType,
-                    'size'                   => $filesystem->fileSize($path),
-                    'visibility'             => $filesystem->visibility($path),
-                    'path'                   => $path,
-                    'storage_path'           => dirname($path),
-                    'last_modified'          => $time,
-                    'last_modified_formated' => $time ? (new \DateTime("@$time"))->format($LMF) : null,
-                    'metas' => [
-                        "title" => $title ? $title->getMetaValue() : null,
-                        "alt" => $alt ? $alt->getMetaValue() : null,
-                        "description" => $description ? $description->getMetaValue() : null,
-                        "extra" => $extra,
-                    ]
-
-                ];
-            }
-        }
-
-        return null;
     }
 
     public function fileIsType($file, $compare){
-        if(is_string($file) && !empty($file)){
-            $rootPath = $this->container->getParameter("easy_media.storage");
-            $basePath = $this->container->getParameter("easy_media.base_url");
-            $path = $rootPath . DIRECTORY_SEPARATOR . str_replace($basePath, "", $file);
-            if (file_exists($path) && is_file($path)){
-                $file = new File($path);
-            }
+
+        $file = $this->getMedia($file);
+        if(null === $file){
+            return null;
         }
 
-        if($file instanceof File){
-            $mimes = $this->container->getParameter("easy_media.extended_mimes");
-            $type = $file->getMimeType();
-            if ($type) {
-                if ($compare == 'image' && in_array($type, $mimes["image"])) {
-                    return true;
-                }
-
-                // because "pdf" shows up as "application" type.includes('pdf')
-                if (($type && strpos($type, "pdf") !== false) && $compare != 'pdf') {
-                    return false;
-                }
-
-                // because "archive" shows up as "application"
-                if (($type && strpos($type, 'compressed') !== false) || in_array($type, $mimes["archive"])) {
-                    return $compare == 'compressed';
-                }
-
-                return $type && strpos($type, $compare) !== false;
+        $mimes = $this->container->getParameter("easy_media.extended_mimes");
+        $type = $file->getMime();
+        if ($type) {
+            if ($compare == 'image' && in_array($type, $mimes["image"])) {
+                return true;
             }
+
+            // because "oembed" shows up as "application" type.includes('oembed')
+            if (($type && strpos($type, "oembed") !== false) && $compare != 'oembed') {
+                return false;
+            }
+
+            // because "pdf" shows up as "application" type.includes('pdf')
+            if (($type && strpos($type, "pdf") !== false) && $compare != 'pdf') {
+                return false;
+            }
+
+            // because "archive" shows up as "application"
+            if (($type && strpos($type, 'compressed') !== false) || in_array($type, $mimes["archive"])) {
+                return $compare == 'compressed';
+            }
+
+            return $type && strpos($type, $compare) !== false;
         }
+
         return false;
     }
 

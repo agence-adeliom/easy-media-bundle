@@ -92,7 +92,7 @@ export default {
                     }
                 })
 
-                this.bcNotif(`${this.trans('rename_success')} "${item.oldName}" to "${item.newName}"`)
+                this.bcNotif(`${this.trans('rename_success')} "${item.oldName}" -> "${item.newName}"`)
             }
         },
         bcDelete(data) {

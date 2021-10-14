@@ -16,7 +16,6 @@
         'file_infos' : path('media.get_file_info'),
     } %}
 
-
 <div class="{{ form.vars.ea_crud_form.ea_field.columns ?? form.vars.ea_crud_form.ea_field.defaultColumns ?? '' }}">
     <div {% with { attr: row_attr|merge({
         'data-row-id': id
@@ -29,7 +28,7 @@
                     <div v-if="inputName">{% include '@EasyMedia/extras/modal.html.twig' %}</div>
                     {% include '@EasyMedia/extras/editor.html.twig' %}
 
-                    <media-modal item="media" {% if value is not empty %}old="{{ value|resolve_media }}" {% endif %} :name="inputName"></media-modal>
+                    <media-modal item="media" {% if value is not empty %}old="{{ value }}" {% endif %} :name="inputName"></media-modal>
                     <!--media-modal item="links" :name="inputName" :multi="true"></media-modal-->
 
                     <section>
@@ -44,6 +43,11 @@
                                                  :src="selectedFile.path"
                                                  loading="lazy">
                                         </div>
+                                    </template>
+
+                                    <template v-else-if="fileTypeIs(selectedFile, 'oembed')">
+                                        <img v-if="selectedFile.metas.icon" :src="selectedFile.metas.icon">
+                                        <icon v-else name="external-link-alt" scale="2.6"></icon>
                                     </template>
 
                                     <span v-else class="icon is-large">
@@ -65,8 +69,8 @@
 
                                     {# any other #}
                                     <template v-else>
-                                        <h4>{% verbatim %}{{ getFileName(selectedFile.name) }}{% endverbatim %}</h4>
-                                        <small class="__info-file-size">{% verbatim %}{{ getFileSize(selectedFile.size) }}{% endverbatim %}</small>
+                                        <h4>{% verbatim %}{{ selectedFile.name }}{% endverbatim %}</h4>
+                                        <small class="__info-file-size" v-if="selectedFile.size">{% verbatim %}{{ getFileSize(selectedFile.size) }}{% endverbatim %}</small>
                                     </template>
                                 </div>
 
@@ -90,16 +94,6 @@
                         </div>
                         {{ form_widget(form, {'type': 'hidden', 'attr': {':value': 'media'} }) }}
                     </section>
-
-                    <!--section>
-                        <input v-for="item in links"
-                               :key="item"
-                               :value="item"
-                               type="text"
-                               name="links[]"/>
-
-                        <button type="button" @click="toggleModalFor('links')">select gallery links</button>
-                    </section-->
                 </div>
             </easy-media-modal>
 

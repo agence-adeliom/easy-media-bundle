@@ -2,15 +2,30 @@
 
 namespace Adeliom\EasyMediaBundle\Form;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EasyMediaType extends AbstractType
 {
+    private $entityManager;
+    private $parameterBag;
+
+    public function __construct(EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag)
+    {
+        $this->entityManager = $entityManager;
+        $this->parameterBag = $parameterBag;
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -25,7 +40,7 @@ class EasyMediaType extends AbstractType
             "move" => true,
             "rename" => true,
             "metas" => true,
-            "delete" => true
+            "delete" => true,
         ]);
 
         $resolver->setAllowedTypes('restrictions_path', ['null', 'string']);
@@ -40,6 +55,52 @@ class EasyMediaType extends AbstractType
         $resolver->setAllowedTypes('rename', "bool");
         $resolver->setAllowedTypes('metas', "bool");
         $resolver->setAllowedTypes('delete', "bool");
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $mediaClass = $this->parameterBag->get("easy_media.media_entity");
+
+        $builder->addModelTransformer(new CallbackTransformer(
+            function ($media) use($mediaClass) {
+                if (empty($media)) {
+                    return '';
+                }
+
+                if (!($media instanceof $mediaClass)) {
+                    $media = $this->entityManager
+                        ->getRepository($mediaClass)
+                        ->find($media)
+                    ;
+                }
+
+                if (null === $media) {
+                    return '';
+                }
+
+                return $media->getId();
+            },
+            function ($mediaId) use($mediaClass) {
+
+                if (!$mediaId) {
+                    return null;
+                }
+
+                $media = $this->entityManager
+                    ->getRepository($mediaClass)
+                    ->find($mediaId)
+                ;
+
+                if (null === $media) {
+                    throw new TransformationFailedException(sprintf(
+                        'An media with id "%s" does not exist!',
+                        $mediaId
+                    ));
+                }
+
+                return $mediaId;
+            }
+        ));
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
@@ -63,7 +124,7 @@ class EasyMediaType extends AbstractType
 
     public function getParent(): string
     {
-        return TextType::class;
+        return HiddenType::class;
     }
 
     public function getBlockPrefix()

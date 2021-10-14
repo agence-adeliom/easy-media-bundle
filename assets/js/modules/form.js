@@ -164,7 +164,11 @@ export default {
             let action = event.target.closest("[action]").getAttribute("action");
 
             let selected = this.selectedFile
-            let changed = this.newMetas
+            let changed = {
+                'title': this.$refs.edit_metas_modal_title_input.value,
+                'alt': this.$refs.edit_metas_modal_alt_input.value,
+                'description': this.$refs.edit_metas_modal_desc_input.value
+            }
 
             if (!changed) {
                 return this.showNotif(this.trans('no_val'), 'warning')
@@ -233,7 +237,7 @@ export default {
 
                 let savedName = data.new_filename
 
-                this.showNotif(`${this.trans('rename_success')} "${filename}" to "${savedName}"`)
+                this.showNotif(`${this.trans('rename_success')} "${filename}" -> "${savedName}"`)
                 selected.name = savedName
                 selected.path = selected.path.replace(filename, savedName)
                 selected.storage_path = selected.storage_path.replace(filename, savedName)

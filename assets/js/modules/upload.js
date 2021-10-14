@@ -217,13 +217,12 @@ export default {
                     }
 
                     this.resetInput('urlToUpload')
-                    this.$nextTick(() => this.$refs.save_link_modal_input.focus())
+                    this.toggleModal()
                     this.showNotif(`${this.trans('save_success')} "${data.message}"`)
                     this.getFiles(null, data.message)
 
                 }).catch((err) => {
                     console.error(err)
-
                     this.toggleLoading()
                     this.toggleModal()
                     this.loadingFiles('hide')

@@ -105,7 +105,7 @@ export default {
             sortName                 : null,
             imageSlideDirection      : null,
             newFilename              : null,
-            newMetas              : {},
+            newMetas              : {title: "", alt: "", description: ""},
             newFolderName            : null,
             searchFor                : null,
             searchItemsCount         : null,

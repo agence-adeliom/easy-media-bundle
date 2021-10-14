@@ -18,6 +18,12 @@
             <p v-if="selectedFileIs('pdf')">{{ 'pdf'|trans }}</p>
         </object>
 
+        {# oembed #}
+        <div v-else-if="selectedFileIs('oembed') && selectedFile.metas.code">
+            <div v-if="selectedFile.metas.type && selectedFile.metas.type == 'video'" class="responsive" :style="{ paddingBottom: (selectedFile.metas.code.ratio ? selectedFile.metas.code.ratio + '%' : 0) }" v-html="selectedFile.metas.code.html"></div>
+            <div v-else v-html="selectedFile.metas.code.html" ></div>
+        </div>
+
         {# video #}
         <div v-else-if="selectedFileIs('video')">
             <video controls
@@ -79,6 +85,7 @@
                     {# name #}
                     <p class="title">
                         <span class="link"
+                              v-if="!selectedFileIs('oembed')"
                               {% if not lightMode %}@click.stop="copyLink(selectedFile.path)"
                               :title="linkCopied ? trans('copied') : trans('to_cp')"
                               v-tippy="{arrow: true, hideOnClick: false, followCursor: true}"
@@ -102,7 +109,7 @@
             <div class="level-right hidden sm:flex">
                 {# download #}
                 <div class="level-item">
-                    <span class="icon is-large link is-black"
+                    <span class="icon is-large link is-black" v-if="!selectedFileIs('oembed')"
                           title="{{ 'download.file'|trans }}"
                           v-tippy="{arrow: true}"
                           @click.prevent="saveFile(selectedFile)">
@@ -118,7 +125,7 @@
         <div class="card-details">
             <table>
                 <tbody>
-                    <tr>
+                    <tr v-if="!selectedFileIs('oembed')">
                         <td class="t-key">{{ 'type'|trans }}:</td>
                         <td class="t-val">{% verbatim %}{{ selectedFile.type }}{% endverbatim %}</td>
                     </tr>
@@ -145,6 +152,36 @@
                     <tr v-if="selectedFile.metas.description">
                         <td class="t-key">{{ 'seo.description'|trans }}:</td>
                         <td class="t-val">{% verbatim %}{{ selectedFile.metas.description }}{% endverbatim %}</td>
+                    </tr>
+
+                    <tr v-if="selectedFileIs('oembed') && selectedFile.metas.provider && selectedFile.metas.provider.name">
+                        <td class="t-key">{{ 'oembed.provider'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ selectedFile.metas.provider.name }}{% endverbatim %}
+                        </td>
+                    </tr>
+                    <tr v-if="selectedFileIs('oembed') && selectedFile.metas.author && selectedFile.metas.author.name">
+                        <td class="t-key">{{ 'oembed.author'|trans }}:</td>
+                        <td class="t-val">
+                            <a v-if="selectedFile.metas.author.url" :href="selectedFile.metas.author.url" target="_blank">
+                                {% verbatim %}{{ selectedFile.metas.author.name }}{% endverbatim %}
+                            </a>
+                            <span v-else>{% verbatim %}{{ selectedFile.metas.author.name }}{% endverbatim %}</span>
+                        </td>
+                    </tr>
+                    <tr v-if="selectedFileIs('oembed') && selectedFile.metas.type">
+                        <td class="t-key">{{ 'oembed.type'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ selectedFile.metas.type }}{% endverbatim %}
+                        </td>
+                    </tr>
+                    <tr v-if="selectedFileIs('oembed') && selectedFile.metas.url">
+                        <td class="t-key">{{ 'oembed.url'|trans }}:</td>
+                        <td class="t-val">
+                            <a :href="selectedFile.metas.url" target="_blank">
+                                {% verbatim %}{{ selectedFile.metas.url }}{% endverbatim %}
+                            </a>
+                        </td>
                     </tr>
 
                     <tr v-for="(value, name) in selectedFile.metas.extra" :key="name">

@@ -158,7 +158,7 @@ export default {
 
             if (!this.isBulkSelecting()) {
                 // image / text
-                if ((this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.textFileType()) && !this.inModal) {
+                if ((this.selectedFileIs('image') || this.selectedFileIs('pdf') || this.selectedFileIs('oembed') || this.textFileType()) && !this.inModal) {
                     return this.toggleModal('preview_modal')
                 }
                 // media

@@ -66,9 +66,12 @@ export default {
       })
     },
     getInfos(path){
+      console.log(path)
       return axios.post(this.routes.file_infos, {
-        path: path
+        item: path
       }).then(({data}) => {
+        console.log(data)
+
         this.selectedFile = data
       }).catch((err) => {
         console.error(err)
@@ -85,10 +88,14 @@ export default {
       let mimes = this.config.mimeTypes
       let type = item.type || item
 
-      console.log(type);
       if (type) {
         if (val == 'image' && mimes.image.includes(type)) {
           return true
+        }
+
+        // because "oembed" shows up as "application"
+        if ((type && type.includes('oembed')) && val != 'oembed') {
+          return false
         }
 
         // because "pdf" shows up as "application"

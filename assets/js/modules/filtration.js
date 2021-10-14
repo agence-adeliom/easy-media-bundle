@@ -72,6 +72,11 @@ export default {
                     return true
                 }
 
+                // because "oembed" shows up as "application"
+                if ((type && type.includes('oembed')) && val != 'oembed') {
+                    return false
+                }
+
                 // because "pdf" shows up as "application"
                 if ((type && type.includes('pdf')) && val != 'pdf') {
                     return false

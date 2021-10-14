@@ -39,8 +39,8 @@ export default {
         // bulk
         bulkItemsCount(val) {
             if (val > 0 && this.inModal && !this.selectedFileIs('folder')) {
-                let links = this.bulkList.map((e) => e.path)
-                EventHub.fire('multi_file_selected', links)
+                let ids = this.bulkList.map((e) => e.id)
+                EventHub.fire('multi_file_selected', ids)
             }
 
             if (val > 1 && !this.bulkSelectAll) {

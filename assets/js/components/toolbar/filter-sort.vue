@@ -50,6 +50,7 @@ export default {
                 'folder',
                 'text',
                 'pdf',
+                'oembed',
                 'application',
                 'selected',
                 'non'
