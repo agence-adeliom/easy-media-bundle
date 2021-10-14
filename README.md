@@ -11,13 +11,14 @@ A VueJS media-manager for Easyadmin.
 - Image editor
 - Multi
     + Upload
-    + Move/Copy
+    + Move
     + Delete
 - Upload by either
     + Using the upload panel
     + Drag&Drop anywhere
     + Click&Hold on an empty area **"items container"**
     + From a url **"images only"**
+    + From a url rich embed element like Youtube video
 - Preview files before uploading
 - Toggle between `random/original` names for uploaded files
 - Bulk selection
@@ -38,6 +39,7 @@ A VueJS media-manager for Easyadmin.
     + Folder
     + Image
     + Audio
+    + Oembed
     + Video
     + text/pdf
     + application/archive
@@ -194,11 +196,15 @@ yield EasyMediaField::new('property', "label")
 # Get media metadatas
 {{ object.media|media_meta }}
 
+# Get single media metadata
+{{ object.media|media_meta('key') }}
+
 # Get complete media informations
 {{ object.media|media_infos }}
 
 # Get test file type
 # type_to_test: can be a mime_type or 
+# oembed for any embed type
 # image for any image type
 # pdf for pdf files
 # compressed for archives files
@@ -206,6 +212,32 @@ yield EasyMediaField::new('property', "label")
 
 # Get mimetype icon (font-awesome)
 {{ mime_icon("text/plain") }}
+```
+
+### Use the Doctrine type (optional)
+
+It automatically converts the stored path into a Media entity
+
+```yaml
+# config/packages/doctrine.yaml
+doctrine:
+  dbal:
+    ...
+    types:
+      easy_media_type: Adeliom\EasyMediaBundle\Types\EasyMediaType
+```
+
+In your entity
+
+```php
+class Article
+{
+    /**
+     * @ORM\Column(type="easy_media_type", nullable=true)
+     */
+    private $file;
+    
+    ...
 ```
 
 ### Configurations
