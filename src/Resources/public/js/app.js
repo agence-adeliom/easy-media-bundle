@@ -2484,6 +2484,7 @@ var DbWorker = new Worker(new URL(/* worker import */ __webpack_require__.p + __
       if (Object.keys(ls).length) {
         this.useRandomNamesForUpload = ls.useRandomNamesForUpload || false;
         this.folders = ls.folders || [];
+        this.foldersIds = ls.foldersIds || [];
         this.toolBar = ls.toolBar || true;
         this.selectedFile = null;
         this.dirBookmarks = ls.dirBookmarks || [];
@@ -4884,7 +4885,6 @@ __webpack_require__.r(__webpack_exports__);
       return new Promise(function (resolve) {
         if (!_this.inModal) {
           var params = new URLSearchParams(location.search);
-          console.log(params);
           _this.foldersIds = params.has('folder_id') ? _this.arrayFilter(params.get('folder_id').replace(/#/g, '').split('/')) : [];
         }
 
@@ -5312,6 +5312,11 @@ __webpack_require__.r(__webpack_exports__);
     folders: function folders(val) {
       this.updateLs({
         'folders': val
+      });
+    },
+    foldersIds: function foldersIds(val) {
+      this.updateLs({
+        'foldersIds': val
       });
     },
     toolBar: function toolBar(val) {

@@ -246,7 +246,7 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var idb_keyval__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! idb-keyval */ "./node_modules/idb-keyval/dist/esm/index.js");
 
-var store = (0,idb_keyval__WEBPACK_IMPORTED_MODULE_0__.createStore)('ctf0-Media_Manager', 'media_manager');
+var store = (0,idb_keyval__WEBPACK_IMPORTED_MODULE_0__.createStore)('easy_media_manager', 'media_manager');
 
 onmessage = function onmessage(e) {
   var _e$data = e.data,

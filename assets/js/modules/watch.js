@@ -69,6 +69,9 @@ export default {
         folders(val) {
             this.updateLs({'folders': val})
         },
+        foldersIds(val) {
+            this.updateLs({'foldersIds': val})
+        },
         toolBar(val) {
             this.updateLs({'toolBar': val})
         },

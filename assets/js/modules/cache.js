@@ -25,6 +25,7 @@ export default {
             if (Object.keys(ls).length) {
                 this.useRandomNamesForUpload = ls.useRandomNamesForUpload || false
                 this.folders = ls.folders || []
+                this.foldersIds = ls.foldersIds || []
                 this.toolBar = ls.toolBar || true
                 this.selectedFile = null
                 this.dirBookmarks = ls.dirBookmarks || []

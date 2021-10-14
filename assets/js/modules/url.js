@@ -14,7 +14,6 @@ export default {
             return new Promise((resolve) => {
                 if (!this.inModal) {
                     let params = new URLSearchParams(location.search)
-                    console.log(params);
                     this.foldersIds = params.has('folder_id')
                         ? this.arrayFilter(params.get('folder_id').replace(/#/g, '').split('/'))
                         : []
