@@ -216,7 +216,8 @@ yield EasyMediaField::new('property', "label")
 ### Manage medias and folders programmatically
 
 ```php
-$manager = new \Adeliom\EasyMediaBundle\Service\EasyMediaManager();
+/* @var EasyMediaManager $manager */
+
 # Get media by id or null
 $media = $manager->getMedia($id);
 
