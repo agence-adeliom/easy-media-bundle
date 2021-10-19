@@ -80,12 +80,20 @@ class EasyMediaManager
         return $this->helper;
     }
 
+    /**
+     * @param $id
+     * @return mixed|object|null
+     */
     public function getFolder($id)
     {
         return $this->getHelper()->getFolderRepository()->find($id);
     }
 
-    public function folderByPath($path)
+    /**
+     * @param string|null $path
+     * @return false|mixed|object|null
+     */
+    public function folderByPath(?string $path)
     {
         $dir = str_replace("//", "/", $this->rootPath . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR);
         if(is_dir($dir)){
@@ -107,6 +115,10 @@ class EasyMediaManager
         return false;
     }
 
+    /**
+     * @param $id
+     * @return mixed|object|null
+     */
     public function getMedia($id)
     {
         return $this->getHelper()->getMediaRepository()->find($id);

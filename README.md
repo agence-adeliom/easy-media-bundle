@@ -62,12 +62,11 @@ A VueJS media-manager for Easyadmin.
     + If no more **rows** available, pressing `down` will go to the last item in the list **"same as native file manager"**.
     + When viewing a `audio/video` file in the preview card, pressing `space` will **play/pause** the item instead of closing the modal.
     + Double click/tap
-        + any file of type `audio/video` when sidebar is hidden, will open it in the preview card **"same as images"**.
+        + any file of type `audio/video/oembed` will open it in the preview card **"same as images"**.
         + any file of type `application/archive` will download it.
     + All the **left/right** gestures have their counterparts available as well.
     + Pressing `esc` while using the ***image editor*** wont close the modal but you can ***dbl click/tap*** the `modal background` to do so. **"to avoid accidentally canceling your changes"**.
 
-> The info sidebar is only available on big screens **"> 1023px"**.<br>
 > To stop interfering with other `keydown` events you can toggle the manager listener through `EventHub.fire('disable-global-keys', true/false)`.
 
 ## Installation
@@ -212,6 +211,33 @@ yield EasyMediaField::new('property', "label")
 
 # Get mimetype icon (font-awesome)
 {{ mime_icon("text/plain") }}
+```
+
+### Manage medias and folders programmatically
+
+```php
+$manager = new \Adeliom\EasyMediaBundle\Service\EasyMediaManager();
+# Get media by id or null
+$media = $manager->getMedia($id);
+
+# Get folder by id or null
+$folder = $manager->getFolder($id);
+
+# Get folder by path
+$folder = $manager->folderByPath($path);
+
+# Create a folder
+$folder = $manager->createFolder($folderName, $path = null)
+
+# Create a media
+# $source can be a UploadedFile, File, Image URL, Oembed URL, Base64 URI
+$folder = $manager->createMedia($source, $path = null, $name = null)
+
+# Save a folder or media
+$manager->save($entity, $flush = true);
+
+# Delete a folder or media
+$manager->delete($entity, $flush = true);
 ```
 
 ### Use the Doctrine type (optional)
