@@ -5,10 +5,6 @@ namespace Adeliom\EasyMediaBundle\Controller\Module;
 use Adeliom\EasyMediaBundle\Entity\Folder;
 use Adeliom\EasyMediaBundle\Entity\Media;
 use Doctrine\Common\Collections\ArrayCollection;
-use League\Flysystem\DirectoryAttributes;
-use League\Flysystem\DirectoryListing;
-use League\Flysystem\FileAttributes;
-use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -28,7 +24,7 @@ trait GetContent
         $folder = $data["folder"];
         $path = '/';
         if(!empty($folder)){
-            $folder = $this->folder->find($folder);
+            $folder = $this->manager->getFolder($folder);
             if($folder){
                 $path = $folder->getPath();
             }
@@ -66,7 +62,7 @@ trait GetContent
                 'id'                     => $folder->getId(),
                 'name'                   => $folder->getName(),
                 'type'                   => 'folder',
-                'path'                   => $this->resolveUrl($path),
+                'path'                   => $this->helper->resolveUrl($path),
                 'storage_path'           => $path,
             ];
         }
@@ -84,10 +80,10 @@ trait GetContent
                 'name'                   => $file->getName(),
                 'type'                   => $file->getMime(),
                 'size'                   => $file->getSize(),
-                'path'                   => $this->resolveUrl($path),
+                'path'                   => $this->helper->resolveUrl($path),
                 'storage_path'           => $path,
                 'last_modified'          => $time,
-                'last_modified_formated' => $this->getItemTime($time),
+                'last_modified_formated' => $this->helper->getItemTime($time),
                 'metas' => $metas
             ];
         }
@@ -107,7 +103,7 @@ trait GetContent
         $data = json_decode($request->getContent(), true);
         $mediaId = $data["item"];
 
-        if ($media = $this->medias->findOneBy(["id" => $mediaId])) {
+        if ($media = $this->helper->getMediaRepository()->findOneBy(["id" => $mediaId])) {
             /** @var Media $media */
             $path = $media->getPath();
             $time = $media->getLastModified() ?? null;
@@ -118,10 +114,10 @@ trait GetContent
                 'name'                   => $media->getName(),
                 'type'                   => $media->getMime(),
                 'size'                   => $media->getSize(),
-                'path'                   => $this->resolveUrl($path),
+                'path'                   => $this->helper->resolveUrl($path),
                 'storage_path'           => $path,
                 'last_modified'          => $time,
-                'last_modified_formated' => $this->getItemTime($time),
+                'last_modified_formated' => $this->helper->getItemTime($time),
                 'metas' => $metas
             ];
             return new JsonResponse($item);
@@ -142,13 +138,13 @@ trait GetContent
     {
         if (!empty($folder)){
             /** @var Folder $folder */
-            $folder = $this->folder->find($folder);
+            $folder = $this->manager->getFolder($folder);
             $folders = $folder->getChildren();
             $medias = $folder->getMedias();
             return array_merge($folders->toArray(), $medias->toArray());
         }else{
-            $folders = $this->folder->findBy(["parent" => null]);
-            $medias = $this->medias->findBy(["folder" => null]);
+            $folders = $this->helper->getFolderRepository()->findBy(["parent" => null]);
+            $medias = $this->helper->getMediaRepository()->findBy(["folder" => null]);
             return array_merge($folders, $medias);
         }
     }

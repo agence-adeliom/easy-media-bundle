@@ -4,6 +4,7 @@ namespace Adeliom\EasyMediaBundle\EventListener;
 
 use Adeliom\EasyMediaBundle\Entity\Folder;
 use Adeliom\EasyMediaBundle\Entity\Media;
+use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
@@ -15,70 +16,26 @@ use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 
 class MediaSubscriber implements EventSubscriberInterface
 {
-    /** @var ContainerBagInterface */
-    protected $parameterBag;
-
     /**
-     * @var Filesystem
+     * @var EasyMediaManager
      */
-    protected $filesystem;
+    protected $manager;
 
-    public function __construct($parameterBag)
+    public function __construct(EasyMediaManager $manager)
     {
-        $this->parameterBag = $parameterBag;
-
-        // The internal adapter
-        $adapter = new LocalFilesystemAdapter(
-        // Determine the root directory
-            $this->parameterBag->get("easy_media.storage"),
-            // Customize how visibility is converted to unix permissions
-            PortableVisibilityConverter::fromArray([
-                'file' => [
-                    'public' => 0644,
-                    'private' => 0640,
-                ],
-                'dir' => [
-                    'public' => 0755,
-                    'private' => 0740,
-                ],
-            ]),
-            // Write flags
-            LOCK_EX,
-            // How to deal with links, either DISALLOW_LINKS or SKIP_LINKS
-            // Disallowing them causes exceptions when encountered
-            LocalFilesystemAdapter::DISALLOW_LINKS
-        );
-        $this->filesystem = new Filesystem($adapter);
+        $this->manager = $manager;
     }
 
     public function getSubscribedEvents(): array
     {
         return [
-            Events::postPersist,
-            Events::postRemove,
             Events::preUpdate,
         ];
     }
 
-    public function postPersist(LifecycleEventArgs $args): void
-    {
-        /** @var Media $media */
-        $media = $args->getObject();
-        if (!$media instanceof Media) {
-            return;
-        }
-    }
-
-    public function postRemove(LifecycleEventArgs $args): void
-    {
-        /** @var Media $media */
-        $media = $args->getObject();
-        if (!$media instanceof Media) {
-            return;
-        }
-        $this->filesystem->delete($media->getPath());
-    }
-
+    /**
+     * @throws \League\Flysystem\FilesystemException
+     */
     public function preUpdate(PreUpdateEventArgs $args): void
     {
         /** @var Media $media */
@@ -90,9 +47,7 @@ class MediaSubscriber implements EventSubscriberInterface
         if($args->hasChangedField("folder")){
             $oldPath = ($args->getOldValue("folder") ? $args->getOldValue("folder")->getPath() : "") . DIRECTORY_SEPARATOR . $media->getSlug();
             $newPath = ($args->getNewValue("folder") ? $args->getNewValue("folder")->getPath() : "") . DIRECTORY_SEPARATOR . $media->getSlug();
-            if($this->filesystem->fileExists($oldPath)){
-                $this->filesystem->move($oldPath, $newPath);
-            }
+            $this->manager->move($oldPath, $newPath);
         }
     }
 }

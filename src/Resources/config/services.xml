@@ -6,31 +6,38 @@
 
     <services>
         <defaults autowire="true" autoconfigure="true"/>
-        <!-- TODO: Add your controllers here -->
-        <!-- Controller -->
+
         <service id="easy_media.controller" class="Adeliom\EasyMediaBundle\Controller\MediaController" public="true" autowire="true">
-            <!-- TODO: Add your controller constructor parameters here -->
             <argument key="$container" type="service" id="service_container"/>
-            <argument key="$translator" type="service" id="translator.default"/>
-            <argument key="$eventDispatcher" type="service" id="event_dispatcher"/>
+            <argument key="$manager" type="service" id="easy_media.manager"/>
             <tag name="controller.service_arguments"/>
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
             </call>
         </service>
-
-        <!-- TODO: Add the alias for your controllers here -->
         <service id="Adeliom\EasyMediaBundle\Controller\MediaController" alias="easy_media.controller" public="true"/>
-        <!-- End Controller -->
 
-        <service id="easy_media.service.metas" class="Adeliom\EasyMediaBundle\Service\EasyMediaMetaService" public="true" autowire="true">
-            <argument key="$entityManager" type="service" id="doctrine.orm.entity_manager"/>
-            <argument key="$container" type="service" id="service_container"/>
+        <service id="easy_media.manager" class="Adeliom\EasyMediaBundle\Service\EasyMediaManager" public="true" autowire="true">
+            <argument key="$filesystemManager" type="service" id="easy_media.service.filesystem"/>
+            <argument key="$helper" type="service" id="easy_media.helper"/>
+            <argument key="$em" type="service" id="doctrine.orm.entity_manager"/>
+            <argument key="$parameters" type="service" id="parameter_bag"/>
+            <argument key="$translator" type="service" id="translator"/>
+        </service>
+        <service id="Adeliom\EasyMediaBundle\Service\EasyMediaManager" alias="easy_media.manager" public="true"/>
+
+        <service id="easy_media.helper" class="Adeliom\EasyMediaBundle\Service\EasyMediaHelper" public="true" autowire="true">
+            <argument key="$parameters" type="service" id="parameter_bag"/>
+            <argument key="$em" type="service" id="doctrine.orm.entity_manager"/>
+        </service>
+        <service id="Adeliom\EasyMediaBundle\Service\EasyMediaHelper" alias="easy_media.manager" public="true"/>
+
+        <service id="easy_media.service.filesystem" class="Adeliom\EasyMediaBundle\Service\EasyMediaFilesystem" public="true" autowire="true">
+            <argument type="string">%easy_media.storage%</argument>
         </service>
 
         <service id="easy_media.form.media" class="Adeliom\EasyMediaBundle\Form\EasyMediaType" public="true" autowire="true">
-            <argument key="$entityManager" type="service" id="doctrine.orm.entity_manager"/>
-            <argument key="$parameterBag" type="service" id="parameter_bag"/>
+            <argument key="$manager" type="service" id="easy_media.manager"/>
         </service>
 
         <service id="easy_media.event_listener.container_listener" class="Adeliom\EasyMediaBundle\EventListener\ContainerListener" public="true" autowire="true">
@@ -45,17 +52,17 @@
         </service>
 
         <service id="easy_media.twig.easy_media_extension" class="Adeliom\EasyMediaBundle\Twig\EasyMediaExtension" public="true" autowire="true">
-            <argument key="$container" type="service" id="service_container"/>
+            <argument key="$manager" type="service" id="easy_media.manager"/>
             <tag name="twig.extension" />
         </service>
 
         <service id="easy_media.event_listener.folder" class="Adeliom\EasyMediaBundle\EventListener\FolderSubscriber" public="true" autowire="true">
-            <argument key="$parameterBag" type="service" id="parameter_bag"/>
+            <argument key="$manager" type="service" id="easy_media.manager"/>
             <tag name="doctrine.event_subscriber"/>
         </service>
 
         <service id="easy_media.event_listener.media" class="Adeliom\EasyMediaBundle\EventListener\MediaSubscriber" public="true" autowire="true">
-            <argument key="$parameterBag" type="service" id="parameter_bag"/>
+            <argument key="$manager" type="service" id="easy_media.manager"/>
             <tag name="doctrine.event_subscriber"/>
         </service>
 

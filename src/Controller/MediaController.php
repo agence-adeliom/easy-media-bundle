@@ -12,12 +12,12 @@ use Adeliom\EasyMediaBundle\Controller\Module\NewFolder;
 use Adeliom\EasyMediaBundle\Controller\Module\Rename;
 use Adeliom\EasyMediaBundle\Controller\Module\Upload;
 use Adeliom\EasyMediaBundle\Controller\Module\Utils;
+use Adeliom\EasyMediaBundle\Service\EasyMediaHelper;
+use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
-use League\Flysystem\Local\LocalFilesystemAdapter;
-use League\Flysystem\UnixVisibility\PortableVisibilityConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -49,10 +49,7 @@ class MediaController extends AbstractController
     /**
      * @var string
      */
-    protected $rootPath;
-    protected $baseUrl;
     protected $ignoreFiles;
-    protected $LMF;
     protected $paginationAmount;
 
     /**
@@ -61,56 +58,35 @@ class MediaController extends AbstractController
     protected $filesystem;
 
     /**
+     * @var EasyMediaManager
+     */
+    protected $manager;
+
+    /**
      * @var EntityManagerInterface
      */
     protected $em;
 
-    public function __construct(Container $container, TranslatorInterface $translator, EventDispatcherInterface $eventDispatcher, EntityManagerInterface $em)
+    /**
+     * @var EasyMediaHelper
+     */
+    protected $helper;
+
+
+    public function __construct(ContainerInterface $container, EasyMediaManager $manager)
     {
-        $this->rootPath = $container->getParameter("easy_media.storage");
-        $this->baseUrl = $container->getParameter("easy_media.base_url");
-        $this->fileChars = $container->getParameter("easy_media.allowed_fileNames_chars");
-        $this->folderChars = $container->getParameter("easy_media.allowed_folderNames_chars");
-        $this->sanitizedText = $container->getParameter("easy_media.sanitized_text");
-        $this->mediaEntity = $container->getParameter("easy_media.media_entity");
-        $this->folderEntity = $container->getParameter("easy_media.folder_entity");
-        $this->metasService = $container->get("easy_media.service.metas");
-        $this->ignoreFiles = $container->getParameter("easy_media.ignore_files");
-        $this->LMF = $container->getParameter("easy_media.last_modified_format");
-        $this->paginationAmount = $container->getParameter("easy_media.pagination_amount");
+        $this->container = $container;
+        $this->em = $this->getDoctrine()->getManager();
 
-        // The internal adapter
-        $adapter = new LocalFilesystemAdapter(
-            // Determine the root directory
-            $this->rootPath,
-            // Customize how visibility is converted to unix permissions
-            PortableVisibilityConverter::fromArray([
-                'file' => [
-                    'public' => 0644,
-                    'private' => 0640,
-                ],
-                'dir' => [
-                    'public' => 0755,
-                    'private' => 0740,
-                ],
-            ]),
-            // Write flags
-            LOCK_EX,
-            // How to deal with links, either DISALLOW_LINKS or SKIP_LINKS
-            // Disallowing them causes exceptions when encountered
-            LocalFilesystemAdapter::DISALLOW_LINKS
-        );
-        $this->filesystem = new Filesystem($adapter);
+        $this->ignoreFiles = $this->container->getParameter("easy_media.ignore_files");
+        $this->paginationAmount = $this->container->getParameter("easy_media.pagination_amount");
 
-        $this->em = $em;
+        $this->manager = $manager;
+        $this->helper = $manager->getHelper();
+        $this->filesystem = $manager->getFilesystem();
 
-        $this->medias = $em->getRepository($this->mediaEntity);
-        $this->folder = $em->getRepository($this->folderEntity);
-
-        $this->unallowedMimes = $container->getParameter("easy_media.unallowed_mimes");
-        $this->unallowedExt = $container->getParameter("easy_media.unallowed_ext");
-        $this->eventDispatcher = $eventDispatcher;
-        $this->translator = $translator;
+        $this->eventDispatcher = $this->get("event_dispatcher");
+        $this->translator = $this->get("translator");
     }
 
     /**
@@ -120,8 +96,7 @@ class MediaController extends AbstractController
      */
     public function index()
     {
-        $datas = [];
-        return $this->render("@EasyMedia/manager_view.html.twig", $datas);
+        return $this->render("@EasyMedia/manager_view.html.twig");
     }
 
     public function browse(Request $request)

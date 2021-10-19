@@ -24,12 +24,9 @@ trait Metas
 
         try {
             /** @var Media $object */
-            $object = $this->medias->find($file["id"]);
-            $metas = array_merge($object->getMetas(), $metas);
-            $object->setMetas($metas);
-            $this->em->persist($object);
-            $this->em->flush();
-
+            $object = $this->manager->getMedia($file["id"]);
+            $object->setMetas(array_merge($object->getMetas(), $metas));
+            $this->manager->save($object);
         } catch (\Exception $e) {
             $message = $e->getMessage();
         }

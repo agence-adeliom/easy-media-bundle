@@ -75,7 +75,7 @@ class Media
         $this->name = $name;
 
         if(!$this->slug){
-            $this->slug = (new AsciiSlugger())->slug($this->name)->toString();
+            $this->slug = (new AsciiSlugger())->slug(strtolower($this->name))->toString();
         }
     }
 

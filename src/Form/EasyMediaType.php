@@ -2,6 +2,7 @@
 
 namespace Adeliom\EasyMediaBundle\Form;
 
+use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -17,13 +18,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EasyMediaType extends AbstractType
 {
-    private $entityManager;
-    private $parameterBag;
+    /**
+     * @var EasyMediaManager
+     */
+    private $manager;
 
-    public function __construct(EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag)
+    public function __construct(EasyMediaManager $manager)
     {
-        $this->entityManager = $entityManager;
-        $this->parameterBag = $parameterBag;
+        $this->manager = $manager;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -59,19 +61,14 @@ class EasyMediaType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $mediaClass = $this->parameterBag->get("easy_media.media_entity");
-
         $builder->addModelTransformer(new CallbackTransformer(
-            function ($media) use($mediaClass) {
+            function ($media) {
                 if (empty($media)) {
                     return '';
                 }
-
-                if (!($media instanceof $mediaClass)) {
-                    $media = $this->entityManager
-                        ->getRepository($mediaClass)
-                        ->find($media)
-                    ;
+                $class = $this->manager->getHelper()->getMediaClassName();
+                if (!($media instanceof $class)) {
+                    $media = $this->manager->getMedia($media);
                 }
 
                 if (null === $media) {
@@ -80,16 +77,13 @@ class EasyMediaType extends AbstractType
 
                 return $media->getId();
             },
-            function ($mediaId) use($mediaClass) {
+            function ($mediaId){
 
                 if (!$mediaId) {
                     return null;
                 }
 
-                $media = $this->entityManager
-                    ->getRepository($mediaClass)
-                    ->find($mediaId)
-                ;
+                $media = $this->manager->getMedia($mediaId);
 
                 if (null === $media) {
                     throw new TransformationFailedException(sprintf(

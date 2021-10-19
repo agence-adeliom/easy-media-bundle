@@ -17,6 +17,7 @@ trait Download
      * @param Request $request [description]
      *
      * @return StreamedResponse [type] [description]
+     * @throws \League\Flysystem\FilesystemException
      */
     public function downloadFolder(Request $request)
     {

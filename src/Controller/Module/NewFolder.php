@@ -2,7 +2,8 @@
 namespace Adeliom\EasyMediaBundle\Controller\Module;
 
 
-use Adeliom\EasyMediaBundle\Entity\Folder;
+use Adeliom\EasyMediaBundle\Exception\AlreadyExist;
+use League\Flysystem\FilesystemException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -21,29 +22,20 @@ trait NewFolder
 
         $currentFolderId            = $data["folder"];
         if(!empty($currentFolderId)){
-            $currentFolder = $this->folder->find($currentFolderId);
+            $currentFolder = $this->manager->getFolder($currentFolderId);
         }else{
             $currentFolder = null;
         }
 
-        $new_folder_name = $this->cleanName($data["new_folder_name"], true);
+        $new_folder_name = $this->helper->cleanName($data["new_folder_name"], true);
         $message         = '';
 
-        if (!empty($this->folder->findBy(["parent" => $currentFolder, "name" => $new_folder_name]))) {
-            $message = $this->translator->trans('error.already_exists', [] , "EasyMediaBundle");
-        } else {
-            try {
-                /** @var Folder $folder */
-                $folder = new $this->folderEntity();
-                $folder->setName($new_folder_name);
-                if($currentFolder){
-                    $folder->setParent($currentFolder);
-                }
-                $this->em->persist($folder);
-                $this->em->flush();
-            } catch (\Exception $exception) {
-                $message = $this->translator->trans('error.creating_dir', [] , "EasyMediaBundle");
-            }
+        try {
+            $this->manager->createFolder($new_folder_name, $currentFolder ? $currentFolder->getPath() : null);
+        }catch (AlreadyExist $exception) {
+            $message = $exception->getMessage();
+        }catch (\Exception | FilesystemException $exception) {
+            $message = $this->translator->trans('error.creating_dir', [] , "EasyMediaBundle");
         }
 
         return new JsonResponse(compact('message', 'new_folder_name'));

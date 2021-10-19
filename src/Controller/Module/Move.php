@@ -3,10 +3,6 @@ namespace Adeliom\EasyMediaBundle\Controller\Module;
 
 
 use Adeliom\EasyMediaBundle\Event\EasyMediaFileMoved;
-use Illuminate\Support\Str;
-use League\Flysystem\FilesystemException;
-use League\Flysystem\UnableToCopyFile;
-use League\Flysystem\UnableToMoveFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -26,7 +22,7 @@ trait Move
         $movedFiles = $data["moved_files"];
         $destination = null;
         if(!empty($destinationId)){
-            $destination = $this->folder->find($destinationId);
+            $destination = $this->manager->getFolder($destinationId);
         }
         $result      = [];
         $toBroadCast = [];
@@ -43,10 +39,7 @@ trait Move
                 'old_path' => $old_path,
             ];
 
-            $repo = $this->medias;
-            if ($file_type == 'folder'){
-                $repo = $this->folder;
-            }
+
 
             $new_path = "/$file_name";
             if ($destination){
@@ -59,8 +52,12 @@ trait Move
                         $this->translator->trans('error.move_into_self', [] , "EasyMediaBundle")
                     );
                 }
-
-                if($entity = $repo->find($id)){
+                if ($file_type == 'folder'){
+                    $entity = $this->manager->getFolder($id);
+                }else{
+                    $entity = $this->manager->getMedia($id);
+                }
+                if($entity){
                     // Move
                     try {
                         if($file_type == 'folder'){
@@ -68,8 +65,7 @@ trait Move
                         }else{
                             $entity->setFolder($destination);
                         }
-                        $this->em->persist($entity);
-                        $this->em->flush();
+                        $this->manager->save($entity);
 
                         $result[]      = array_merge($defaults, ['success' => true]);
                         $toBroadCast[] = $defaults;

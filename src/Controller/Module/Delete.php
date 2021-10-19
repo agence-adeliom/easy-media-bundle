@@ -34,21 +34,19 @@ trait Delete
                 'path' => $item_path,
             ];
 
-            $repo = $this->medias;
-            if ($type == 'folder'){
-                $repo = $this->folder;
-            }
-
-
             try {
-                if($entity = $repo->find($id)){
-                    $this->em->remove($entity);
-                    $this->em->flush();
+                if ($type == 'folder'){
+                    $entity = $this->manager->getFolder($id);
+                }else{
+                    $entity = $this->manager->getMedia($id);
+                }
+
+                if($entity){
+                    $this->manager->delete($entity);
 
                     $result[]      = array_merge($defaults, ['success' => true]);
                     $toBroadCast[] = $defaults;
 
-                    // fire event
                     $this->eventDispatcher->dispatch(new EasyMediaFileDeleted($item_path, $type == 'folder'), EasyMediaFileDeleted::NAME);
                 }
             }catch (\Exception $e){
