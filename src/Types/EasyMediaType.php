@@ -1,6 +1,7 @@
 <?php
 namespace Adeliom\EasyMediaBundle\Types;
 
+use Adeliom\EasyMediaBundle\Entity\Media;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -33,6 +34,9 @@ class EasyMediaType extends Type
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         if($value){
+            if ($value instanceof Media) {
+                return $value->getId();
+            }
             return $value;
         }
         return null;

@@ -3,13 +3,9 @@
 namespace Adeliom\EasyMediaBundle\Form;
 
 use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Exception\TransformationFailedException;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -118,7 +114,7 @@ class EasyMediaType extends AbstractType
 
     public function getParent(): string
     {
-        return HiddenType::class;
+        return TextType::class;
     }
 
     public function getBlockPrefix()
