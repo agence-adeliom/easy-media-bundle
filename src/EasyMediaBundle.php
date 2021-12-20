@@ -8,7 +8,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 class EasyMediaBundle extends Bundle
 {
     /**
-     * Overridden to allow for the custom extension alias.
+     * @return ExtensionInterface|null The container extension
      */
     public function getContainerExtension()
     {
