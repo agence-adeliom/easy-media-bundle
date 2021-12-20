@@ -77,6 +77,68 @@ Install with composer
 composer require agence-adeliom/easy-media-bundle
 ```
 
+#### Without Symfony Flex
+
+```yaml
+# config/packages/easy_media.yaml
+
+twig:
+    form_themes:
+        - '@EasyMedia/form/easy-media.html.twig'
+
+doctrine:
+    dbal:
+        types:
+            easy_media_type: Adeliom\EasyMediaBundle\Types\EasyMediaType
+
+easy_media:
+    media_entity: App\Entity\EasyMedia\Media
+    folder_entity: App\Entity\EasyMedia\Folder
+```
+
+```yaml
+# config/routes/easy_media.yaml
+
+easy_media:
+    resource: '@EasyMediaBundle/Resources/config/routes.xml'
+```
+
+```php
+<?php
+// src/Entity/EasyMedia/Folder.php
+
+namespace App\Entity\EasyMedia;
+
+use Adeliom\EasyMediaBundle\Entity\Folder as BaseFolder;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity()
+ * @ORM\Table(name="easy_media__folder")
+ */
+class Folder extends BaseFolder
+{
+}
+```
+
+```php
+<?php
+// src/Entity/EasyMedia/Media.php
+
+namespace App\Entity\EasyMedia;
+
+use Adeliom\EasyMediaBundle\Entity\Media as BaseMedia;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity()
+ * @ORM\Table(name="easy_media__media")
+ */
+class Media extends BaseMedia
+{
+}
+```
+
 ### Setup database
 
 #### Using doctrine migrations
