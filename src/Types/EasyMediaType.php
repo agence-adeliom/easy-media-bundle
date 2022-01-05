@@ -5,7 +5,6 @@ use Adeliom\EasyMediaBundle\Entity\Media;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\File\File;
 
 class EasyMediaType extends Type
 {

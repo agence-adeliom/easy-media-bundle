@@ -29,7 +29,7 @@
         "symfony/options-resolver": "^4.4 || ^5.2",
         "symfony/property-access": "^4.4 || ^5.2",
         "symfony/filesystem": "^5.3",
-        "easycorp/easyadmin-bundle": "^3.4",
+        "easycorp/easyadmin-bundle": "^3.4 || ^v4.0.0",
         "agence-adeliom/easy-common-bundle": "^1.0",
         "league/flysystem": "^2.1",
         "maennchen/zipstream-php": "^2.1.0",
