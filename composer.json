@@ -21,7 +21,7 @@
         "ext-json": "*",
         "symfony/config": "^4.4 || ^5.2",
         "symfony/dependency-injection": "^4.4 || ^5.2",
-        "symfony/deprecation-contracts": "^2.2",
+        "symfony/deprecation-contracts": "^2.2 || ^v3.0.0",
         "symfony/event-dispatcher": "^4.4 || ^5.2",
         "symfony/form": "^4.4 || ^5.2",
         "symfony/framework-bundle": "^4.4 || ^5.2",
