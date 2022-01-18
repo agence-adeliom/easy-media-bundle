@@ -45,4 +45,12 @@ class EasyMediaType extends Type
     {
         return self::EASYMEDIATYPE; // modify to match your constant name
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    {
+        return true;
+    }
 }
