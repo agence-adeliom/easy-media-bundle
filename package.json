@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "annyang": "^2.6.1",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "cropperjs": "^1.5.12",
     "dropzone": "^5.9.2",
     "fuse.js": "^6.4.6",
