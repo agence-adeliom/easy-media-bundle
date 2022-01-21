@@ -66,12 +66,9 @@ export default {
       })
     },
     getInfos(path){
-      console.log(path)
       return axios.post(this.routes.file_infos, {
         item: path
       }).then(({data}) => {
-        console.log(data)
-
         this.selectedFile = data
       }).catch((err) => {
         console.error(err)

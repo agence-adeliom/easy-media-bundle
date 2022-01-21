@@ -37,7 +37,7 @@ export default {
         EventHub.fire('external_modal_restrict', this.restrict)
     },
     mounted() {
-        console.log(this)
+
         if (this.old) {
             this.updateParent(this.old)
         }
@@ -50,15 +50,12 @@ export default {
         })
 
         EventHub.listen('multi_file_selected', (paths) => {
-          console.log(paths);
           if (this.item == this.name && this.type !== 'folder' && this.multi) {
                 this.updateParent(paths)
             }
         })
 
         EventHub.listen('folder_selected', (path) => {
-          console.log(path);
-
           if (this.item == this.name && this.type == 'folder') {
                 this.updateParent(path)
             }
@@ -66,7 +63,6 @@ export default {
     },
     methods: {
         updateParent(path) {
-          console.log(this.$parent, this.item)
           return this.$parent[this.item] = path
         }
     },

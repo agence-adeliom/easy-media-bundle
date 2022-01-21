@@ -24,7 +24,7 @@
   }
 
   &-files {
-    @apply bottom-0 overflow-y-scroll absolute right-0 top-0 left-72 transition-all duration-200;
+    @apply bottom-0 overflow-y-scroll absolute right-0 top-0 left-0 transition-all duration-200;
     @apply accelerate-3D;
     touch-action: initial !important;
     will-change: height, width, left, right;
