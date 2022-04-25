@@ -1,7 +1,7 @@
 {
     "name": "agence-adeliom/easy-media-bundle",
     "type": "symfony-bundle",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "description": "A Symfony Media manager bundle for EasyAdmin",
     "keywords": ["symfony", "easyadmin", "media", "media-manager"],
     "homepage": "https://github.com/agence-adeliom/easy-media-bundle",

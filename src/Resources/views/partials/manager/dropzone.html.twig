@@ -18,15 +18,15 @@
             </div>
 
             {# urlToUpload #}
-            <div class="save_link" @click.stop="toggleModal('save_link_modal')" v-if="!restrictUpload()">
-                        <span class="icon is-large"
-                              title="{{ 'save.link'|trans }}"
-                              v-tippy="{arrow: true, placement: 'left'}">
-                            <icon>
-                                <icon class="circle" name="circle" scale="2.5"></icon>
-                                <icon class="anchor" name="link"></icon>
-                            </icon>
-                        </span>
+            <div class="save_link" @click.stop="toggleModal('save_link_modal')">
+                <span class="icon is-large"
+                        title="{{ 'save.link'|trans }}"
+                        v-tippy="{arrow: true, placement: 'left'}">
+                    <icon>
+                        <icon class="circle" name="circle" scale="2.5"></icon>
+                        <icon class="anchor" name="link"></icon>
+                    </icon>
+                </span>
             </div>
         </div>
     </div>
