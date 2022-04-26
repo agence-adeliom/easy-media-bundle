@@ -21,10 +21,10 @@ trait GetContent
     public function getFiles(Request $request)
     {
         $data = json_decode($request->getContent(), true);
-        $folder = $data["folder"];
+        $folder = null;
         $path = '/';
-        if(!empty($folder)){
-            $folder = $this->manager->getFolder($folder);
+        if(!empty($data["folder"])){
+            $folder = $this->manager->getFolder($data["folder"]);
             if($folder){
                 $path = $folder->getPath();
             }
@@ -35,11 +35,11 @@ trait GetContent
             ]);
         }
         return new JsonResponse([
-                'files' => [
-                    'path'  => $path,
-                    'items' => $this->paginate($this->getData($folder), $this->paginationAmount),
-                ],
-            ]);
+            'files' => [
+                'path'  => $path,
+                'items' => $this->paginate($this->getData($folder), $this->paginationAmount),
+            ],
+        ]);
     }
 
     /**
