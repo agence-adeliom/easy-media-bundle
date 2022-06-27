@@ -183,15 +183,11 @@ trait GetContent
      */
     protected function getFolderInfoFromList($list)
     {
-        $list = (new ArrayCollection($list))->filter(function ($item){
-            return $item->isFile();
-        });
+        $list = (new ArrayCollection($list))->filter(fn($item) => $item->isFile());
 
         return [
             'count' => $list->count(),
-            'size'  => array_sum($list->map(function ($item){
-                return $item->fileSize();
-            })->toArray()),
+            'size'  => array_sum($list->map(fn($item) => $item->fileSize())->toArray()),
         ];
     }
 }

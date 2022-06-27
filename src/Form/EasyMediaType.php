@@ -14,10 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EasyMediaType extends AbstractType
 {
-    /**
-     * @var EasyMediaManager
-     */
-    private $manager;
+    private \Adeliom\EasyMediaBundle\Service\EasyMediaManager $manager;
 
     public function __construct(EasyMediaManager $manager)
     {
@@ -112,12 +109,12 @@ class EasyMediaType extends AbstractType
         $view->vars["bulk_selection"] = $options["bulk_selection"];
     }
 
-    public function getParent(): string
+    public function getParent(): ?string
     {
         return TextType::class;
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return "easy_media";
     }

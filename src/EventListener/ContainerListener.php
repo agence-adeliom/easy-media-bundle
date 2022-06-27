@@ -6,10 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ContainerListener
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private \Symfony\Component\DependencyInjection\ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {

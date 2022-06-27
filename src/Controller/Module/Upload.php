@@ -38,9 +38,7 @@ trait Upload
                     $name = $random_name ? $this->helper->getRandomString() : null;
 
                     if(!empty($custom_attr)) {
-                        $custom_attr = array_filter($custom_attr, function ($entry) use ($orig_name) {
-                            return $entry["name"] == $orig_name;
-                        });
+                        $custom_attr = array_filter($custom_attr, fn($entry) => $entry["name"] == $orig_name);
                         $custom_attr = current($custom_attr);
                     }
                     $file_options = !empty($custom_attr) ? $custom_attr["options"] : [];

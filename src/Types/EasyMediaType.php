@@ -8,10 +8,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class EasyMediaType extends Type
 {
-    const EASYMEDIATYPE = 'easy_media_type'; // modify to match your type name
+    public const EASYMEDIATYPE = 'easy_media_type'; // modify to match your type name
 
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
     {
         return "TEXT";
     }
@@ -41,7 +41,7 @@ class EasyMediaType extends Type
         return null;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::EASYMEDIATYPE; // modify to match your constant name
     }
@@ -49,7 +49,7 @@ class EasyMediaType extends Type
     /**
      * {@inheritdoc}
      */
-    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
         return true;
     }

@@ -11,6 +11,7 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 class Configuration implements ConfigurationInterface
 {
 
+    /** @return TreeBuilder */
     public function getConfigTreeBuilder()
     {
         $builder = new TreeBuilder('easy_media');

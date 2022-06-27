@@ -28,7 +28,7 @@ class EasyMediaExtension extends AbstractExtension
         $this->manager = $manager;
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('resolve_media', [$this, 'resolveMedia']),
@@ -37,7 +37,7 @@ class EasyMediaExtension extends AbstractExtension
         ];
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('mime_icon', [$this, 'getMimeIcon']),
@@ -84,7 +84,7 @@ class EasyMediaExtension extends AbstractExtension
         return $metas;
     }
 
-    public function mediaInfos($file)
+    public function mediaInfos($file): ?array
     {
         $file = $this->getMedia($file);
         if(null === $file){
@@ -109,7 +109,8 @@ class EasyMediaExtension extends AbstractExtension
 
     }
 
-    public function fileIsType($file, $compare){
+    public function fileIsType($file, $compare): ?bool
+    {
 
         $file = $this->getMedia($file);
         if(null === $file){
@@ -120,7 +121,8 @@ class EasyMediaExtension extends AbstractExtension
         return $this->manager->getHelper()->fileIsType($type, $compare);
     }
 
-    public function getMimeIcon($mime_type) {
+    public function getMimeIcon($mime_type): string
+    {
         return EasyMediaHelper::mime2icon($mime_type);
     }
 }

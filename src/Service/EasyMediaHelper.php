@@ -363,7 +363,7 @@ class EasyMediaHelper
                 return $compare == 'compressed';
             }
 
-            return $type && strpos($type, $compare) !== false;
+            return $type && strpos($type, (string) $compare) !== false;
         }
 
         return false;
