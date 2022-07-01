@@ -131,10 +131,9 @@ trait GetContent
     /**
      * get directory data.
      *
-     * @param int $folder
      * @param mixed $rec
      */
-    protected function getFolderContent($folder, $rec = false)
+    protected function getFolderContent(int $folder, $rec = false)
     {
         if (!empty($folder)){
             /** @var Folder $folder */
@@ -157,12 +156,12 @@ trait GetContent
     /**
      * filter directory data by type.
      *
-     * @param array $list
      * @param [type] $type
+     * @return mixed[]
      */
     protected function getFolderListByType(array $list, $type)
     {
-        $list = (new ArrayCollection($list))->filter(function ($item) use ($type){
+        $list = (new ArrayCollection($list))->filter(function ($item) use ($type): bool{
             if($type == "dir"){
                 return $item instanceof Folder;
             }
@@ -180,6 +179,7 @@ trait GetContent
      * get folder size.
      *
      * @param [type] $list
+     * @return array<string, int>|array<string, float>
      */
     protected function getFolderInfoFromList($list)
     {

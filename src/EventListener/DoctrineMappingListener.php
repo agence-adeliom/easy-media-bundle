@@ -13,17 +13,14 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  */
 class DoctrineMappingListener implements EventSubscriber
 {
-    private string $mediaClass;
-
-    private string $folderClass;
-
-    public function __construct(string $mediaClass, string $folderClass)
+    public function __construct(private string $mediaClass, private string $folderClass)
     {
-        $this->mediaClass = $mediaClass;
-        $this->folderClass = $folderClass;
     }
 
-    public function getSubscribedEvents()
+    /**
+     * @return string[]
+     */
+    public function getSubscribedEvents(): array
     {
         return [Events::loadClassMetadata];
     }

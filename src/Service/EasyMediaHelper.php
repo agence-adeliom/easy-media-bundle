@@ -1,46 +1,15 @@
 <?php
 namespace Adeliom\EasyMediaBundle\Service;
 
-
-use Adeliom\EasyMediaBundle\Entity\Folder;
-use Adeliom\EasyMediaBundle\Entity\Media;
-use Adeliom\EasyMediaBundle\Exception\AlreadyExist;
-use Adeliom\EasyMediaBundle\Exception\ExtNotAllowed;
-use Adeliom\EasyMediaBundle\Exception\FolderNotExist;
-use Adeliom\EasyMediaBundle\Exception\NoFile;
-use Adeliom\EasyMediaBundle\Exception\ProviderNotFound;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Embed\Embed;
-use Illuminate\Support\Str;
-use League\Flysystem\Filesystem;
-use League\Flysystem\FilesystemException;
-use League\Flysystem\UnableToCopyFile;
-use League\Flysystem\UnableToRetrieveMetadata;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\String\Slugger\AsciiSlugger;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EasyMediaHelper
 {
-    /**
-     * @var ContainerBagInterface
-     */
-    protected $parameters;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $em;
-
-    public function __construct(ContainerBagInterface $parameters, EntityManagerInterface $em)
+    public function __construct(protected ContainerBagInterface $parameters, protected EntityManagerInterface $em)
     {
-        $this->parameters = $parameters;
-        $this->em = $em;
     }
 
     public function getFolderClassName()
@@ -48,7 +17,7 @@ class EasyMediaHelper
         return $this->parameters->get("easy_media.folder_entity");
     }
 
-    public function getFolderRepository()
+    public function getFolderRepository(): EntityRepository
     {
         return $this->em->getRepository($this->getFolderClassName());
     }
@@ -58,7 +27,7 @@ class EasyMediaHelper
         return $this->parameters->get("easy_media.media_entity");
     }
 
-    public function getMediaRepository()
+    public function getMediaRepository(): EntityRepository
     {
         return $this->em->getRepository($this->getMediaClassName());
     }
@@ -72,8 +41,6 @@ class EasyMediaHelper
     {
         return $this->parameters->get("easy_media.storage");
     }
-
-
 
     /**
      * sanitize input.
@@ -92,14 +59,14 @@ class EasyMediaHelper
         return $text ?: $this->getRandomString();
     }
 
-    protected function filePattern($item)
+    protected function filePattern($item): string
     {
         return '/(script.*?\/script)|[^(' . $item . ')a-zA-Z0-9]+/ius';
     }
 
-    public function getItemTime($time)
+    public function getItemTime($time): ?string
     {
-        return $time ? (new \DateTime("@$time"))->format($this->parameters->get('easy_media.last_modified_format')) : null;
+        return $time ? (new DateTime("@$time"))->format($this->parameters->get('easy_media.last_modified_format')) : null;
     }
 
     /**
@@ -110,18 +77,18 @@ class EasyMediaHelper
      *
      * @return [type] [description]
      */
-    public function resolveUrl($path)
+    public function resolveUrl($path): array|string
     {
         return $this->clearDblSlash(sprintf('%s/%s', $this->getBaseUrl(), $path));
     }
 
-    public function clearDblSlash($str)
+    public function clearDblSlash($str): array|string
     {
         $str = preg_replace('/\/+/', '/', $str);
         return str_replace(':/', '://', $str);
     }
 
-    public static function mime2ext($mime) {
+    public static function mime2ext($mime): string|bool {
         $mime_map = [
             'video/3gpp2'                                                               => '3g2',
             'video/3gp'                                                                 => '3gp',
@@ -306,7 +273,7 @@ class EasyMediaHelper
         return isset($mime_map[$mime]) === true ? $mime_map[$mime] : false;
     }
 
-    public static function mime2icon($mime_type){
+    public static function mime2icon($mime_type): string{
         // List of official MIME Types: http://www.iana.org/assignments/media-types/media-types.xhtml
         $icon_classes = array(
             // Media
@@ -333,7 +300,7 @@ class EasyMediaHelper
             'application/zip' => 'fa-file-archive-o',
         );
         foreach ($icon_classes as $text => $icon) {
-            if (strpos($mime_type, $text) === 0) {
+            if (str_starts_with($mime_type, $text)) {
                 return $icon;
             }
         }
@@ -341,7 +308,7 @@ class EasyMediaHelper
     }
 
 
-    public function fileIsType($type, $compare){
+    public function fileIsType($type, $compare): bool{
         $mimes = $this->parameters->get("easy_media.extended_mimes");
         if ($type) {
             if ($compare == 'image' && in_array($type, $mimes["image"])) {
@@ -349,21 +316,21 @@ class EasyMediaHelper
             }
 
             // because "oembed" shows up as "application" type.includes('oembed')
-            if (($type && strpos($type, "oembed") !== false) && $compare != 'oembed') {
+            if (($type && str_contains($type, "oembed")) && $compare != 'oembed') {
                 return false;
             }
 
             // because "pdf" shows up as "application" type.includes('pdf')
-            if (($type && strpos($type, "pdf") !== false) && $compare != 'pdf') {
+            if (($type && str_contains($type, "pdf")) && $compare != 'pdf') {
                 return false;
             }
 
             // because "archive" shows up as "application"
-            if (($type && strpos($type, 'compressed') !== false) || in_array($type, $mimes["archive"])) {
+            if (($type && str_contains($type, 'compressed')) || in_array($type, $mimes["archive"])) {
                 return $compare == 'compressed';
             }
 
-            return $type && strpos($type, (string) $compare) !== false;
+            return $type && str_contains($type, (string) $compare);
         }
 
         return false;

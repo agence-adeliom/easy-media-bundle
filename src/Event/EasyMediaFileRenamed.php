@@ -8,12 +8,7 @@ class EasyMediaFileRenamed extends Event
 {
     public const NAME = 'em.file.renamed';
 
-    public $oldPath;
-    public $newPath;
-
-    public function __construct($oldPath, $newPath)
+    public function __construct(public string $oldPath, public string $newPath)
     {
-        $this->oldPath = $oldPath;
-        $this->newPath = $newPath;
     }
 }

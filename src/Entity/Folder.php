@@ -7,44 +7,30 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
-/**
- * @ORM\MappedSuperclass
- */
+#[ORM\MappedSuperclass]
 class Folder
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    protected int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    protected $name;
+    #[ORM\Column(type: 'string', length: 255)]
+    protected string $name;
 
-    /**
-     * @var string|null
-     * @Gedmo\Slug(fields={"name"}, updatable=false)
-     * @ORM\Column(length=100)
-     */
-    protected $slug;
+    #[Gedmo\Slug(fields:["name"], updatable:false)]
+    #[ORM\Column(length: 100)]
+    protected ?string $slug;
 
-    /**
-     * @var Folder|null
-     */
-    protected $parent;
-
+    protected ?Folder $parent;
     /**
      * @var ArrayCollection<Folder>
      */
-    protected $children;
-
+    protected ArrayCollection $children;
     /**
      * @var ArrayCollection<Media>
      */
-    protected $medias;
+    protected ArrayCollection $medias;
 
     public function __construct() {
         $this->children = new ArrayCollection();
@@ -56,11 +42,11 @@ class Folder
         return $this->id;
     }
 
-    public function getName() {
+    public function getName(): ?string {
         return $this->name;
     }
 
-    public function setName(string $name) {
+    public function setName(string $name): void {
         $this->name = $name;
 
         if(!$this->slug){
@@ -68,15 +54,15 @@ class Folder
         }
     }
 
-    public function getSlug() {
+    public function getSlug(): ?string {
         return $this->slug;
     }
 
-    public function setSlug(string $slug) {
+    public function setSlug(string $slug): void {
         $this->slug = $slug;
     }
 
-    public function getParent() {
+    public function getParent(): ?Folder {
         return $this->parent;
     }
 
@@ -84,7 +70,7 @@ class Folder
         return $this->children;
     }
 
-    public function addChild(Folder $child) {
+    public function addChild(Folder $child): void {
         $this->children[] = $child;
         $child->setParent($this);
     }
@@ -93,22 +79,23 @@ class Folder
         return $this->medias;
     }
 
-    public function addMedia(Media $media) {
+    public function addMedia(Media $media): void {
         $this->medias[] = $media;
         $media->setFolder($this);
     }
 
-    public function setParent(?Folder $parent = null) {
+    public function setParent(?Folder $parent = null): void {
         $this->parent = $parent;
     }
 
-    public function getPath($separator = "/") {
+    public function getPath($separator = "/"): string {
         $tree = '';
         $current = $this;
         do {
             $tree = $current->getSlug().$separator.$tree;
             $current = $current->getParent();
-        } while ($current);
+        }
+        while ($current);
         return trim($tree, $separator);
     }
 }

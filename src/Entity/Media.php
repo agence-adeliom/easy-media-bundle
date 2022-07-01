@@ -6,71 +6,45 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
-/**
- * @ORM\MappedSuperclass
- */
+#[ORM\MappedSuperclass]
 class Media
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    protected int $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    protected $name;
+    #[ORM\Column(type: 'string', length: 255)]
+    protected string $name;
 
-    /**
-     * @var string|null
-     * @ORM\Column(length=100)
-     */
-    protected $slug;
+    #[ORM\Column(length: 100)]
+    protected ?string $slug;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    protected $mime = true;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    protected bool $mime = true;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    protected $size = null;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    protected ?int $size;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    protected $lastModified = null;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    protected ?int $lastModified;
 
-    /**
-     * @ORM\Column(type="json")
-     */
-    protected $metas = [];
+    #[ORM\Column(type: 'json')]
+    protected array $metas = [];
 
-    /**
-     * @var Folder|null
-     */
-    protected $folder = null;
+    protected ?Folder $folder;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param mixed $name
-     */
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
 
@@ -79,97 +53,65 @@ class Media
         }
     }
 
-    public function getSlug() {
+    public function getSlug(): ?string {
         return $this->slug;
     }
 
-    public function setSlug(string $slug) {
+    public function setSlug(string $slug): void {
         $this->slug = $slug;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getMime()
+    public function getMime(): bool
     {
         return $this->mime;
     }
 
-    /**
-     * @param mixed $mime
-     */
-    public function setMime($mime = null): void
+    public function setMime(?bool $mime = null): void
     {
         $this->mime = $mime;
     }
 
-    /**
-     * @return int|null
-     */
     public function getSize(): ?int
     {
         return $this->size;
     }
 
-    /**
-     * @param int $size
-     */
     public function setSize(?int $size): void
     {
         $this->size = $size;
     }
 
-    /**
-     * @return null
-     */
-    public function getLastModified()
+    public function getLastModified(): ?int
     {
         return $this->lastModified;
     }
 
-    /**
-     * @param null $lastModified
-     */
-    public function setLastModified($lastModified): void
+    public function setLastModified(?int $lastModified): void
     {
         $this->lastModified = $lastModified;
     }
 
-    /**
-     * @return array
-     */
     public function getMetas(): array
     {
         return $this->metas;
     }
 
-    /**
-     * @param array $metas
-     */
     public function setMetas(array $metas): void
     {
         $this->metas = $metas;
     }
 
-    /**
-     * @return Folder|null
-     */
     public function getFolder(): ?Folder
     {
         return $this->folder;
     }
 
-    /**
-     * @param Folder|null $folder
-     */
     public function setFolder(?Folder $folder): void
     {
         $this->folder = $folder;
     }
 
-
-
-    public function getPath($separator = "/") {
+    public function getPath(string $separator = "/"): string {
         $tree = $this->getSlug();
         $current = $this->getFolder();
         if($current) {
@@ -180,5 +122,4 @@ class Media
         }
         return trim($tree, $separator);
     }
-
 }

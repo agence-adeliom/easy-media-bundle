@@ -8,26 +8,7 @@ class EasyMediaFileUploaded extends Event
 {
     public const NAME = 'em.file.uploaded';
 
-    /**
-     * @var string
-     */
-    public $filePath;
-
-    /**
-     * @var string
-     */
-    public $mimeType;
-
-    /**
-     * @var array
-     */
-    public $options = [];
-
-
-    public function __construct($filePath, $mimeType, $options = [])
+    public function __construct(public string $filePath, public string $mimeType, public array $options = [])
     {
-        $this->filePath = $filePath;
-        $this->mimeType = $mimeType;
-        $this->options = $options;
     }
 }

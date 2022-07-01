@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Adeliom\EasyMediaBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
@@ -12,7 +11,7 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 class EasyMediaExtension extends Extension implements PrependExtensionInterface
 {
 
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
@@ -25,7 +24,7 @@ class EasyMediaExtension extends Extension implements PrependExtensionInterface
         }
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $configs = $container->getExtensionConfig($this->getAlias());
         $configuration = $this->getConfiguration($configs, $container);
@@ -52,7 +51,7 @@ class EasyMediaExtension extends Extension implements PrependExtensionInterface
         $container->prependExtensionConfig('twig', $twigConfig);
     }
 
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'easy_media';
     }

@@ -8,20 +8,7 @@ class EasyMediaFileDeleted extends Event
 {
     public const NAME = 'em.file.deleted';
 
-    /**
-     * @var string
-     */
-    public $filePath;
-
-    /**
-     * @var bool
-     */
-    public $isFolder;
-
-
-    public function __construct($filePath, $isFolder)
+    public function __construct(public string $filePath, public bool $isFolder)
     {
-        $this->filePath = $filePath;
-        $this->isFolder = $isFolder;
     }
 }

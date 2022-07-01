@@ -5,29 +5,19 @@ namespace Adeliom\EasyMediaBundle\Twig;
 
 use Adeliom\EasyMediaBundle\Service\EasyMediaHelper;
 use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
-use League\Flysystem\FileAttributes;
-use League\Flysystem\Filesystem;
-use League\Flysystem\Local\LocalFilesystemAdapter;
-use League\MimeTypeDetection\FinfoMimeTypeDetector;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class EasyMediaExtension extends AbstractExtension
 {
-    /**
-     * @var EasyMediaManager
-     */
-    protected $manager;
-
-    public function __construct(EasyMediaManager $manager)
+    public function __construct(protected EasyMediaManager $manager)
     {
-        $this->manager = $manager;
     }
 
+    /**
+     * @return TwigFilter[]
+     */
     public function getFilters(): array
     {
         return [
@@ -37,6 +27,9 @@ class EasyMediaExtension extends AbstractExtension
         ];
     }
 
+    /**
+     * @return TwigFunction[]
+     */
     public function getFunctions(): array
     {
         return [
@@ -67,7 +60,7 @@ class EasyMediaExtension extends AbstractExtension
         return $this->buildPath($file);
     }
 
-    private function buildPath($media){
+    private function buildPath($media): array|string{
         return $this->manager->getHelper()->resolveUrl($media->getPath());
     }
 

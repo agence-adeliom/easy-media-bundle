@@ -2,6 +2,7 @@
 
 namespace Adeliom\EasyMediaBundle\EventListener;
 
+use League\Flysystem\FilesystemException;
 use Adeliom\EasyMediaBundle\Entity\Folder;
 use Adeliom\EasyMediaBundle\Entity\Media;
 use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
@@ -16,16 +17,13 @@ use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 
 class MediaSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var EasyMediaManager
-     */
-    protected $manager;
-
-    public function __construct(EasyMediaManager $manager)
+    public function __construct(protected EasyMediaManager $manager)
     {
-        $this->manager = $manager;
     }
 
+    /**
+     * @return string[]
+     */
     public function getSubscribedEvents(): array
     {
         return [
@@ -34,7 +32,7 @@ class MediaSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @throws \League\Flysystem\FilesystemException
+     * @throws FilesystemException
      */
     public function preUpdate(PreUpdateEventArgs $args): void
     {

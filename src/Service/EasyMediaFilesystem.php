@@ -1,7 +1,6 @@
 <?php
 namespace Adeliom\EasyMediaBundle\Service;
 
-
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use League\Flysystem\Filesystem;
@@ -12,19 +11,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class EasyMediaFilesystem
 {
-    /**
-     * @var string
-     */
-    protected $rootPath;
+    protected Filesystem $filesystem;
 
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
-
-    public function __construct($rootPath)
+    public function __construct(protected string $rootPath)
     {
-        $this->rootPath = $rootPath;
         // The internal adapter
         $adapter = new LocalFilesystemAdapter(
         // Determine the root directory
@@ -49,17 +39,11 @@ class EasyMediaFilesystem
         $this->filesystem = new Filesystem($adapter);
     }
 
-    /**
-     * @return Filesystem
-     */
     public function getFilesystem(): Filesystem
     {
         return $this->filesystem;
     }
 
-    /**
-     * @return string
-     */
     public function getRootPath(): string
     {
         return $this->rootPath;

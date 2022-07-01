@@ -6,17 +6,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ContainerListener
 {
-    private \Symfony\Component\DependencyInjection\ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
-    /**
-     * @return ContainerInterface
-     */
-    public function getContainer()
+    public function getContainer(): ContainerInterface
     {
         return $this->container;
     }

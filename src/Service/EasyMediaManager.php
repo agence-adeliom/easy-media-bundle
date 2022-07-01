@@ -1,7 +1,7 @@
 <?php
 namespace Adeliom\EasyMediaBundle\Service;
 
-
+use Throwable;
 use Adeliom\EasyMediaBundle\Entity\Folder;
 use Adeliom\EasyMediaBundle\Entity\Media;
 use Adeliom\EasyMediaBundle\Exception\AlreadyExist;
@@ -10,14 +10,11 @@ use Adeliom\EasyMediaBundle\Exception\FolderNotExist;
 use Adeliom\EasyMediaBundle\Exception\NoFile;
 use Adeliom\EasyMediaBundle\Exception\ProviderNotFound;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Embed\Embed;
 use Illuminate\Support\Str;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToCopyFile;
-use League\Flysystem\UnableToRetrieveMetadata;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\File;
@@ -27,73 +24,32 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EasyMediaManager
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
+    protected Filesystem $filesystem;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected mixed $rootPath;
 
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
-
-    /**
-     * @var ContainerBagInterface
-     */
-    protected $parameters;
-
-    /**
-     * @var EasyMediaHelper
-     */
-    protected $helper;
-
-    protected $rootPath;
-
-    public function __construct(EasyMediaFilesystem $filesystemManager, EasyMediaHelper $helper, EntityManagerInterface $em, ContainerBagInterface $parameters, TranslatorInterface $translator)
+    public function __construct(EasyMediaFilesystem $filesystemManager, protected EasyMediaHelper $helper, protected EntityManagerInterface $em, protected ContainerBagInterface $parameters, protected TranslatorInterface $translator)
     {
-        $this->em = $em;
-        $this->helper = $helper;
-        $this->parameters = $parameters;
-        $this->translator = $translator;
         $this->rootPath = $helper->getRootPath();
         $this->filesystem = $filesystemManager->getFilesystem();
     }
 
-    /**
-     * @return Filesystem
-     */
     public function getFilesystem(): Filesystem
     {
         return $this->filesystem;
     }
 
-    /**
-     * @return EasyMediaHelper
-     */
     public function getHelper(): EasyMediaHelper
     {
         return $this->helper;
     }
 
-    /**
-     * @param $id
-     * @return mixed|object|null
-     */
-    public function getFolder($id)
+    public function getFolder($id): ?Folder
     {
         return $this->getHelper()->getFolderRepository()->find($id);
     }
 
-    /**
-     * @param string|null $path
-     * @return false|mixed|object|null
-     */
-    public function folderByPath(?string $path)
+    public function folderByPath(?string $path): mixed
     {
         $dir = str_replace("//", "/", $this->rootPath . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR);
         if(is_dir($dir)){
@@ -115,11 +71,7 @@ class EasyMediaManager
         return false;
     }
 
-    /**
-     * @param $id
-     * @return mixed|object|null
-     */
-    public function getMedia($id)
+    public function getMedia(mixed $id): ?Media
     {
         return $this->getHelper()->getMediaRepository()->find($id);
     }
@@ -127,7 +79,7 @@ class EasyMediaManager
     /**
      * @throws FilesystemException|FolderNotExist
      */
-    public function createFolder(?string $name, $path = null) : Folder
+    public function createFolder(?string $name, ?string $path = null) : Folder
     {
         $class = $this->getHelper()->getFolderClassName();
         /** @var Folder $entity */
@@ -150,7 +102,7 @@ class EasyMediaManager
         return $entity;
     }
 
-    public function createMedia($source, $path = null, $name = null) : Media
+    public function createMedia($source, ?string $path = null, $name = null) : Media
     {
         $class = $this->getHelper()->getMediaClassName();
         /** @var Media $entity */
@@ -182,7 +134,7 @@ class EasyMediaManager
         return $entity;
     }
 
-    private function createFromOembed(Media $entity, $source){
+    private function createFromOembed(Media $entity, string $source): Media{
 
         $embed = new Embed();
         $infos = $embed->get($source);
@@ -222,7 +174,7 @@ class EasyMediaManager
         return $entity;
     }
 
-    private function createFromBase64(Media $entity, $source){
+    private function createFromBase64(Media $entity, $source): Media{
 
         if(preg_match('/^data\:([a-zA-Z]+\/[a-zA-Z]+);base64\,([a-zA-Z0-9\+\/]+\=*)$/', $source, $matches)) {
             $infos = [
@@ -250,7 +202,7 @@ class EasyMediaManager
         $file = new File($this->helper->clearDblSlash($this->rootPath . DIRECTORY_SEPARATOR . $destination));
 
         if(@exif_imagetype($file->getPathname())){
-            list($width, $height) = getimagesize($file->getPathname());
+            [$width, $height] = getimagesize($file->getPathname());
             $entity->setMetas([
                 "dimensions" => [
                     "width" => $width,
@@ -267,7 +219,7 @@ class EasyMediaManager
         return $entity;
     }
 
-    private function createFromImageURL(Media $entity, $source, $type){
+    private function createFromImageURL(Media $entity, $source, $type): Media{
 
         $urlPath = parse_url($source, PHP_URL_PATH);
         $original  = substr($urlPath, strrpos($urlPath, '/') + 1);
@@ -296,7 +248,7 @@ class EasyMediaManager
 
         try {
             $data = file_get_contents($source);
-        } catch (\Throwable $th) {
+        } catch (Throwable) {
             throw new NoFile(
                 $this->translator->trans('error.no_file', [] , "EasyMediaBundle")
             );
@@ -310,7 +262,7 @@ class EasyMediaManager
             $entity->setName($file->getFilename());
         }
 
-        list($width, $height) = getimagesize($file->getPathname());
+        [$width, $height] = getimagesize($file->getPathname());
 
         $entity->setMetas([
             "dimensions" => [
@@ -327,7 +279,7 @@ class EasyMediaManager
         return $entity;
     }
 
-    private function createFromFile(Media $entity, $source){
+    private function createFromFile(Media $entity, $source): Media{
 
         if (is_string($source)){
             $source = new File($source);
@@ -392,7 +344,7 @@ class EasyMediaManager
         }
 
         if(@exif_imagetype($source->getPathname())){
-            list($width, $height) = getimagesize($source->getPathname());
+            [$width, $height] = getimagesize($source->getPathname());
             $entity->setMetas([
                 "dimensions" => [
                     "width" => $width,
@@ -418,7 +370,7 @@ class EasyMediaManager
         return $entity;
     }
 
-    public function delete($item, $flush = true)
+    public function delete($item, $flush = true): void
     {
         $this->em->remove($item);
 
@@ -435,7 +387,7 @@ class EasyMediaManager
         }
     }
 
-    public function save($item, $flush = true)
+    public function save($item, $flush = true): void
     {
         $this->em->persist($item);
         if ($flush){
@@ -446,7 +398,7 @@ class EasyMediaManager
     /**
      * @throws FilesystemException
      */
-    public function move($oldPath, $newPath)
+    public function move($oldPath, $newPath): void
     {
         if( $this->filesystem->fileExists($this->helper->clearDblSlash($oldPath))){
             $this->filesystem->move($this->helper->clearDblSlash($oldPath), $this->helper->clearDblSlash($newPath));

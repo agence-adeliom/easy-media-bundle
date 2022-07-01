@@ -10,7 +10,6 @@ class EasyMediaType extends Type
 {
     public const EASYMEDIATYPE = 'easy_media_type'; // modify to match your type name
 
-
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
     {
         return "TEXT";

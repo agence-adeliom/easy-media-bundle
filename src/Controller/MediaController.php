@@ -2,6 +2,8 @@
 
 namespace Adeliom\EasyMediaBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Response;
 use Adeliom\EasyMediaBundle\Controller\Module\Delete;
 use Adeliom\EasyMediaBundle\Controller\Module\Download;
 use Adeliom\EasyMediaBundle\Controller\Module\GetContent;
@@ -58,11 +60,6 @@ class MediaController extends AbstractController
     protected $filesystem;
 
     /**
-     * @var EasyMediaManager
-     */
-    protected $manager;
-
-    /**
      * @var EntityManagerInterface
      */
     protected $em;
@@ -73,15 +70,13 @@ class MediaController extends AbstractController
     protected $helper;
 
 
-    public function __construct(ContainerInterface $container, EasyMediaManager $manager)
+    public function __construct(ContainerInterface $container, protected EasyMediaManager $manager, private ManagerRegistry $managerRegistry)
     {
         $this->container = $container;
-        $this->em = $this->getDoctrine()->getManager();
+        $this->em = $this->managerRegistry->getManager();
 
         $this->ignoreFiles = $this->container->getParameter("easy_media.ignore_files");
         $this->paginationAmount = $this->container->getParameter("easy_media.pagination_amount");
-
-        $this->manager = $manager;
         $this->helper = $manager->getHelper();
         $this->filesystem = $manager->getFilesystem();
 
@@ -94,12 +89,12 @@ class MediaController extends AbstractController
      *
      * @return [type] [description]
      */
-    public function index()
+    public function index(): Response
     {
         return $this->render("@EasyMedia/manager_view.html.twig");
     }
 
-    public function browse(Request $request)
+    public function browse(Request $request): Response
     {
         $data = [
             "provider" => $request->query->get("provider"),

@@ -7,10 +7,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class EasyMediaBundle extends Bundle
 {
-    /**
-     * @return ExtensionInterface|null The container extension
-     */
-    public function getContainerExtension()
+    public function getContainerExtension(): ?EasyMediaExtension
     {
         if (null === $this->extension) {
             $this->extension = new EasyMediaExtension();

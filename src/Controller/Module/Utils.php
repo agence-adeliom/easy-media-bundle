@@ -10,7 +10,6 @@ trait Utils
      * helper to paginate array.
      *
      * @param [type] $items
-     * @param int $perPage
      * @return array
      */
     public function paginate($items, int $perPage = 10)

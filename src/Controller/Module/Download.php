@@ -66,7 +66,7 @@ trait Download
      */
     protected function zipAndDownload($name, $list)
     {
-        return new StreamedResponse(function () use ($name, $list) {
+        return new StreamedResponse(function () use ($name, $list): void {
             // track changes
             $counter  = 100 / count($list);
             $progress = 0;
@@ -93,7 +93,7 @@ trait Download
     protected function zipAndDownloadDir($name, $list)
     {
 
-        return new StreamedResponse(function () use ($name, $list) {
+        return new StreamedResponse(function () use ($name, $list): void {
             // track changes
             $counter  = 100 / count($list);
             $progress = 0;
