@@ -9,9 +9,12 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 #[ORM\MappedSuperclass]
 class Media
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    /**
+     * The unique auto incremented primary key.
+     * @ORM\Id
+     * @ORM\Column(type="integer", options={"unsigned": true})
+     * @ORM\GeneratedValue
+     */
     protected int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
