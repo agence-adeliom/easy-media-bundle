@@ -27,7 +27,7 @@
         "symfony/filesystem": "^5.3 || ^6.0",
         "easycorp/easyadmin-bundle": "^3.4 || ^v4.0.0",
         "agence-adeliom/easy-common-bundle": "^2.0 || dev-develop",
-        "league/flysystem": "^2.1",
+        "league/flysystem": "^3.0",
         "maennchen/zipstream-php": "^2.1.0",
         "illuminate/support": "^8.49",
         "stof/doctrine-extensions-bundle": "^1.5",
