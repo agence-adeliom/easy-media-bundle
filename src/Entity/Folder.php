@@ -10,9 +10,12 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 #[ORM\MappedSuperclass]
 class Folder
 {
+    /**
+     * The unique auto incremented primary key.
+     */
     #[ORM\Id]
+    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
     protected int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
