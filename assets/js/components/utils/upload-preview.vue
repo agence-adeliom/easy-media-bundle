@@ -18,7 +18,7 @@
     <div v-if="img"
          class="options btn-animate"
          :class="{'show': panelIsVisible}">
-      <button type="button" v-tippy="{arrow: true, placement: 'left'}"
+      <button type="button" v-tippy="{zIndex: 999999999, arrow: true, placement: 'left'}"
               class="btn-plain"
               :class="{'alt': panelIsVisible}"
               :title="trans('options')"

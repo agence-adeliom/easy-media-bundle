@@ -17,15 +17,15 @@
       }
 
       .t-key {
-        @apply whitespace-nowrap text-theme-25;
+        @apply whitespace-nowrap text-color;
       }
 
       .t-val {
-        @apply pl-1 text-right text-theme-75 break-words;
+        @apply pl-1 text-right text-color-secondary break-words;
       }
 
       a {
-        @apply text-blue-400;
+        @apply text-color-active;
       }
     }
   }

@@ -154,6 +154,48 @@
                         <td class="t-val">{% verbatim %}{{ selectedFile.metas.description }}{% endverbatim %}</td>
                     </tr>
 
+                    <tr v-if="selectedFileIs('audio') && selectedFile.metas.tags && selectedFile.metas.tags.title">
+                        <td class="t-key">{{ 'audio.title'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ selectedFile.metas.tags.title }}{% endverbatim %}
+                        </td>
+                    </tr>
+
+                    <tr v-if="selectedFileIs('audio') && selectedFile.metas.tags && selectedFile.metas.tags.album">
+                        <td class="t-key">{{ 'audio.album'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ selectedFile.metas.tags.album }}{% endverbatim %}
+                        </td>
+                    </tr>
+
+                    <tr v-if="selectedFileIs('audio') && selectedFile.metas.tags && selectedFile.metas.tags.artist">
+                        <td class="t-key">{{ 'audio.artist'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ selectedFile.metas.tags.artist }}{% endverbatim %}
+                        </td>
+                    </tr>
+
+                    <tr v-if="selectedFileIs('audio') && selectedFile.metas.tags && selectedFile.metas.tags.genre">
+                        <td class="t-key">{{ 'audio.genre'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ selectedFile.metas.tags.genre }}{% endverbatim %}
+                        </td>
+                    </tr>
+
+                    <tr v-if="selectedFileIs('audio') && selectedFile.metas.tags && selectedFile.metas.tags.year">
+                        <td class="t-key">{{ 'audio.year'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ selectedFile.metas.tags.year }}{% endverbatim %}
+                        </td>
+                    </tr>
+
+                    <tr v-if="(selectedFileIs('audio') || selectedFileIs('video')) && selectedFile.metas.duration">
+                        <td class="t-key">{{ 'duration'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ new Date(selectedFile.metas.duration * 1000).toISOString().slice(11, 19) }}{% endverbatim %}
+                        </td>
+                    </tr>
+
                     <tr v-if="selectedFileIs('oembed') && selectedFile.metas.provider && selectedFile.metas.provider.name">
                         <td class="t-key">{{ 'oembed.provider'|trans }}:</td>
                         <td class="t-val">

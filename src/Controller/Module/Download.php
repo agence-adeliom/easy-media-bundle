@@ -1,41 +1,54 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Adeliom\EasyMediaBundle\Controller\Module;
 
-
+use Adeliom\EasyMediaBundle\Entity\Media;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\StorageAttributes;
+use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
+use Liip\ImagineBundle\Model\Binary;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Mime\MimeTypes;
 use ZipStream\Option\Archive;
 use ZipStream\ZipStream;
 
 trait Download
 {
-
     /**
      * zip folder.
      *
      * @param Request $request [description]
      *
      * @return StreamedResponse [type] [description]
+     *
      * @throws \League\Flysystem\FilesystemException
      */
-    public function downloadFolder(Request $request)
+    public function downloadFolder(Request $request): StreamedResponse
     {
-        $name = $request->request->get("name");
-        $folders = $request->request->get("folders");
+        $name = $request->request->get('name');
+        $folders = $request->request->get('folders');
 
-        /** @var string[] $allPaths */
-        $allPaths = $this->filesystem->listContents(sprintf("%s/%s" , $folders, $name))
-            ->filter(fn (StorageAttributes $attributes) => $attributes->isFile())
-            ->map(fn (StorageAttributes $attributes) => $attributes->path())
+        /** @var array<string> $allPaths */
+        $allPaths = $this->filesystem->listContents(sprintf('%s/%s', $folders, $name))
+            ->filter(static function (StorageAttributes $attributes) {
+                return $attributes->isFile();
+            })
+            ->map(static function (StorageAttributes $attributes) {
+                return $attributes->path();
+            })
             ->toArray();
 
-        if ($allPaths){
+        if ($allPaths !== []) {
             return $this->zipAndDownloadDir(
                 $name,
                 $allPaths
             );
         }
+
         exit;
     }
 
@@ -46,32 +59,28 @@ trait Download
      *
      * @return StreamedResponse [type] [description]
      */
-    public function downloadFiles(Request $request)
+    public function downloadFiles(Request $request): StreamedResponse
     {
-        $list = json_decode($request->request->get("list", []), true);
-        $name = $request->request->get("name");
+        $list = json_decode($request->request->get('list', []), true, 512, JSON_THROW_ON_ERROR);
+        $name = $request->request->get('name');
 
         return $this->zipAndDownload(
-            $name . '-files',
+            $name.'-files',
             $list
         );
     }
 
     /**
      * zip ops.
-     *
-     * @param mixed $name
-     * @param mixed $list
-     * @return StreamedResponse
      */
-    protected function zipAndDownload($name, $list)
+    protected function zipAndDownload(mixed $name, mixed $list): StreamedResponse
     {
-        return new StreamedResponse(function () use ($name, $list) {
+        return new StreamedResponse(function () use ($name, $list): void {
             // track changes
-            $counter  = 100 / count($list);
+            $counter = 100 / count($list);
             $progress = 0;
 
-            $zip = new ZipStream("$name.zip", $this->getZipOptions());
+            $zip = new ZipStream(sprintf('%s.zip', $name), $this->getZipOptions());
 
             foreach ($list as $file) {
                 $name = $file['name'];
@@ -92,18 +101,17 @@ trait Download
 
     protected function zipAndDownloadDir($name, $list)
     {
-
-        return new StreamedResponse(function () use ($name, $list) {
+        return new StreamedResponse(function () use ($name, $list): void {
             // track changes
-            $counter  = 100 / count($list);
+            $counter = 100 / count($list);
             $progress = 0;
 
-            $zip = new ZipStream("$name.zip", $this->getZipOptions());
+            $zip = new ZipStream(sprintf('%s.zip', $name), $this->getZipOptions());
 
             foreach ($list as $file) {
-                $dir_name   = pathinfo($file, PATHINFO_DIRNAME);
-                $file_name  = pathinfo($file, PATHINFO_BASENAME);
-                $full_name  = "$dir_name/$file_name";
+                $dir_name = pathinfo($file, PATHINFO_DIRNAME);
+                $file_name = pathinfo($file, PATHINFO_BASENAME);
+                $full_name = sprintf('%s/%s', $dir_name, $file_name);
                 $streamRead = $this->filesystem->readStream($file);
 
                 // add to zip
@@ -131,4 +139,26 @@ trait Download
         return $options;
     }
 
+    public function downloadFile(string $path)
+    {
+        try {
+            $mimeType = $this->filesystem->mimeType($path);
+
+            $stream = $this->filesystem->readStream($path);
+            $response = new StreamedResponse(function () use ($stream) {
+                fpassthru($stream);
+                exit();
+            });
+
+            $response->setLastModified((new \DateTime())->setTimestamp($this->filesystem->lastModified($path)));
+            $response->headers->set("Content-Type", $mimeType);
+            $response->setPublic();
+            $response->setMaxAge(60 * 12);
+            $response->setSharedMaxAge(60 * 12);
+            return $response;
+
+        } catch (FilesystemException $exception) {
+            throw new NotLoadableException(sprintf('Source image "%s" not found.', $path), 0, $exception);
+        }
+    }
 }

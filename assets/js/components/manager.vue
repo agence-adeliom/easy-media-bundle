@@ -381,7 +381,7 @@ export default {
                             }
 
                             // copy file
-                            if (key == 'x') {
+                            if (key == 'x' || key == 'c') {
                                 this.addToMovableList()
                             }
                         }

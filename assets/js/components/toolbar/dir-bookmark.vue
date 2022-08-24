@@ -14,7 +14,7 @@
                 <div class="tags has-addons">
                     <!-- name -->
                     <span v-if="!isCurrent(item.dir)"
-                          v-tippy="{arrow: true, placement: 'left'}"
+                          v-tippy="{zIndex: 999999999, arrow: true, placement: 'left'}"
                           :title="goTo(item.dir)"
                           class="tag is-link is-primary link"
                           @click.stop="goToFolder(item.dir)">

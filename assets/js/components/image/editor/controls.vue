@@ -2,7 +2,7 @@
     <div>
         <button type="button" v-for="item in controlsList"
                 :key="item.op"
-                v-tippy="{arrow: true, theme: 'mm'}"
+                v-tippy="{zIndex: 999999999, arrow: true, theme: 'mm'}"
                 :class="{'is-active': item.mode ? dragModeIs(item.mode) : false}"
                 :title="trans(item.trans)"
                 :disabled="processing"

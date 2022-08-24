@@ -26,11 +26,11 @@ label.input-label{
 }
 
 .button, .input, .textarea{
-  @apply inline-flex appearance-none rounded-md text-base align-top px-4 py-2 border border-gray-300;
+  @apply inline-flex appearance-none rounded-md text-base align-top px-4 py-2 border border-solid border-gray-300;
 }
 
 .button{
-  @apply bg-white justify-center text-center whitespace-nowrap cursor-pointer text-black;
+  @apply bg-white justify-center text-center whitespace-nowrap cursor-pointer text-black border border-solid border-gray-300;
 
   .icon{
     @apply w-6 h-6 mr-1 -ml-2;
@@ -47,31 +47,31 @@ label.input-label{
   }
 
   &.is-link {
-    @apply border-transparent text-white bg-blue-500;
+    @apply border-transparent text-white bg-link;
   }
   &.is-primary {
-    @apply border-transparent text-white bg-purple-500;
+    @apply border-transparent text-white bg-primary;
   }
   &.is-success {
-    @apply border-transparent text-white bg-green-400;
+    @apply border-transparent text-white bg-success;
   }
   &.is-warning {
-    @apply border-transparent text-black bg-yellow-400;
+    @apply border-transparent text-white bg-warning;
   }
   &.is-danger {
-    @apply border-transparent text-white bg-red-400;
+    @apply border-transparent text-white bg-danger;
   }
 }
 
 button.delete,
 .media-right span.delete,
 .__box-delete span.delete{
-  @apply select-none cursor-pointer pointer-events-auto inline-block flex-grow-0 flex-shrink-0 h-5 w-5 outline-none relative align-top appearance-none bg-theme-75 bg-opacity-20 rounded-full border-none;
+  @apply select-none cursor-pointer pointer-events-auto inline-block flex-grow-0 flex-shrink-0 h-5 w-5 outline-none relative align-top appearance-none bg-black bg-opacity-20 rounded-full border-none;
   font-size: 0;
 
   &:before,
   &:after{
-    @apply bg-white block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45;
+    @apply bg-header block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45;
     content: "";
   }
   &:before{
@@ -82,6 +82,14 @@ button.delete,
     height: 50%;
     width: 2px;
   }
+  &:hover{
+    @apply bg-active;
+
+    &:before,
+    &:after {
+      @apply bg-color-active;
+    }
+  }
 }
 
 .field{
@@ -91,7 +99,7 @@ button.delete,
       margin-right: -1px;
     }
     .control{
-      @apply relative;
+      @apply relative mb-0;
       .button,
       .input,
       .select select{

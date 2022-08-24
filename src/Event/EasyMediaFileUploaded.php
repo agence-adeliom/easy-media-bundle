@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Adeliom\EasyMediaBundle\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
@@ -7,22 +9,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 class EasyMediaFileUploaded extends Event
 {
     public const NAME = 'em.file.uploaded';
-
-    /**
-     * @var string
-     */
     public $filePath;
-
-    /**
-     * @var string
-     */
     public $mimeType;
-
-    /**
-     * @var array
-     */
     public $options = [];
-
 
     public function __construct($filePath, $mimeType, $options = [])
     {

@@ -92,7 +92,7 @@
                             </div>
                             <button type="button" class="modal-close is-large" @click.stop="toggleModal()"></button>
                         </div>
-                        {{ form_widget(form, {'type': 'hidden', 'attr': {':value': 'media'} }) }}
+                        {{ form_widget(form, {'type': 'text', 'attr': {'v-model': 'media', "style": "display:none"} }) }}
                     </section>
                 </div>
             </easy-media-modal>

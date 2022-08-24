@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Adeliom\EasyMediaBundle\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
@@ -7,17 +9,8 @@ use Symfony\Contracts\EventDispatcher\Event;
 class EasyMediaFileDeleted extends Event
 {
     public const NAME = 'em.file.deleted';
-
-    /**
-     * @var string
-     */
     public $filePath;
-
-    /**
-     * @var bool
-     */
     public $isFolder;
-
 
     public function __construct($filePath, $isFolder)
     {

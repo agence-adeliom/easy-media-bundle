@@ -1,8 +1,8 @@
 <?php
 
-namespace Adeliom\EasyMediaBundle\Event;
+declare(strict_types=1);
 
-use Symfony\Contracts\EventDispatcher\Event;
+namespace Adeliom\EasyMediaBundle\Event;
 
 class EasyMediaFileSaved extends EasyMediaFileUploaded
 {

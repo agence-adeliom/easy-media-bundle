@@ -1,119 +1,84 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Adeliom\EasyMediaBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
-/**
- * @ORM\MappedSuperclass
- */
+#[ORM\MappedSuperclass]
 class Media
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
+    protected ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    protected $name;
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
+    protected ?string $name = null;
 
-    /**
-     * @var string|null
-     * @ORM\Column(length=100)
-     */
-    protected $slug;
+    #[ORM\Column(length: 100)]
+    protected ?string $slug = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    protected $mime = true;
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
+    protected ?string $mime = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    protected $size = null;
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
+    protected ?int $size = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    protected $lastModified = null;
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
+    protected ?int $lastModified = null;
 
-    /**
-     * @ORM\Column(type="json")
-     */
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::JSON)]
     protected $metas = [];
 
-    /**
-     * @var Folder|null
-     */
-    protected $folder = null;
+    protected ?Folder $folder = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getName()
+    public function getName(): mixed
     {
         return $this->name;
     }
 
-    /**
-     * @param mixed $name
-     */
-    public function setName($name): void
+    public function setName(mixed $name): void
     {
         $this->name = $name;
 
-        if(!$this->slug){
-            $this->slug = (new AsciiSlugger())->slug(strtolower($this->name))->toString();
+        if (! $this->slug) {
+            $this->slug = (new AsciiSlugger())->slug(strtolower((string) $this->name))->toString();
         }
     }
 
-    public function getSlug() {
+    public function getSlug()
+    {
         return $this->slug;
     }
 
-    public function setSlug(string $slug) {
+    public function setSlug(string $slug): void
+    {
         $this->slug = $slug;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getMime()
+    public function getMime(): mixed
     {
         return $this->mime;
     }
 
-    /**
-     * @param mixed $mime
-     */
-    public function setMime($mime = null): void
+    public function setMime(mixed $mime = null): void
     {
         $this->mime = $mime;
     }
 
-    /**
-     * @return int|null
-     */
     public function getSize(): ?int
     {
         return $this->size;
     }
 
-    /**
-     * @param int $size
-     */
     public function setSize(?int $size): void
     {
         $this->size = $size;
@@ -135,50 +100,42 @@ class Media
         $this->lastModified = $lastModified;
     }
 
-    /**
-     * @return array
-     */
     public function getMetas(): array
     {
         return $this->metas;
     }
 
-    /**
-     * @param array $metas
-     */
+    public function getMeta(string $key, $default = null)
+    {
+        return $this->metas[$key] ?? $default;
+    }
+
     public function setMetas(array $metas): void
     {
         $this->metas = $metas;
     }
 
-    /**
-     * @return Folder|null
-     */
     public function getFolder(): ?Folder
     {
         return $this->folder;
     }
 
-    /**
-     * @param Folder|null $folder
-     */
     public function setFolder(?Folder $folder): void
     {
         $this->folder = $folder;
     }
 
-
-
-    public function getPath($separator = "/") {
+    public function getPath($separator = '/')
+    {
         $tree = $this->getSlug();
         $current = $this->getFolder();
-        if($current) {
+        if ($current !== null) {
             do {
-                $tree = $current->getSlug() . $separator . $tree;
+                $tree = $current->getSlug().$separator.$tree;
                 $current = $current->getParent();
             } while ($current);
         }
+
         return trim($tree, $separator);
     }
-
 }

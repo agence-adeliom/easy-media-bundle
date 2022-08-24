@@ -4,11 +4,11 @@
 
 .notie{
   &-background{
-    &-success { @apply bg-green-400; }
-    &-warning { @apply bg-yellow-400; }
-    &-error { @apply bg-red-400; }
-    &-info { @apply bg-blue-500; }
-    &-neutral { @apply bg-gray-400; }
+    &-success { @apply bg-success; }
+    &-warning { @apply bg-warning; }
+    &-error { @apply bg-danger; }
+    &-info { @apply bg-link; }
+    &-neutral { background: var(--true-gray-600) }
     &-overlay { @apply bg-white; }
   }
   &-container {
@@ -20,7 +20,7 @@
     z-index: calc(var(--notie-z-index) - 1);
   }
   &-textbox {
-    @apply p-6 text-white;
+    @apply p-4 text-white;
     &-inner {
       @apply my-0 mx-auto max-w-4xl;
     }

@@ -4,7 +4,8 @@
     min-width: 12rem;
     padding-top: 4px;
     top: 100%;
-    @apply hidden absolute left-0;
+    left: unset;
+    @apply hidden absolute bg-white text-dark;
   }
   &.is-active .dropdown-menu,
   &.is-hoverable:hover .dropdown-menu{

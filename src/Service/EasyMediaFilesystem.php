@@ -1,52 +1,27 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Adeliom\EasyMediaBundle\Service;
 
-
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use League\Flysystem\PathNormalizer;
 use League\Flysystem\UnixVisibility\PortableVisibilityConverter;
 use League\Flysystem\Visibility;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use League\FlysystemBundle\Lazy\LazyFactory;
 
-class EasyMediaFilesystem
+class EasyMediaFilesystem extends Filesystem
 {
     /**
-     * @var string
+     * @var FilesystemAdapter
      */
-    protected $rootPath;
+    public FilesystemAdapter $adapter;
 
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
-
-    public function __construct($rootPath)
+    public function __construct(FilesystemAdapter $adapter, array $config = [], PathNormalizer $pathNormalizer = null)
     {
-        $this->rootPath = $rootPath;
-        // The internal adapter
-        $adapter = new LocalFilesystemAdapter(
-        // Determine the root directory
-            $this->rootPath,
-            // Customize how visibility is converted to unix permissions
-            PortableVisibilityConverter::fromArray([
-                'file' => [
-                    'public' => 0644,
-                    'private' => 0640,
-                ],
-                'dir' => [
-                    'public' => 0755,
-                    'private' => 0740,
-                ],
-            ], Visibility::PUBLIC),
-            // Write flags
-            LOCK_EX,
-            // How to deal with links, either DISALLOW_LINKS or SKIP_LINKS
-            // Disallowing them causes exceptions when encountered
-            LocalFilesystemAdapter::DISALLOW_LINKS
-        );
-        $this->filesystem = new Filesystem($adapter);
+        parent::__construct($adapter, $config, $pathNormalizer);
     }
 
     /**
@@ -54,15 +29,6 @@ class EasyMediaFilesystem
      */
     public function getFilesystem(): Filesystem
     {
-        return $this->filesystem;
+        return $this;
     }
-
-    /**
-     * @return string
-     */
-    public function getRootPath(): string
-    {
-        return $this->rootPath;
-    }
-
 }

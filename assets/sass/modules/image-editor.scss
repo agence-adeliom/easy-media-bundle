@@ -158,10 +158,10 @@
         }
 
         &.is-danger{
-            @apply bg-opacity-100 bg-red-400;
+            @apply bg-opacity-100 bg-danger;
         }
         &.is-success{
-            @apply bg-opacity-100 bg-green-400;
+            @apply bg-opacity-100 bg-success;
         }
 
 

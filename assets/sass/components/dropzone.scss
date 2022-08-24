@@ -37,27 +37,27 @@
     }
 
     .circle {
-      @apply text-theme;
+      @apply text-header;
     }
 
     .anchor {
-      @apply text-theme-50
+      @apply text-color
     }
 
     &:hover {
       .anchor {
-        @apply text-theme;
+        @apply text-color-active;
       }
 
       .circle {
-        @apply text-theme-50
+        @apply text-header
       }
     }
   }
 }
 
 #uploadProgress {
-  @apply mx-6 my-4 mt-0;
+  @apply mx-6 my-4;
 }
 
 #uploadPreview {

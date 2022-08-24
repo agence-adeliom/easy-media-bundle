@@ -1,0 +1,10 @@
+{% if options.picture is defined %}
+    <picture>
+        {% for source in options.picture.source %}
+            <source {% for name, value in source|filter(value => value is not empty) %}{{ name }}="{{ value }}" {% endfor %}/>
+        {% endfor %}
+        <img {% for name, value in options.picture.img|filter(value => value is not empty) %}{{ name }}="{{ value }}" {% endfor %}/>
+    </picture>
+{% else %}
+    <img {% for name, value in options|filter(value => value is not empty) %}{{ name }}="{{ value }}" {% endfor %}/>
+{% endif %}

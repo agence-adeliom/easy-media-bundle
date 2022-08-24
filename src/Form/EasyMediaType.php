@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Adeliom\EasyMediaBundle\Form;
 
 use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
@@ -15,9 +17,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class EasyMediaType extends AbstractType
 {
     /**
-     * @var EasyMediaManager
+     * @readonly
      */
-    private $manager;
+    private \Adeliom\EasyMediaBundle\Service\EasyMediaManager $manager;
 
     public function __construct(EasyMediaManager $manager)
     {
@@ -27,18 +29,18 @@ class EasyMediaType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            "restrictions_path" => null,
-            "restrictions_uploadTypes" => null,
-            "restrictions_uploadSize" => null,
+            'restrictions_path' => null,
+            'restrictions_uploadTypes' => null,
+            'restrictions_uploadSize' => null,
             'hideExt' => null,
             'hidePath' => null,
             'editor' => true,
             'upload' => true,
-            "bulk_selection" => true,
-            "move" => true,
-            "rename" => true,
-            "metas" => true,
-            "delete" => true,
+            'bulk_selection' => true,
+            'move' => true,
+            'rename' => true,
+            'metas' => true,
+            'delete' => true,
         ]);
 
         $resolver->setAllowedTypes('restrictions_path', ['null', 'string']);
@@ -46,46 +48,43 @@ class EasyMediaType extends AbstractType
         $resolver->setAllowedTypes('restrictions_uploadSize', ['null', 'float']);
         $resolver->setAllowedTypes('hideExt', ['null', 'array']);
         $resolver->setAllowedTypes('hidePath', ['null', 'array']);
-        $resolver->setAllowedTypes('editor', "bool");
-        $resolver->setAllowedTypes('upload', "bool");
-        $resolver->setAllowedTypes('bulk_selection', "bool");
-        $resolver->setAllowedTypes('move', "bool");
-        $resolver->setAllowedTypes('rename', "bool");
-        $resolver->setAllowedTypes('metas', "bool");
-        $resolver->setAllowedTypes('delete', "bool");
+        $resolver->setAllowedTypes('editor', 'bool');
+        $resolver->setAllowedTypes('upload', 'bool');
+        $resolver->setAllowedTypes('bulk_selection', 'bool');
+        $resolver->setAllowedTypes('move', 'bool');
+        $resolver->setAllowedTypes('rename', 'bool');
+        $resolver->setAllowedTypes('metas', 'bool');
+        $resolver->setAllowedTypes('delete', 'bool');
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new CallbackTransformer(
             function ($media) {
                 if (empty($media)) {
                     return '';
                 }
+
                 $class = $this->manager->getHelper()->getMediaClassName();
-                if (!($media instanceof $class)) {
+                if (! ($media instanceof $class)) {
                     $media = $this->manager->getMedia($media);
                 }
 
-                if (null === $media) {
+                if ($media === null) {
                     return '';
                 }
 
                 return $media->getId();
             },
-            function ($mediaId){
-
-                if (!$mediaId) {
+            function ($mediaId) {
+                if (! $mediaId) {
                     return null;
                 }
 
                 $media = $this->manager->getMedia($mediaId);
 
-                if (null === $media) {
-                    throw new TransformationFailedException(sprintf(
-                        'An media with id "%s" does not exist!',
-                        $mediaId
-                    ));
+                if ($media === null) {
+                    throw new TransformationFailedException(sprintf('An media with id "%s" does not exist!', $mediaId));
                 }
 
                 return $mediaId;
@@ -96,29 +95,29 @@ class EasyMediaType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['restrict'] = [
-            "path" => $options['restrictions_path'],
-            "uploadTypes" => $options['restrictions_uploadTypes'],
-            "uploadSize" => $options['restrictions_uploadSize'],
+            'path' => $options['restrictions_path'],
+            'uploadTypes' => $options['restrictions_uploadTypes'],
+            'uploadSize' => $options['restrictions_uploadSize'],
         ];
 
         $view->vars['hideExt'] = $options['hideExt'];
         $view->vars['hidePath'] = $options['hidePath'];
         $view->vars['editor'] = $options['editor'];
         $view->vars['upload'] = $options['upload'];
-        $view->vars["move"] = $options["move"];
-        $view->vars["rename"] = $options["rename"];
-        $view->vars["metas"] = $options["metas"];
-        $view->vars["delete"] = $options["delete"];
-        $view->vars["bulk_selection"] = $options["bulk_selection"];
+        $view->vars['move'] = $options['move'];
+        $view->vars['rename'] = $options['rename'];
+        $view->vars['metas'] = $options['metas'];
+        $view->vars['delete'] = $options['delete'];
+        $view->vars['bulk_selection'] = $options['bulk_selection'];
     }
 
-    public function getParent(): string
+    public function getParent(): ?string
     {
         return TextType::class;
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
-        return "easy_media";
+        return 'easy_media';
     }
 }

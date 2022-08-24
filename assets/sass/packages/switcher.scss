@@ -63,8 +63,8 @@
             --tw-shadow: 0 0 1px 3px rgba(theme('colors.black'), 0.4);
             @apply bg-white rounded-full left-0 top-0 absolute transition-all duration-200 transform-gpu translate-x-0 shadow;
             content: '';
-            height: 21px;
-            width: 21px;
+            height: 25px;
+            width: 25px;
         }
 
         &:hover {
@@ -81,7 +81,7 @@
 
     &.is-danger {
         .switcher {
-            @apply bg-red-500 border-2 border-red-500;
+            @apply bg-danger border-2 border-danger;
         }
     }
 }

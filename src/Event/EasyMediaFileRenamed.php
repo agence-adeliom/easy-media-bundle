@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Adeliom\EasyMediaBundle\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
@@ -7,7 +9,6 @@ use Symfony\Contracts\EventDispatcher\Event;
 class EasyMediaFileRenamed extends Event
 {
     public const NAME = 'em.file.renamed';
-
     public $oldPath;
     public $newPath;
 
