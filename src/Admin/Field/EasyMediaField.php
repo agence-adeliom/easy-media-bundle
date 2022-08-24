@@ -1,20 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Adeliom\EasyMediaBundle\Admin\Field;
 
 use Adeliom\EasyMediaBundle\Form\EasyMediaType;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class EasyMediaField implements FieldInterface
 {
     use FieldTrait;
 
-    /**
-     * @param string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, string|false|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)
@@ -32,7 +30,7 @@ class EasyMediaField implements FieldInterface
             // loads the CSS and JS assets associated to the given Webpack Encore entry
             // in any CRUD page (index/detail/edit/new). It's equivalent to calling
             // encore_entry_link_tags('...') and encore_entry_script_tags('...')
-            //->addWebpackEncoreEntry('admin-field-map')
+            // ->addWebpackEncoreEntry('admin-field-map')
 
             ;
     }

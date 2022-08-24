@@ -17,26 +17,29 @@
         }
     ],
     "require": {
-        "php": "^8.0|^8.1",
+        "php": "^7.4|^8.0",
         "ext-json": "*",
-        "symfony/config": "^4.4 || ^5.2 || ^6.0",
-        "symfony/dependency-injection": "^4.4 || ^5.2 || ^6.0",
-        "symfony/form": "^4.4 || ^5.2 || ^6.0",
-        "symfony/http-kernel": "^4.4 || ^5.2 || ^6.0",
-        "symfony/options-resolver": "^4.4 || ^5.2 || ^6.0",
-        "symfony/filesystem": "^5.3 || ^6.0",
-        "easycorp/easyadmin-bundle": "^3.4 || ^v4.0.0",
-        "agence-adeliom/easy-common-bundle": "^2.0 || dev-develop",
-        "league/flysystem": "^3.0",
+        "symfony/config": "^5.2 || ^6.0",
+        "symfony/dependency-injection": "^5.2 || ^6.0",
+        "symfony/deprecation-contracts": "^2.2 || ^v3.0.0",
+        "symfony/event-dispatcher": "^5.2 || ^6.0",
+        "symfony/form": "^5.2 || ^6.0",
+        "symfony/framework-bundle": "^5.2 || ^6.0",
+        "symfony/http-kernel": "^5.2 || ^6.0",
+        "symfony/options-resolver": "^5.2 || ^6.0",
+        "symfony/property-access": "^5.2 || ^6.0",
+        "symfony/filesystem": "^5.2 || ^6.0",
+        "easycorp/easyadmin-bundle": "^3.4 || ^v4.0",
+        "agence-adeliom/easy-common-bundle": "^1.0",
+        "league/flysystem-bundle": "^2.1",
+        "liip/imagine-bundle": "^2.8",
         "maennchen/zipstream-php": "^2.1.0",
         "illuminate/support": "^8.49",
         "stof/doctrine-extensions-bundle": "^1.5",
         "symfony/psr-http-message-bridge" : "^2.0",
         "nyholm/psr7": "^1.4",
-        "embed/embed": "^4.2"
-    },
-    "suggest": {
-        "liip/imagine-bundle": "^2.6"
+        "embed/embed": "^4.2",
+        "james-heinrich/getid3": "^1.9"
     },
     "autoload": {
         "psr-4": {

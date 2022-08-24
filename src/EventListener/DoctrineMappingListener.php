@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Adeliom\EasyMediaBundle\EventListener;
 
 use Doctrine\Common\EventSubscriber;
@@ -13,13 +15,19 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  */
 class DoctrineMappingListener implements EventSubscriber
 {
-    public function __construct(private string $mediaClass, private string $folderClass)
+    /**
+     * @readonly
+     */
+    private string $mediaClass;
+    /**
+     * @readonly
+     */
+    private string $folderClass;
+
+    public function __construct(string $mediaClass, string $folderClass)
     {
     }
 
-    /**
-     * @return string[]
-     */
     public function getSubscribedEvents(): array
     {
         return [Events::loadClassMetadata];
@@ -29,8 +37,8 @@ class DoctrineMappingListener implements EventSubscriber
     {
         $classMetadata = $eventArgs->getClassMetadata();
 
-        $isFolder     = is_a($classMetadata->getName(), $this->folderClass, true);
-        $isMedia     = is_a($classMetadata->getName(), $this->mediaClass, true);
+        $isFolder = is_a($classMetadata->getName(), $this->folderClass, true);
+        $isMedia = is_a($classMetadata->getName(), $this->mediaClass, true);
         if ($isFolder) {
             $this->processParent($classMetadata, $this->folderClass);
             $this->processChildren($classMetadata, $this->folderClass);
@@ -40,7 +48,6 @@ class DoctrineMappingListener implements EventSubscriber
         if ($isMedia) {
             $this->processFolder($classMetadata, $this->folderClass);
         }
-
     }
 
     /**
@@ -48,59 +55,59 @@ class DoctrineMappingListener implements EventSubscriber
      */
     private function processParent(ClassMetadata $classMetadata, string $class): void
     {
-        if (!$classMetadata->hasAssociation('parent')) {
+        if (! $classMetadata->hasAssociation('parent')) {
             $classMetadata->mapManyToOne([
                 'fieldName' => 'parent',
                 'targetEntity' => $class,
                 'inversedBy' => 'children',
-                'cascade' => ["persist","detach"],
-                "joinColumns" => [
+                'cascade' => ['persist', 'detach'],
+                'joinColumns' => [
                     [
-                        "name" => "parent_id",
-                        "referencedColumnName" => "id",
-                        "nullable" => "true",
-                        "onDelete" => "SET NULL",
-                    ]
-                ]
+                        'name' => 'parent_id',
+                        'referencedColumnName' => 'id',
+                        'nullable' => 'true',
+                        'onDelete' => 'SET NULL',
+                    ],
+                ],
             ]);
         }
     }
 
     /**
-     * Declare self-bidirectionnal mapping for children
+     * Declare self-bidirectionnal mapping for children.
      */
     private function processChildren(ClassMetadata $classMetadata, string $class): void
     {
-        if (!$classMetadata->hasAssociation('children')) {
+        if (! $classMetadata->hasAssociation('children')) {
             $classMetadata->mapOneToMany([
                 'fieldName' => 'children',
                 'targetEntity' => $class,
                 'mappedBy' => 'parent',
-                'cascade' => ["persist", "remove"]
+                'cascade' => ['persist', 'remove'],
             ]);
         }
     }
 
     private function processMedias(ClassMetadata $classMetadata, string $class): void
     {
-        if (!$classMetadata->hasAssociation('medias')) {
+        if (! $classMetadata->hasAssociation('medias')) {
             $classMetadata->mapOneToMany([
                 'fieldName' => 'medias',
                 'targetEntity' => $class,
                 'mappedBy' => 'folder',
-                'cascade' => ["persist", "remove"]
+                'cascade' => ['persist', 'remove'],
             ]);
         }
     }
 
     private function processFolder(ClassMetadata $classMetadata, string $class): void
     {
-        if (!$classMetadata->hasAssociation('folder')) {
+        if (! $classMetadata->hasAssociation('folder')) {
             $classMetadata->mapManyToOne([
                 'fieldName' => 'folder',
                 'targetEntity' => $class,
                 'inversedBy' => 'medias',
-                'cascade' => ["persist"]
+                'cascade' => ['persist'],
             ]);
         }
     }

@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Adeliom\EasyMediaBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -10,32 +13,34 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 #[ORM\MappedSuperclass]
 class Folder
 {
-    /**
-     * The unique auto incremented primary key.
-     */
     #[ORM\Id]
-    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     #[ORM\GeneratedValue]
-    protected int $id;
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
+    protected ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    protected string $name;
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
+    protected ?string $name = null;
 
-    #[Gedmo\Slug(fields:["name"], updatable:false)]
+    /**
+     * @Gedmo\Slug(fields={"name"}, updatable=false)
+     */
     #[ORM\Column(length: 100)]
-    protected ?string $slug;
+    protected ?string $slug = null;
 
-    protected ?Folder $parent;
-    /**
-     * @var ArrayCollection<Folder>
-     */
-    protected ArrayCollection $children;
-    /**
-     * @var ArrayCollection<Media>
-     */
-    protected ArrayCollection $medias;
+    protected ?Folder $parent = null;
 
-    public function __construct() {
+    /**
+     * @var Collection<Folder>
+     */
+    protected Collection $children;
+
+    /**
+     * @var Collection<Media>
+     */
+    protected Collection $medias;
+
+    public function __construct()
+    {
         $this->children = new ArrayCollection();
         $this->medias = new ArrayCollection();
     }
@@ -45,60 +50,71 @@ class Folder
         return $this->id;
     }
 
-    public function getName(): ?string {
+    public function getName()
+    {
         return $this->name;
     }
 
-    public function setName(string $name): void {
+    public function setName(string $name): void
+    {
         $this->name = $name;
 
-        if(!$this->slug){
+        if (! $this->slug) {
             $this->slug = (new AsciiSlugger())->slug(strtolower($this->name))->toString();
         }
     }
 
-    public function getSlug(): ?string {
+    public function getSlug()
+    {
         return $this->slug;
     }
 
-    public function setSlug(string $slug): void {
+    public function setSlug(string $slug): void: void
+    {
         $this->slug = $slug;
     }
 
-    public function getParent(): ?Folder {
+    public function getParent()
+    {
         return $this->parent;
     }
 
-    public function getChildren() {
+    public function getChildren()
+    {
         return $this->children;
     }
 
-    public function addChild(Folder $child): void {
+    public function addChild(Folder $child): void
+    {
         $this->children[] = $child;
         $child->setParent($this);
     }
 
-    public function getMedias() {
+    public function getMedias()
+    {
         return $this->medias;
     }
 
-    public function addMedia(Media $media): void {
+    public function addMedia(Media $media): void
+    {
         $this->medias[] = $media;
         $media->setFolder($this);
     }
 
-    public function setParent(?Folder $parent = null): void {
+    public function setParent(?Folder $parent = null): void
+    {
         $this->parent = $parent;
     }
 
-    public function getPath($separator = "/"): string {
+    public function getPath($separator = '/')
+    {
         $tree = '';
         $current = $this;
         do {
             $tree = $current->getSlug().$separator.$tree;
             $current = $current->getParent();
-        }
-        while ($current);
+        } while ($current);
+
         return trim($tree, $separator);
     }
 }

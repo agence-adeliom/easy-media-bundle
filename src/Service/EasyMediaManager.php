@@ -1,7 +1,9 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Adeliom\EasyMediaBundle\Service;
 
-use Throwable;
 use Adeliom\EasyMediaBundle\Entity\Folder;
 use Adeliom\EasyMediaBundle\Entity\Media;
 use Adeliom\EasyMediaBundle\Exception\AlreadyExist;
@@ -13,6 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Embed\Embed;
 use Illuminate\Support\Str;
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToCopyFile;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
@@ -24,14 +27,24 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EasyMediaManager
 {
+    public mixed $em;
+
+    protected EntityManagerInterface $entityManager;
+
     protected Filesystem $filesystem;
+    protected FilesystemAdapter $adapter;
 
-    protected mixed $rootPath;
+    protected \Adeliom\EasyMediaBundle\Service\EasyMediaHelper $helper;
+    protected \Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface $parameters;
+    protected \Symfony\Contracts\Translation\TranslatorInterface $translator;
 
-    public function __construct(EasyMediaFilesystem $filesystemManager, protected EasyMediaHelper $helper, protected EntityManagerInterface $em, protected ContainerBagInterface $parameters, protected TranslatorInterface $translator)
+    public function __construct(EasyMediaFilesystem $filesystemManager, EasyMediaHelper $helper, EntityManagerInterface $em, ContainerBagInterface $parameters, TranslatorInterface $translator)
     {
-        $this->rootPath = $helper->getRootPath();
-        $this->filesystem = $filesystemManager->getFilesystem();
+        $this->helper = $helper;
+        $this->parameters = $parameters;
+        $this->translator = $translator;
+        $this->em = $em;
+        $this->filesystem = $filesystemManager;
     }
 
     public function getFilesystem(): Filesystem
@@ -44,34 +57,36 @@ class EasyMediaManager
         return $this->helper;
     }
 
-    public function getFolder($id): ?Folder
+    public function getFolder($id): mixed
     {
         return $this->getHelper()->getFolderRepository()->find($id);
     }
 
     public function folderByPath(?string $path): mixed
     {
-        $dir = str_replace("//", "/", $this->rootPath . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR);
-        if(is_dir($dir)){
-            $slugs = array_values(array_filter(explode('/', $path)));
+        if (is_null($path) || $this->filesystem->directoryExists($path)) {
+            $slugs = array_values(array_filter(explode('/', (string) $path)));
             $parent = null;
-            foreach ($slugs as $i => $slug){
-                if($folder = $this->getHelper()->getFolderRepository()->findOneBy([
+            foreach ($slugs as $i => $slug) {
+                if ($folder = $this->getHelper()->getFolderRepository()->findOneBy([
                     'parent' => $parent,
                     'slug' => $slug,
-                ])){
+                ])) {
                     $parent = $folder;
                 }
-                if($i == count($slugs) -1){
+
+                if ($i === count($slugs) - 1) {
                     return $folder ?: false;
                 }
             }
+
             return $parent;
         }
+
         return false;
     }
 
-    public function getMedia(mixed $id): ?Media
+    public function getMedia($id): mixed
     {
         return $this->getHelper()->getMediaRepository()->find($id);
     }
@@ -79,293 +94,60 @@ class EasyMediaManager
     /**
      * @throws FilesystemException|FolderNotExist
      */
-    public function createFolder(?string $name, ?string $path = null) : Folder
+    public function createFolder(?string $name, $path = null): Folder
     {
         $class = $this->getHelper()->getFolderClassName();
         /** @var Folder $entity */
         $entity = new $class();
 
-        if($name) $entity->setName($name);
-
-        $folder = $this->folderByPath($path);
-        if($folder === false) {
-            throw new FolderNotExist("The folder does not exist");
+        if ($name) {
+            $entity->setName($name);
         }
 
-        if (!empty($this->getHelper()->getFolderRepository()->findBy(["parent" => $folder, "name" => $name]))) {
-            throw new AlreadyExist($this->translator->trans('error.already_exists', [] , "EasyMediaBundle"));
+        $folder = $this->folderByPath($path);
+        if ($folder === false) {
+            throw new FolderNotExist('The folder does not exist');
+        }
+
+        if (! empty($this->getHelper()->getFolderRepository()->findBy(['parent' => $folder, 'name' => $name]))) {
+            throw new AlreadyExist($this->translator->trans('error.already_exists', [], 'EasyMediaBundle'));
         }
 
         $entity->setParent($folder);
-        $this->filesystem->createDirectory($entity->getPath());
+        $this->filesystem->createDirectory($entity->getPath(), []);
         $this->save($entity);
+
         return $entity;
     }
 
-    public function createMedia($source, ?string $path = null, $name = null) : Media
+    public function createMedia($source, $path = null, $name = null): Media
     {
         $class = $this->getHelper()->getMediaClassName();
         /** @var Media $entity */
         $entity = new $class();
 
-        if($name) {
+        if ($name) {
             $entity->setName($this->helper->cleanName($name));
-        };
-        $folder = $this->folderByPath($path);
-        if($folder === false) {
-            throw new FolderNotExist("The folder does not exist");
         }
+        $folder = $this->folderByPath($path);
+        if ($folder === false) {
+            throw new FolderNotExist('The folder does not exist');
+        }
+
         $entity->setFolder($folder);
 
-        if (substr($source, 0, 5) == 'data:') {
+        if (substr((string) $source, 0, 5) === 'data:') {
             $entity = $this->createFromBase64($entity, $source);
-        }else if (filter_var($source, FILTER_VALIDATE_URL) !== FALSE) {
-            if($imageType = @exif_imagetype($source)){
+        } elseif (filter_var($source, FILTER_VALIDATE_URL) !== false) {
+            if ($imageType = @exif_imagetype($source)) {
                 $entity = $this->createFromImageURL($entity, $source, $imageType);
-            }else{
+            } else {
                 $entity = $this->createFromOembed($entity, $source);
             }
-        }else{
+        } else {
             $entity = $this->createFromFile($entity, $source);
         }
-
         $this->save($entity);
-
-        return $entity;
-    }
-
-    private function createFromOembed(Media $entity, string $source): Media{
-
-        $embed = new Embed();
-        $infos = $embed->get($source);
-
-        if($infos->getOEmbed() && !empty($infos->getOEmbed()->all())){
-            $oembed = $infos->getOEmbed();
-            $name = $entity->getName() ?: $oembed->get('title');
-
-            $entity->setName($name);
-            $entity->setMime("application/json+oembed");
-            $entity->setMetas([
-                "provider" => [
-                    "name" => $infos->providerName,
-                    "url" => (string) $infos->providerUrl
-                ],
-                "author" => [
-                    "name" => $infos->authorName,
-                    "url" => (string) $infos->authorUrl
-                ],
-                "url" => (string) $infos->url,
-                "image" => (string) $infos->image,
-                "icon" => (string) ($infos->icon ?: $infos->favicon),
-                "type" => $oembed->get('type'),
-                'code' => [
-                    'html' => $infos->code ? $infos->code->html : null,
-                    'width' => $infos->code ? $infos->code->width : null,
-                    'height' => $infos->code ? $infos->code->height : null,
-                    'ratio' => $infos->code ? $infos->code->ratio : null
-                ]
-            ]);
-        }else{
-            throw new ProviderNotFound(
-                $this->translator->trans('error.provider_not_found', [] , "EasyMediaBundle")
-            );
-        }
-
-        return $entity;
-    }
-
-    private function createFromBase64(Media $entity, $source): Media{
-
-        if(preg_match('/^data\:([a-zA-Z]+\/[a-zA-Z]+);base64\,([a-zA-Z0-9\+\/]+\=*)$/', $source, $matches)) {
-            $infos = [
-                'mime' => $matches[1],
-                'data' => base64_decode($matches[2]),
-            ];
-        }else{
-            throw new NoFile(
-                $this->translator->trans('error.no_file', [] , "EasyMediaBundle")
-            );
-        }
-        $filename = strtolower((new AsciiSlugger())->slug(strtolower($entity->getName()))->toString() . "." . EasyMediaHelper::mime2ext($infos["mime"]));
-        $entity->setSlug($filename);
-
-        $path = $entity->getFolder() ? $entity->getFolder()->getPath() : null;
-        $destination = $this->helper->clearDblSlash($path . DIRECTORY_SEPARATOR . $filename);
-        if ($this->filesystem->fileExists($destination)) {
-            throw new AlreadyExist(
-                $this->translator->trans('error.already_exists', [] , "EasyMediaBundle")
-            );
-        }
-
-        $this->filesystem->write($destination, $infos["data"]);
-
-        $file = new File($this->helper->clearDblSlash($this->rootPath . DIRECTORY_SEPARATOR . $destination));
-
-        if(@exif_imagetype($file->getPathname())){
-            [$width, $height] = getimagesize($file->getPathname());
-            $entity->setMetas([
-                "dimensions" => [
-                    "width" => $width,
-                    "height" => $height,
-                    "ratio" => ($height / $width) * 100,
-                ]
-            ]);
-        }
-
-        $entity->setSize($file->getSize());
-        $entity->setLastModified($file->getMTime());
-        $entity->setMime($file->getMimeType());
-
-        return $entity;
-    }
-
-    private function createFromImageURL(Media $entity, $source, $type): Media{
-
-        $urlPath = parse_url($source, PHP_URL_PATH);
-        $original  = substr($urlPath, strrpos($urlPath, '/') + 1);
-        $name = $entity->getName() ?: pathinfo($original, PATHINFO_FILENAME);
-
-        $file_type   = image_type_to_mime_type($type);
-        $ext_only  = EasyMediaHelper::mime2ext($file_type);
-
-        $final_name_slug = strtolower((new AsciiSlugger())->slug(strtolower($name))->toString() . ".$ext_only");
-        $entity->setSlug($final_name_slug);
-
-        $ignore = array_merge($this->parameters->get("easy_media.unallowed_mimes"), ['application/octet-stream']);
-
-        // check for mime type
-        if (Str::contains($file_type, $ignore)) {
-            throw new ExtNotAllowed(
-                $this->translator->trans('not_allowed_file_ext', [] , "EasyMediaBundle")
-            );
-        }
-        // check existence
-        if ($this->filesystem->fileExists($entity->getPath())) {
-            throw new AlreadyExist(
-                $this->translator->trans('error.already_exists', [] , "EasyMediaBundle")
-            );
-        }
-
-        try {
-            $data = file_get_contents($source);
-        } catch (Throwable) {
-            throw new NoFile(
-                $this->translator->trans('error.no_file', [] , "EasyMediaBundle")
-            );
-        }
-
-        $this->filesystem->write($entity->getPath(), $data);
-
-        $file = new File($this->helper->clearDblSlash($this->rootPath . DIRECTORY_SEPARATOR . $entity->getPath()));
-
-        if(empty($entity->getName())){
-            $entity->setName($file->getFilename());
-        }
-
-        [$width, $height] = getimagesize($file->getPathname());
-
-        $entity->setMetas([
-            "dimensions" => [
-                "width" => $width,
-                "height" => $height,
-                "ratio" => ($height / $width) * 100,
-            ]
-        ]);
-
-        $entity->setSize($file->getSize());
-        $entity->setLastModified($file->getMTime());
-        $entity->setMime($file->getMimeType());
-
-        return $entity;
-    }
-
-    private function createFromFile(Media $entity, $source): Media{
-
-        if (is_string($source)){
-            $source = new File($source);
-        }
-        if (!($source instanceof File)){
-            throw new NoFile();
-        }
-
-        if($source instanceof UploadedFile){
-            $orig_name  = $source->getClientOriginalName();
-            $name = $entity->getName() ?: pathinfo($orig_name, PATHINFO_FILENAME);
-            $ext_only   = pathinfo($orig_name, PATHINFO_EXTENSION);
-            if($type = $source->getClientMimeType()){
-                $entity->setMime($type);
-                if($ext = EasyMediaHelper::mime2ext($type)){
-                    $ext_only = $ext;
-                }
-            }
-            if(empty($entity->getName())){
-                $entity->setName($source->getClientOriginalName());
-            }
-        }else{
-            $orig_name  = $source->getFilename();
-            $name = $entity->getName() ?: $source->getBasename('.'.$source->getExtension());
-            $ext_only   = pathinfo($orig_name, PATHINFO_EXTENSION);
-            if($type = $source->getMimeType()){
-                $entity->setMime($type);
-                if($ext = EasyMediaHelper::mime2ext($type)){
-                    $ext_only = $ext;
-                }
-            }
-            if(empty($entity->getName())){
-                $entity->setName($source->getFilename());
-            }
-        }
-
-        $final_name_slug = strtolower((new AsciiSlugger())->slug(strtolower($name))->toString() . ".$ext_only");
-
-        $entity->setSlug($final_name_slug);
-        $entity->setSize($source->getSize());
-        $entity->setLastModified($source->getMTime());
-
-        // check for mime type
-        if (Str::contains($entity->getMime(), $this->parameters->get("easy_media.unallowed_mimes"))) {
-            throw new ExtNotAllowed(
-                $this->translator->trans('not_allowed_file_ext', [] , "EasyMediaBundle")
-            );
-        }
-
-        // check for extension
-        if (Str::contains($ext_only, $this->parameters->get("easy_media.unallowed_ext"))) {
-            throw new ExtNotAllowed(
-                $this->translator->trans('not_allowed_file_ext', [] , "EasyMediaBundle")
-            );
-        }
-
-        // check existence
-        if ($this->filesystem->fileExists($this->helper->clearDblSlash($entity->getPath()))) {
-            throw new AlreadyExist(
-                $this->translator->trans('error.already_exists', [] , "EasyMediaBundle")
-            );
-        }
-
-        if(@exif_imagetype($source->getPathname())){
-            [$width, $height] = getimagesize($source->getPathname());
-            $entity->setMetas([
-                "dimensions" => [
-                    "width" => $width,
-                    "height" => $height,
-                    "ratio" => ($height / $width) * 100,
-                ]
-            ]);
-        }
-
-        try {
-            $destination = $this->helper->clearDblSlash($this->rootPath . DIRECTORY_SEPARATOR . dirname($entity->getPath()));
-            if($source instanceof UploadedFile){
-                $source->move($destination, $entity->getSlug());
-            }elseif($source instanceof File){
-                if(!copy($source->getPathname(), $this->helper->clearDblSlash($destination . DIRECTORY_SEPARATOR . $entity->getSlug()))){
-                    throw new UnableToCopyFile();
-                }
-            }
-        }catch (FileException | UnableToCopyFile $exception){
-            dump($exception);
-        }
 
         return $entity;
     }
@@ -382,7 +164,7 @@ class EasyMediaManager
             $this->filesystem->delete($item->getPath());
         }
 
-        if ($flush){
+        if ($flush) {
             $this->em->flush();
         }
     }
@@ -390,7 +172,7 @@ class EasyMediaManager
     public function save($item, $flush = true): void
     {
         $this->em->persist($item);
-        if ($flush){
+        if ($flush) {
             $this->em->flush();
         }
     }
@@ -400,8 +182,259 @@ class EasyMediaManager
      */
     public function move($oldPath, $newPath): void
     {
-        if( $this->filesystem->fileExists($this->helper->clearDblSlash($oldPath))){
+        if ($this->filesystem->fileExists($this->helper->clearDblSlash($oldPath))) {
             $this->filesystem->move($this->helper->clearDblSlash($oldPath), $this->helper->clearDblSlash($newPath));
         }
+    }
+
+    private function createFromOembed(Media $entity, $source)
+    {
+        $embed = new Embed();
+        $infos = $embed->get($source);
+
+        if (($oembed = $infos->getOEmbed()) && ! empty($infos->getOEmbed()->all())) {
+            $name = $entity->getName() ?: $oembed->get('title');
+            $entity->setName($name);
+            $entity->setMime('application/json+oembed');
+            $entity->setMetas([
+                'provider' => [
+                    'name' => $infos->providerName,
+                    'url' => (string) $infos->providerUrl,
+                ],
+                'author' => [
+                    'name' => $infos->authorName,
+                    'url' => (string) $infos->authorUrl,
+                ],
+                'title' => (string) $infos->title,
+                'url' => (string) $infos->url,
+                'image' => (string) $infos->image,
+                'icon' => (string) ($infos->icon ?: $infos->favicon),
+                'type' => $oembed->get('type'),
+                'code' => [
+                    'html' => $infos->code !== null ? $infos->code->html : null,
+                    'width' => $infos->code !== null ? $infos->code->width : null,
+                    'height' => $infos->code !== null ? $infos->code->height : null,
+                    'ratio' => $infos->code !== null ? $infos->code->ratio : null,
+                ],
+            ]);
+        } else {
+            throw new ProviderNotFound($this->translator->trans('error.provider_not_found', [], 'EasyMediaBundle'));
+        }
+
+        return $entity;
+    }
+
+    private function createFromBase64(Media $entity, $source)
+    {
+        if (preg_match('#^data\:([a-zA-Z]+\/[a-zA-Z]+);base64\,([a-zA-Z0-9\+\/]+\=*)$#', (string) $source, $matches)) {
+            $infos = [
+                'mime' => $matches[1],
+                'data' => base64_decode($matches[2]),
+            ];
+        } else {
+            throw new NoFile($this->translator->trans('error.no_file', [], 'EasyMediaBundle'));
+        }
+
+        $entity->setName($this->helper->cleanName(""));
+        $filename = strtolower((new AsciiSlugger())->slug(strtolower((string) $entity->getName()))->toString().'.'.EasyMediaHelper::mime2ext($infos['mime']));
+        $entity->setSlug($filename);
+
+        if ($this->filesystem->fileExists($entity->getPath())) {
+            throw new AlreadyExist($this->translator->trans('error.already_exists', [], 'EasyMediaBundle'));
+        }
+
+        $this->filesystem->write($entity->getPath(), $infos['data']);
+
+        $entity->setSize($this->filesystem->fileSize($entity->getPath()));
+        $entity->setLastModified($this->filesystem->lastModified($entity->getPath()));
+        $entity->setMime($this->filesystem->mimeType($entity->getPath()));
+
+
+        if (str_contains($entity->getMime(), "image/")) {
+            $tmp = tmpfile();
+            if (false !== $tmp) {
+                fwrite($tmp, $this->filesystem->read($entity->getPath()));
+            }
+            $path = stream_get_meta_data($tmp)['uri'];
+            [$width, $height] = getimagesize($path);
+            $entity->setMetas([
+                'dimensions' => [
+                    'width' => $width,
+                    'height' => $height,
+                    'ratio' => $height / $width * 100,
+                ],
+            ]);
+        }
+
+
+        return $entity;
+    }
+
+    private function createFromImageURL(Media $entity, $source, $type)
+    {
+        $urlPath = parse_url($source, PHP_URL_PATH);
+        $original = substr((string) $urlPath, strrpos($urlPath, '/') + 1);
+        $name = $entity->getName() ?: pathinfo($original, PATHINFO_FILENAME);
+
+        $file_type = image_type_to_mime_type($type);
+        $ext_only = EasyMediaHelper::mime2ext($file_type) ?? pathinfo($original, PATHINFO_EXTENSION);
+
+        $final_name_slug = strtolower((new AsciiSlugger())->slug(strtolower((string) $name))->toString().sprintf('.%s', $ext_only));
+        $entity->setSlug($final_name_slug);
+
+        if (empty($entity->getName())) {
+            $entity->setName($name);
+        }
+
+        $ignore = array_merge($this->parameters->get('easy_media.unallowed_mimes'), ['application/octet-stream']);
+
+        // check for mime type
+        if (Str::contains($file_type, $ignore)) {
+            throw new ExtNotAllowed($this->translator->trans('not_allowed_file_ext', [], 'EasyMediaBundle'));
+        }
+
+        // check existence
+        if ($this->filesystem->fileExists($entity->getPath())) {
+            throw new AlreadyExist($this->translator->trans('error.already_exists', [], 'EasyMediaBundle'));
+        }
+
+        try {
+            $stream = file_get_contents($source);
+            $this->filesystem->write($entity->getPath(), $stream);
+
+            [$width, $height] = getimagesize($source);
+            $entity->setMetas([
+                'dimensions' => [
+                    'width' => $width,
+                    'height' => $height,
+                    'ratio' => $height / $width * 100,
+                ],
+            ]);
+
+            $entity->setSize($this->filesystem->fileSize($entity->getPath()));
+            $entity->setLastModified($this->filesystem->lastModified($entity->getPath()));
+            $entity->setMime($this->filesystem->mimeType($entity->getPath()));
+        } catch (\Throwable $exception) {
+            throw new NoFile($this->translator->trans('error.no_file', [], 'EasyMediaBundle'));
+        }
+
+        return $entity;
+    }
+
+    private function createFromFile(Media $entity, $source)
+    {
+        if (is_string($source)) {
+            $source = new File($source);
+        }
+
+        if (!($source instanceof File)) {
+            throw new NoFile();
+        }
+
+        if ($source instanceof UploadedFile) {
+            $orig_name = $source->getClientOriginalName();
+            $name = $entity->getName() ?: pathinfo($orig_name, PATHINFO_FILENAME);
+            $ext_only = pathinfo($orig_name, PATHINFO_EXTENSION);
+            if (($type = $source->getClientMimeType()) !== '' && ($type = $source->getClientMimeType()) !== '0') {
+                $entity->setMime($type);
+                if ($ext = EasyMediaHelper::mime2ext($type)) {
+                    $ext_only = $ext;
+                }
+            }
+
+            if (empty($entity->getName())) {
+                $entity->setName($source->getClientOriginalName());
+            }
+        } else {
+            $orig_name = $source->getFilename();
+            $name = $entity->getName() ?: $source->getBasename('.'.$source->getExtension());
+            $ext_only = pathinfo($orig_name, PATHINFO_EXTENSION);
+            if ($type = $source->getMimeType()) {
+                $entity->setMime($type);
+                if ($ext = EasyMediaHelper::mime2ext($type)) {
+                    $ext_only = $ext;
+                }
+            }
+
+            if (empty($entity->getName())) {
+                $entity->setName($source->getFilename());
+            }
+        }
+
+        $final_name_slug = strtolower((new AsciiSlugger())->slug(strtolower((string) $name))->toString().sprintf('.%s', $ext_only));
+        $entity->setSlug($final_name_slug);
+        $entity->setSize($source->getSize());
+        $entity->setLastModified($source->getMTime());
+
+        // check for mime type
+        if (Str::contains($entity->getMime(), $this->parameters->get('easy_media.unallowed_mimes'))) {
+            throw new ExtNotAllowed($this->translator->trans('not_allowed_file_ext', [], 'EasyMediaBundle'));
+        }
+
+        // check for extension
+        if (Str::contains($ext_only, $this->parameters->get('easy_media.unallowed_ext'))) {
+            throw new ExtNotAllowed($this->translator->trans('not_allowed_file_ext', [], 'EasyMediaBundle'));
+        }
+
+        // check existence
+        if ($this->filesystem->fileExists($this->helper->clearDblSlash($entity->getPath()))) {
+            throw new AlreadyExist($this->translator->trans('error.already_exists', [], 'EasyMediaBundle'));
+        }
+
+        if (@exif_imagetype($source->getPathname())) {
+            [$width, $height] = getimagesize($source->getPathname());
+            $entity->setMetas([
+                'dimensions' => [
+                    'width' => $width,
+                    'height' => $height,
+                    'ratio' => $height / $width * 100,
+                ],
+            ]);
+        }
+
+        try {
+            if($this->helper->fileIsType($entity->getMime(), 'video') || $this->helper->fileIsType($entity->getMime(), 'audio')){
+                $getID3 = new \getID3();
+                $id3Datas = $getID3->analyze($source->getPathname());
+
+                if (isset($id3Datas["video"]) && $this->helper->fileIsType($entity->getMime(), 'video')) {
+                    $datas = [
+                        'duration' => $id3Datas["playtime_seconds"],
+                        'frame_rate' => $id3Datas["video"]["frame_rate"],
+                        'dimensions' => [
+                            'width' => $id3Datas["video"]["resolution_x"],
+                            'height' => $id3Datas["video"]["resolution_y"],
+                            'ratio' => $id3Datas["video"]["resolution_y"] / $id3Datas["video"]["resolution_x"] * 100,
+                        ],
+                    ];
+                }
+
+                if (isset($id3Datas["audio"]) && $this->helper->fileIsType($entity->getMime(), 'audio')) {
+                    $datas = [
+                        'duration' => $id3Datas["playtime_seconds"],
+                        'tags' => [],
+                    ];
+                    if(!empty($id3Datas["id3v1"]["title"])){$datas["tags"]["title"] = $id3Datas["id3v1"]["title"];}
+                    if(!empty($id3Datas["id3v1"]["artist"])){$datas["tags"]["artist"] = $id3Datas["id3v1"]["artist"];}
+                    if(!empty($id3Datas["id3v1"]["album"])){$datas["tags"]["album"] = $id3Datas["id3v1"]["album"];}
+                    if(!empty($id3Datas["id3v1"]["year"])){$datas["tags"]["year"] = $id3Datas["id3v1"]["year"];}
+                }
+
+                $entity->setMetas($datas);
+            }
+
+        }catch (\Exception $ex){
+        }
+
+
+        try {
+            $stream = fopen($source->getRealPath(), 'r+');
+            $this->filesystem->writeStream($entity->getPath(), $stream);
+            fclose($stream);
+        } catch (FileException|UnableToCopyFile $exception) {
+            dump($exception);
+        }
+
+        return $entity;
     }
 }

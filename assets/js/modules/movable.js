@@ -18,13 +18,13 @@ export default {
         },
         // helpers
         addToMovableList(item = null) {
+            if(!item && this.selectedFile){
+                item = this.selectedFile;
+            }
             let list = [].concat(
                 this.movableList,
-                item
-                    ? [item]
-                    : this.delOrMoveList()
+                item ? [item] : (this.bulkList ?? [])
             )
-
             this.movableList = uniq(list)
 
             if (this.isBulkSelecting()) {
@@ -42,7 +42,7 @@ export default {
         inMovableList(item = this.selectedFile) {
             return item &&
                 this.movableItemsCount &&
-                this.movableList.some((e) => e.storage_path == item.storage_path)
+                this.movableList.some((e) => e.storage_path == item?.storage_path)
         },
 
         // form

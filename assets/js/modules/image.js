@@ -32,8 +32,8 @@ export default {
     computed: {
         selectedFileDimensions() {
             let f = this.dimensions.find((e) => e.url == this.selectedFile.path)
-
-            return f ? f.val : '...'
+            const dimension = this.selectedFile?.metas?.dimensions;
+            return f ? f.val : (dimension) ? `${dimension.width} x ${dimension.height}` : '...'
         }
     }
 }

@@ -1,6 +1,7 @@
 // default
 .__stack-breadcrumb {
-  @apply py-3 px-6 bg-theme z-1 border-b border-t border-theme-5 shadow-lg;
+  @apply py-3 px-6 bg-theme z-1 shadow-lg;
+  @apply border-solid border-0 border-b border-theme-5;
   @apply m-0;
 
   .level-left, .level-right{
@@ -12,7 +13,7 @@
     @apply p-0;
 
     & > ul {
-      @apply flex items-center;
+      @apply flex items-center p-0 m-0;
     }
 
     li {

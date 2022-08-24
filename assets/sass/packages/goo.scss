@@ -14,7 +14,7 @@
         @apply rounded-full text-white cursor-pointer transition-all bg-indigo-600;
         @apply absolute right-0 top-0 -z-1 h-full w-full opacity-0;
         .btn-plain {
-            @apply text-white h-full w-full;
+            @apply text-white h-full w-full border-0;
             .icon.is-large {
                 @apply h-12 w-12;
             }

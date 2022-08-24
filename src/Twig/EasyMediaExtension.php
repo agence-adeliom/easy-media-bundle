@@ -1,121 +1,48 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Adeliom\EasyMediaBundle\Twig;
 
 use Adeliom\EasyMediaBundle\Service\EasyMediaHelper;
 use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
+use Liip\ImagineBundle\Controller\ImagineController;
+use Liip\ImagineBundle\Imagine\Data\DataManager;
+use Liip\ImagineBundle\Imagine\Filter\FilterManager;
+use Liip\ImagineBundle\Service\FilterService;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class EasyMediaExtension extends AbstractExtension
 {
-    public function __construct(protected EasyMediaManager $manager)
+    protected EasyMediaManager $manager;
+    protected FilterManager $filterManager;
+
+    public function __construct(EasyMediaManager $manager, FilterManager $filterManager)
     {
+        $this->manager = $manager;
+        $this->filterManager = $filterManager;
     }
 
-    /**
-     * @return TwigFilter[]
-     */
-    public function getFilters(): array
+    public function getFilters()
     {
         return [
-            new TwigFilter('resolve_media', [$this, 'resolveMedia']),
-            new TwigFilter('media_infos', [$this, 'mediaInfos']),
-            new TwigFilter('media_meta', [$this, 'mediaMeta']),
+            new TwigFilter('resolve_media', [EasyMediaRuntime::class, 'resolveMedia']),
+            new TwigFilter('media_infos', [EasyMediaRuntime::class, 'mediaInfos']),
+            new TwigFilter('media_meta', [EasyMediaRuntime::class, 'mediaMeta']),
         ];
     }
 
-    /**
-     * @return TwigFunction[]
-     */
-    public function getFunctions(): array
+    public function getFunctions()
     {
         return [
-            new TwigFunction('mime_icon', [$this, 'getMimeIcon']),
-            new TwigFunction('file_is_type', [$this, 'fileIsType']),
+            new TwigFunction('mime_icon', [EasyMediaRuntime::class, 'getMimeIcon']),
+            new TwigFunction('file_is_type', [EasyMediaRuntime::class, 'fileIsType']),
+            new TwigFunction('easy_media', [EasyMediaRuntime::class, 'media'], ['is_safe' => ['html']]),
+            new TwigFunction('easy_media_path', [EasyMediaRuntime::class, 'path']),
         ];
     }
-
-    private function getMedia($file){
-        $class = $this->manager->getHelper()->getMediaClassName();
-        if(!($file instanceof $class)){
-            $file = $this->manager->getMedia($file);
-        }
-
-        if(null === $file){
-            return null;
-        }
-
-        return $file;
-    }
-
-    public function resolveMedia($file)
-    {
-        $file = $this->getMedia($file);
-        if(null === $file){
-            return null;
-        }
-        return $this->buildPath($file);
-    }
-
-    private function buildPath($media): array|string{
-        return $this->manager->getHelper()->resolveUrl($media->getPath());
-    }
-
-    public function mediaMeta($file, ?string $key = null){
-
-        $file = $this->getMedia($file);
-        if(null === $file){
-            return null;
-        }
-        $metas = $file->getMetas();
-        if($key){
-            return $metas[$key] ?? null;
-        }
-        return $metas;
-    }
-
-    public function mediaInfos($file): ?array
-    {
-        $file = $this->getMedia($file);
-        if(null === $file){
-            return null;
-        }
-
-        $path = $file->getPath();
-        $time = $file->getLastModified() ?? null;
-        $metas = $file->getMetas();
-
-        return [
-            'id'                     => $file->getId(),
-            'name'                   => $file->getName(),
-            'type'                   => $file->getMime(),
-            'size'                   => $file->getSize(),
-            'path'                   => $this->buildPath($file),
-            'storage_path'           => $path,
-            'last_modified'          => $time,
-            'last_modified_formated' => $time ? $this->manager->getHelper()->getItemTime($time) : null,
-            'metas' => $metas
-        ];
-
-    }
-
-    public function fileIsType($file, $compare): ?bool
-    {
-
-        $file = $this->getMedia($file);
-        if(null === $file){
-            return null;
-        }
-
-        $type = $file->getMime();
-        return $this->manager->getHelper()->fileIsType($type, $compare);
-    }
-
-    public function getMimeIcon($mime_type): string
-    {
-        return EasyMediaHelper::mime2icon($mime_type);
-    }
+=======
+>>>>>>> main
 }

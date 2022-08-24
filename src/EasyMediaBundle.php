@@ -1,17 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Adeliom\EasyMediaBundle;
 
 use Adeliom\EasyMediaBundle\DependencyInjection\EasyMediaExtension;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class EasyMediaBundle extends Bundle
 {
-    public function getContainerExtension(): ?EasyMediaExtension
+    /**
+     * @return ExtensionInterface|null The container extension
+     */
+    public function getContainerExtension(): ?ExtensionInterface
     {
-        if (null === $this->extension) {
+        if ($this->extension === null) {
             $this->extension = new EasyMediaExtension();
         }
+
         return $this->extension;
     }
 }
