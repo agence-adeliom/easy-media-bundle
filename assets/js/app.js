@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import notie from 'notie'
+
 window.Vue = Vue;
 require('./manager')
 Vue.component('EasyMediaModal', require('./components/easy-media-modal').default)

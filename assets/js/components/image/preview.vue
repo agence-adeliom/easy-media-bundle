@@ -84,8 +84,6 @@
 </template>
 
 <script>
-import debounce        from 'lodash/debounce'
-import animateScrollTo from '../../packages/animated-scroll-to'
 
 export default {
     props: [

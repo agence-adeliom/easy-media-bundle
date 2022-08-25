@@ -6,7 +6,6 @@ namespace Adeliom\EasyMediaBundle\Controller\Module;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use League\Flysystem\FileAttributes;
-use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 trait GlobalSearch
@@ -14,9 +13,7 @@ trait GlobalSearch
     public function globalSearch()
     {
         $results = (new ArrayCollection($this->getFolderContent('/', true)))
-            ->filter(function ($item) {
-                return ! preg_grep($this->ignoreFiles, [$item->path()]) && ! $item->isDir();
-            })->map(function ($file) {
+            ->filter(fn($item) => ! preg_grep($this->ignoreFiles, [$item->path()]) && ! $item->isDir())->map(function ($file) {
                 /** @var FileAttributes $file */
                 $path = $file->path();
                 $time = $file->lastModified();

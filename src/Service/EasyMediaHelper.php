@@ -7,22 +7,13 @@ namespace Adeliom\EasyMediaBundle\Service;
 use Adeliom\EasyMediaBundle\Entity\Media;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
-use Symfony\Component\Mime\FileinfoMimeTypeGuesser;
-use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 class EasyMediaHelper
 {
-    protected \Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface $parameters;
-    protected \Doctrine\ORM\EntityManagerInterface $em;
-    protected RouterInterface $router;
-
-    public function __construct(ContainerBagInterface $parameters, EntityManagerInterface $em, RouterInterface $router)
+    public function __construct(protected ContainerBagInterface $parameters, protected EntityManagerInterface $em, protected RouterInterface $router)
     {
-        $this->parameters = $parameters;
-        $this->em = $em;
-        $this->router = $router;
     }
 
     public function getFolderClassName()
@@ -65,7 +56,7 @@ class EasyMediaHelper
         $pattern = $this->filePattern($this->parameters->get(sprintf('easy_media.%s', $folder ? 'allowed_folderNames_chars' : 'allowed_fileNames_chars')));
         $text = preg_replace($pattern, '', $text);
 
-        return $text ? $text : $this->getRandomString();
+        return $text ?: $this->getRandomString();
     }
 
     public function getItemTime($time): ?string
@@ -88,6 +79,9 @@ class EasyMediaHelper
         ], UrlGeneratorInterface::ABSOLUTE_URL));
     }
 
+    /**
+     * @return mixed[]|string
+     */
     public function clearDblSlash($str): array|string
     {
         $str = preg_replace('#\/+#', '/', $str);
@@ -310,7 +304,7 @@ class EasyMediaHelper
             'application/zip' => 'fa-file-archive-o',
         ];
         foreach ($icon_classes as $text => $icon) {
-            if (strncmp((string) $mime_type, $text, strlen($text)) === 0) {
+            if (str_starts_with((string) $mime_type, $text)) {
                 return $icon;
             }
         }
@@ -322,34 +316,34 @@ class EasyMediaHelper
     {
         $mimes = $this->parameters->get('easy_media.extended_mimes');
         if ($type) {
-            if ((($type && (strpos((string)$type, 'image') !== false)) || in_array($type, isset($mimes['image']) ? $mimes['image'] : [])) && $compare !== 'image') {
+            if ((($type && (str_contains((string)$type, 'image'))) || in_array($type, $mimes['image'] ?? [])) && $compare !== 'image') {
                 return true;
             }
 
-            if (($type && strpos((string) $type, 'video') !== false) || in_array($type, isset($mimes['video']) ? $mimes['video'] : [])) {
+            if (($type && str_contains((string) $type, 'video')) || in_array($type, $mimes['video'] ?? [])) {
                 return $compare === 'video';
             }
 
-            if (($type && strpos((string) $type, 'audio') !== false) || in_array($type, isset($mimes['audio']) ? $mimes['audio'] : [])) {
+            if (($type && str_contains((string) $type, 'audio')) || in_array($type, $mimes['audio'] ?? [])) {
                 return $compare === 'audio';
             }
 
             // because "oembed" shows up as "application" type.includes('oembed')
-            if (($type && strpos((string) $type, 'oembed') !== false) && $compare !== 'oembed') {
+            if (($type && str_contains((string) $type, 'oembed')) && $compare !== 'oembed') {
                 return false;
             }
 
             // because "pdf" shows up as "application" type.includes('pdf')
-            if (($type && strpos((string) $type, 'pdf') !== false) && $compare !== 'pdf') {
+            if (($type && str_contains((string) $type, 'pdf')) && $compare !== 'pdf') {
                 return false;
             }
 
             // because "archive" shows up as "application"
-            if (($type && strpos((string) $type, 'compressed') !== false) || in_array($type, $mimes['archive'])) {
+            if (($type && str_contains((string) $type, 'compressed')) || in_array($type, $mimes['archive'])) {
                 return $compare === 'compressed';
             }
 
-            return $type && strpos((string) $type, (string) $compare) !== false;
+            return $type && str_contains((string) $type, (string) $compare);
         }
 
         return false;
@@ -357,6 +351,6 @@ class EasyMediaHelper
 
     protected function filePattern($item)
     {
-        return '/(script.*?\/script)|[^('.$item.')a-zA-Z0-9]+/ius';
+        return '/(script.*?\/script)|[^(' . $item . ')a-zA-Z0-9]+/ius';
     }
 }

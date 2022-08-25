@@ -6,5 +6,8 @@ namespace Adeliom\EasyMediaBundle\Event;
 
 class EasyMediaFileSaved extends EasyMediaFileUploaded
 {
+    /**
+     * @var string
+     */
     public const NAME = 'em.file.saved';
 }

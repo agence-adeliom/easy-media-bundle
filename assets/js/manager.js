@@ -1,7 +1,7 @@
 import Vue from 'vue'
 /*                Libs                */
 import VueClipboard from 'vue-clipboard2'
-import Vue2Filters  from 'vue2-filters'
+import Vue2Filters from 'vue2-filters'
 import VueTippy from 'vue-tippy'
 
 Vue.use(Vue2Filters)

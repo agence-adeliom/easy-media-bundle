@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Adeliom\EasyMediaBundle\Controller;
 
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\Response;
 use Adeliom\EasyMediaBundle\Controller\Module\Delete;
 use Adeliom\EasyMediaBundle\Controller\Module\Download;
 use Adeliom\EasyMediaBundle\Controller\Module\GetContent;
@@ -18,14 +16,14 @@ use Adeliom\EasyMediaBundle\Controller\Module\Upload;
 use Adeliom\EasyMediaBundle\Controller\Module\Utils;
 use Adeliom\EasyMediaBundle\Service\EasyMediaHelper;
 use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use League\Flysystem\Filesystem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;

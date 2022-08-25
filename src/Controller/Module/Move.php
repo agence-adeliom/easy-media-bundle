@@ -44,7 +44,7 @@ trait Move
 
             $new_path = sprintf('/%s', $file_name);
             if ($destination) {
-                $new_path = $destination->getPath().$new_path;
+                $new_path = $destination->getPath() . $new_path;
             }
 
             $defaults['new_path'] = $new_path;
@@ -77,7 +77,7 @@ trait Move
             } catch (\Exception $e) {
                 $result[] = [
                     'success' => false,
-                    'message' => sprintf('"%s" ', $old_path).$e->getMessage(),
+                    'message' => sprintf('"%s" ', $old_path) . $e->getMessage(),
                 ];
             }
         }

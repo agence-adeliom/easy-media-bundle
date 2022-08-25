@@ -138,10 +138,10 @@
 </template>
 
 <script>
-import Cropper   from 'cropperjs'
+import Cropper from 'cropperjs'
 import cloneDeep from 'lodash/cloneDeep'
-import isEmpty   from 'lodash/isEmpty'
-import omit      from 'lodash/omit'
+import isEmpty from 'lodash/isEmpty'
+import omit from 'lodash/omit'
 
 export default {
     components: {

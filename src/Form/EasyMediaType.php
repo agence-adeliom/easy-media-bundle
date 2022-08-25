@@ -16,14 +16,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EasyMediaType extends AbstractType
 {
-    /**
-     * @readonly
-     */
-    private \Adeliom\EasyMediaBundle\Service\EasyMediaManager $manager;
-
-    public function __construct(EasyMediaManager $manager)
-    {
-        $this->manager = $manager;
+    public function __construct(
+        /**
+         * @readonly
+         */
+        private EasyMediaManager $manager
+    ) {
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -70,7 +68,7 @@ class EasyMediaType extends AbstractType
                     $media = $this->manager->getMedia($media);
                 }
 
-                if ($media === null) {
+                if (!$media instanceof \Adeliom\EasyMediaBundle\Entity\Media) {
                     return '';
                 }
 
@@ -83,7 +81,7 @@ class EasyMediaType extends AbstractType
 
                 $media = $this->manager->getMedia($mediaId);
 
-                if ($media === null) {
+                if (!$media instanceof \Adeliom\EasyMediaBundle\Entity\Media) {
                     throw new TransformationFailedException(sprintf('An media with id "%s" does not exist!', $mediaId));
                 }
 

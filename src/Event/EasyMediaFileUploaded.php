@@ -8,9 +8,15 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class EasyMediaFileUploaded extends Event
 {
+    /**
+     * @var string
+     */
     public const NAME = 'em.file.uploaded';
+
     public $filePath;
+
     public $mimeType;
+
     public $options = [];
 
     public function __construct($filePath, $mimeType, $options = [])

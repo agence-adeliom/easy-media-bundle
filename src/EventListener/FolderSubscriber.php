@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Adeliom\EasyMediaBundle\EventListener;
 
-use League\Flysystem\FilesystemException;
 use Adeliom\EasyMediaBundle\Entity\Folder;
 use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
+use League\Flysystem\FilesystemException;
 
 class FolderSubscriber implements EventSubscriberInterface
 {
@@ -41,14 +41,14 @@ class FolderSubscriber implements EventSubscriberInterface
         }
 
         if ($args->hasChangedField('parent')) {
-            $oldPath = ($args->getOldValue('parent') ? $args->getOldValue('parent')->getPath() : '').DIRECTORY_SEPARATOR.$folder->getSlug();
-            $newPath = ($args->getNewValue('parent') ? $args->getNewValue('parent')->getPath() : '').DIRECTORY_SEPARATOR.$folder->getSlug();
+            $oldPath = ($args->getOldValue('parent') ? $args->getOldValue('parent')->getPath() : '') . DIRECTORY_SEPARATOR . $folder->getSlug();
+            $newPath = ($args->getNewValue('parent') ? $args->getNewValue('parent')->getPath() : '') . DIRECTORY_SEPARATOR . $folder->getSlug();
             $this->manager->move($oldPath, $newPath);
         }
 
         if ($args->hasChangedField('slug')) {
-            $oldPath = basename($folder->getPath()).DIRECTORY_SEPARATOR.$args->getOldValue('slug');
-            $newPath = basename($folder->getPath()).DIRECTORY_SEPARATOR.$args->getNewValue('slug');
+            $oldPath = basename($folder->getPath()) . DIRECTORY_SEPARATOR . $args->getOldValue('slug');
+            $newPath = basename($folder->getPath()) . DIRECTORY_SEPARATOR . $args->getNewValue('slug');
             $this->manager->move($oldPath, $newPath);
         }
     }

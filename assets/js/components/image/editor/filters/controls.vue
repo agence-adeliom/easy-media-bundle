@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import debounce  from 'lodash/debounce'
+import debounce from 'lodash/debounce'
 import snakeCase from 'lodash/snakeCase'
 
 export default {

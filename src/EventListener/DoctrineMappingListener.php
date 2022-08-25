@@ -19,6 +19,7 @@ class DoctrineMappingListener implements EventSubscriber
      * @readonly
      */
     private string $mediaClass;
+
     /**
      * @readonly
      */

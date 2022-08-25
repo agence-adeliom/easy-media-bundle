@@ -111,7 +111,7 @@ class Folder
         $tree = '';
         $current = $this;
         do {
-            $tree = $current->getSlug().$separator.$tree;
+            $tree = $current->getSlug() . $separator . $tree;
             $current = $current->getParent();
         } while ($current);
 

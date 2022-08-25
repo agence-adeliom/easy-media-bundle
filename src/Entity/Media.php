@@ -125,7 +125,7 @@ class Media
         $current = $this->getFolder();
         if ($current !== null) {
             do {
-                $tree = $current->getSlug().$separator.$tree;
+                $tree = $current->getSlug() . $separator . $tree;
                 $current = $current->getParent();
             } while ($current);
         }

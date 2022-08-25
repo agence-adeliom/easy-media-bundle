@@ -47,7 +47,7 @@ trait Delete
 
                     $this->eventDispatcher->dispatch(new EasyMediaFileDeleted($item_path, $type === 'folder'), EasyMediaFileDeleted::NAME);
                 }
-            } catch (\Exception $exception) {
+            } catch (\Exception) {
                 $result[] = array_merge($defaults, [
                     'success' => false,
                     'message' => $this->translator->trans('error.deleting_file', [], 'EasyMediaBundle'),

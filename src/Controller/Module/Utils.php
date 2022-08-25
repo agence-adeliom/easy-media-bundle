@@ -12,8 +12,6 @@ trait Utils
      * helper to paginate array.
      *
      * @param [type] $items
-     *
-     * @return array
      */
     public function paginate($items, int $perPage = 10): array
     {
@@ -42,10 +40,10 @@ trait Utils
             'per_page' => $perPage,
             'last_page' => $totalPages,
             'path' => $request->getPathInfo(),
-            'first_page_url' => $request->getPathInfo().(parse_url($request->getPathInfo(), PHP_URL_QUERY) ? '&' : '?').'page=1',
-            'last_page_url' => $request->getPathInfo().(parse_url($request->getPathInfo(), PHP_URL_QUERY) ? '&' : '?').'page='.$totalPages,
-            'next_page_url' => $currentPage + 1 <= $totalPages ? $request->getPathInfo().(parse_url($request->getPathInfo(), PHP_URL_QUERY) ? '&' : '?').'page='.min($currentPage + 1, $totalPages) : null,
-            'prev_page_url' => $currentPage - 1 >= 1 ? $request->getPathInfo().(parse_url($request->getPathInfo(), PHP_URL_QUERY) ? '&' : '?').'page='.max($currentPage - 1, 1) : null,
+            'first_page_url' => $request->getPathInfo() . (parse_url($request->getPathInfo(), PHP_URL_QUERY) ? '&' : '?') . 'page=1',
+            'last_page_url' => $request->getPathInfo() . (parse_url($request->getPathInfo(), PHP_URL_QUERY) ? '&' : '?') . 'page=' . $totalPages,
+            'next_page_url' => $currentPage + 1 <= $totalPages ? $request->getPathInfo() . (parse_url($request->getPathInfo(), PHP_URL_QUERY) ? '&' : '?') . 'page=' . min($currentPage + 1, $totalPages) : null,
+            'prev_page_url' => $currentPage - 1 >= 1 ? $request->getPathInfo() . (parse_url($request->getPathInfo(), PHP_URL_QUERY) ? '&' : '?') . 'page=' . max($currentPage - 1, 1) : null,
         ];
     }
 }

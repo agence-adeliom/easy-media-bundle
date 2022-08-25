@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace Adeliom\EasyMediaBundle\Controller\Module;
 
-use Adeliom\EasyMediaBundle\Entity\Media;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\StorageAttributes;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 use Liip\ImagineBundle\Model\Binary;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\Mime\MimeTypes;
 use ZipStream\Option\Archive;
 use ZipStream\ZipStream;
 
@@ -34,12 +31,8 @@ trait Download
 
         /** @var array<string> $allPaths */
         $allPaths = $this->filesystem->listContents(sprintf('%s/%s', $folders, $name))
-            ->filter(static function (StorageAttributes $attributes) {
-                return $attributes->isFile();
-            })
-            ->map(static function (StorageAttributes $attributes) {
-                return $attributes->path();
-            })
+            ->filter(static fn(StorageAttributes $attributes) => $attributes->isFile())
+            ->map(static fn(StorageAttributes $attributes) => $attributes->path())
             ->toArray();
 
         if ($allPaths !== []) {
@@ -65,7 +58,7 @@ trait Download
         $name = $request->request->get('name');
 
         return $this->zipAndDownload(
-            $name.'-files',
+            $name . '-files',
             $list
         );
     }
@@ -145,7 +138,7 @@ trait Download
             $mimeType = $this->filesystem->mimeType($path);
 
             $stream = $this->filesystem->readStream($path);
-            $response = new StreamedResponse(function () use ($stream) {
+            $response = new StreamedResponse(static function () use ($stream) {
                 fpassthru($stream);
                 exit();
             });
@@ -156,9 +149,8 @@ trait Download
             $response->setMaxAge(60 * 12);
             $response->setSharedMaxAge(60 * 12);
             return $response;
-
-        } catch (FilesystemException $exception) {
-            throw new NotLoadableException(sprintf('Source image "%s" not found.', $path), 0, $exception);
+        } catch (FilesystemException $filesystemException) {
+            throw new NotLoadableException(sprintf('Source image "%s" not found.', $path), 0, $filesystemException);
         }
     }
 }

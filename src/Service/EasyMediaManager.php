@@ -27,24 +27,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EasyMediaManager
 {
-    public mixed $em;
-
     protected EntityManagerInterface $entityManager;
 
-    protected Filesystem $filesystem;
     protected FilesystemAdapter $adapter;
 
-    protected \Adeliom\EasyMediaBundle\Service\EasyMediaHelper $helper;
-    protected \Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface $parameters;
-    protected \Symfony\Contracts\Translation\TranslatorInterface $translator;
 
-    public function __construct(EasyMediaFilesystem $filesystemManager, EasyMediaHelper $helper, EntityManagerInterface $em, ContainerBagInterface $parameters, TranslatorInterface $translator)
+    public function __construct(protected EasyMediaFilesystem $filesystem, protected EasyMediaHelper $helper, public EntityManagerInterface $em, protected ContainerBagInterface $parameters, protected TranslatorInterface $translator)
     {
-        $this->helper = $helper;
-        $this->parameters = $parameters;
-        $this->translator = $translator;
-        $this->em = $em;
-        $this->filesystem = $filesystemManager;
     }
 
     public function getFilesystem(): Filesystem
@@ -57,21 +46,29 @@ class EasyMediaManager
         return $this->helper;
     }
 
-    public function getFolder($id): mixed
+    /**
+     * @return mixed
+     */
+    public function getFolder($id)
     {
         return $this->getHelper()->getFolderRepository()->find($id);
     }
 
-    public function folderByPath(?string $path): mixed
+    /**
+     * @return mixed
+     */
+    public function folderByPath(?string $path)
     {
         if (is_null($path) || $this->filesystem->directoryExists($path)) {
             $slugs = array_values(array_filter(explode('/', (string) $path)));
             $parent = null;
             foreach ($slugs as $i => $slug) {
-                if ($folder = $this->getHelper()->getFolderRepository()->findOneBy([
+                if (
+                    ($folder = $this->getHelper()->getFolderRepository()->findOneBy([
                     'parent' => $parent,
                     'slug' => $slug,
-                ])) {
+                    ])) !== null
+                ) {
                     $parent = $folder;
                 }
 
@@ -86,7 +83,10 @@ class EasyMediaManager
         return false;
     }
 
-    public function getMedia($id): mixed
+    /**
+     * @return mixed
+     */
+    public function getMedia($id)
     {
         return $this->getHelper()->getMediaRepository()->find($id);
     }
@@ -129,6 +129,7 @@ class EasyMediaManager
         if ($name) {
             $entity->setName($this->helper->cleanName($name));
         }
+
         $folder = $this->folderByPath($path);
         if ($folder === false) {
             throw new FolderNotExist('The folder does not exist');
@@ -136,7 +137,7 @@ class EasyMediaManager
 
         $entity->setFolder($folder);
 
-        if (substr((string) $source, 0, 5) === 'data:') {
+        if (str_starts_with((string) $source, 'data:')) {
             $entity = $this->createFromBase64($entity, $source);
         } elseif (filter_var($source, FILTER_VALIDATE_URL) !== false) {
             if ($imageType = @exif_imagetype($source)) {
@@ -147,6 +148,7 @@ class EasyMediaManager
         } else {
             $entity = $this->createFromFile($entity, $source);
         }
+
         $this->save($entity);
 
         return $entity;
@@ -229,14 +231,14 @@ class EasyMediaManager
         if (preg_match('#^data\:([a-zA-Z]+\/[a-zA-Z]+);base64\,([a-zA-Z0-9\+\/]+\=*)$#', (string) $source, $matches)) {
             $infos = [
                 'mime' => $matches[1],
-                'data' => base64_decode($matches[2]),
+                'data' => base64_decode((string) $matches[2]),
             ];
         } else {
             throw new NoFile($this->translator->trans('error.no_file', [], 'EasyMediaBundle'));
         }
 
         $entity->setName($this->helper->cleanName(""));
-        $filename = strtolower((new AsciiSlugger())->slug(strtolower((string) $entity->getName()))->toString().'.'.EasyMediaHelper::mime2ext($infos['mime']));
+        $filename = strtolower((new AsciiSlugger())->slug(strtolower((string) $entity->getName()))->toString() . '.' . EasyMediaHelper::mime2ext($infos['mime']));
         $entity->setSlug($filename);
 
         if ($this->filesystem->fileExists($entity->getPath())) {
@@ -255,6 +257,7 @@ class EasyMediaManager
             if (false !== $tmp) {
                 fwrite($tmp, $this->filesystem->read($entity->getPath()));
             }
+
             $path = stream_get_meta_data($tmp)['uri'];
             [$width, $height] = getimagesize($path);
             $entity->setMetas([
@@ -272,14 +275,14 @@ class EasyMediaManager
 
     private function createFromImageURL(Media $entity, $source, $type)
     {
-        $urlPath = parse_url($source, PHP_URL_PATH);
+        $urlPath = parse_url((string) $source, PHP_URL_PATH);
         $original = substr((string) $urlPath, strrpos($urlPath, '/') + 1);
         $name = $entity->getName() ?: pathinfo($original, PATHINFO_FILENAME);
 
         $file_type = image_type_to_mime_type($type);
         $ext_only = EasyMediaHelper::mime2ext($file_type) ?? pathinfo($original, PATHINFO_EXTENSION);
 
-        $final_name_slug = strtolower((new AsciiSlugger())->slug(strtolower((string) $name))->toString().sprintf('.%s', $ext_only));
+        $final_name_slug = strtolower((new AsciiSlugger())->slug(strtolower((string) $name))->toString() . sprintf('.%s', $ext_only));
         $entity->setSlug($final_name_slug);
 
         if (empty($entity->getName())) {
@@ -314,7 +317,7 @@ class EasyMediaManager
             $entity->setSize($this->filesystem->fileSize($entity->getPath()));
             $entity->setLastModified($this->filesystem->lastModified($entity->getPath()));
             $entity->setMime($this->filesystem->mimeType($entity->getPath()));
-        } catch (\Throwable $exception) {
+        } catch (\Throwable) {
             throw new NoFile($this->translator->trans('error.no_file', [], 'EasyMediaBundle'));
         }
 
@@ -323,6 +326,7 @@ class EasyMediaManager
 
     private function createFromFile(Media $entity, $source)
     {
+        $datas = [];
         if (is_string($source)) {
             $source = new File($source);
         }
@@ -347,7 +351,7 @@ class EasyMediaManager
             }
         } else {
             $orig_name = $source->getFilename();
-            $name = $entity->getName() ?: $source->getBasename('.'.$source->getExtension());
+            $name = $entity->getName() ?: $source->getBasename('.' . $source->getExtension());
             $ext_only = pathinfo($orig_name, PATHINFO_EXTENSION);
             if ($type = $source->getMimeType()) {
                 $entity->setMime($type);
@@ -361,7 +365,7 @@ class EasyMediaManager
             }
         }
 
-        $final_name_slug = strtolower((new AsciiSlugger())->slug(strtolower((string) $name))->toString().sprintf('.%s', $ext_only));
+        $final_name_slug = strtolower((new AsciiSlugger())->slug(strtolower((string) $name))->toString() . sprintf('.%s', $ext_only));
         $entity->setSlug($final_name_slug);
         $entity->setSize($source->getSize());
         $entity->setLastModified($source->getMTime());
@@ -393,7 +397,7 @@ class EasyMediaManager
         }
 
         try {
-            if($this->helper->fileIsType($entity->getMime(), 'video') || $this->helper->fileIsType($entity->getMime(), 'audio')){
+            if ($this->helper->fileIsType($entity->getMime(), 'video') || $this->helper->fileIsType($entity->getMime(), 'audio')) {
                 $getID3 = new \getID3();
                 $id3Datas = $getID3->analyze($source->getPathname());
 
@@ -414,16 +418,26 @@ class EasyMediaManager
                         'duration' => $id3Datas["playtime_seconds"],
                         'tags' => [],
                     ];
-                    if(!empty($id3Datas["id3v1"]["title"])){$datas["tags"]["title"] = $id3Datas["id3v1"]["title"];}
-                    if(!empty($id3Datas["id3v1"]["artist"])){$datas["tags"]["artist"] = $id3Datas["id3v1"]["artist"];}
-                    if(!empty($id3Datas["id3v1"]["album"])){$datas["tags"]["album"] = $id3Datas["id3v1"]["album"];}
-                    if(!empty($id3Datas["id3v1"]["year"])){$datas["tags"]["year"] = $id3Datas["id3v1"]["year"];}
+                    if (!empty($id3Datas["id3v1"]["title"])) {
+                        $datas["tags"]["title"] = $id3Datas["id3v1"]["title"];
+                    }
+
+                    if (!empty($id3Datas["id3v1"]["artist"])) {
+                        $datas["tags"]["artist"] = $id3Datas["id3v1"]["artist"];
+                    }
+
+                    if (!empty($id3Datas["id3v1"]["album"])) {
+                        $datas["tags"]["album"] = $id3Datas["id3v1"]["album"];
+                    }
+
+                    if (!empty($id3Datas["id3v1"]["year"])) {
+                        $datas["tags"]["year"] = $id3Datas["id3v1"]["year"];
+                    }
                 }
 
                 $entity->setMetas($datas);
             }
-
-        }catch (\Exception $ex){
+        } catch (\Exception $exception) {
         }
 
 
@@ -431,7 +445,7 @@ class EasyMediaManager
             $stream = fopen($source->getRealPath(), 'r+');
             $this->filesystem->writeStream($entity->getPath(), $stream);
             fclose($stream);
-        } catch (FileException|UnableToCopyFile $exception) {
+        } catch (FileException | UnableToCopyFile $exception) {
             dump($exception);
         }
 

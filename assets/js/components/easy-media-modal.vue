@@ -1,8 +1,8 @@
 <script>
 import MediaModal from '../mixins/modal'
-import Utilities      from '../modules/utils'
-import Gestures       from '../modules/gestures'
-import Image       from '../modules/image'
+import Utilities from '../modules/utils'
+import Gestures from '../modules/gestures'
+import Image from '../modules/image'
 
 require('../packages/download.min')
 

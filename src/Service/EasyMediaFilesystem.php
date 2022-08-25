@@ -6,10 +6,7 @@ namespace Adeliom\EasyMediaBundle\Service;
 
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemAdapter;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\PathNormalizer;
-use League\Flysystem\UnixVisibility\PortableVisibilityConverter;
-use League\Flysystem\Visibility;
 use League\FlysystemBundle\Lazy\LazyFactory;
 
 class EasyMediaFilesystem extends Filesystem

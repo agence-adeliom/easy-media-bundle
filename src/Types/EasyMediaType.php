@@ -11,6 +11,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class EasyMediaType extends Type
 {
+    /**
+     * @var string
+     */
     public const EASYMEDIATYPE = 'easy_media_type';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string

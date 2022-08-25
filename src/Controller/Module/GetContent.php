@@ -77,6 +77,7 @@ trait GetContent
 
             return new JsonResponse($item);
         }
+
         return new JsonResponse([
             'error' => $this->translator->trans('error.doesnt_exist', ['attr' => $mediaId], 'EasyMediaBundle'),
         ]);
@@ -143,6 +144,7 @@ trait GetContent
 
             return array_merge($folders->toArray(), $medias->toArray());
         }
+
         $folders = $this->helper->getFolderRepository()->findBy(['parent' => null]);
         $medias = $this->helper->getMediaRepository()->findBy(['folder' => null]);
 
@@ -185,15 +187,11 @@ trait GetContent
      */
     protected function getFolderInfoFromList($list)
     {
-        $list = (new ArrayCollection($list))->filter(static function ($item) {
-            return $item->isFile();
-        });
+        $list = (new ArrayCollection($list))->filter(static fn($item) => $item->isFile());
 
         return [
             'count' => $list->count(),
-            'size' => array_sum($list->map(static function ($item) {
-                return $item->fileSize();
-            })->toArray()),
+            'size' => array_sum($list->map(static fn($item) => $item->fileSize())->toArray()),
         ];
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Adeliom\EasyMediaBundle\Twig;
 
-use Adeliom\EasyMediaBundle\Service\EasyMediaHelper;
 use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
 use Liip\ImagineBundle\Controller\ImagineController;
 use Liip\ImagineBundle\Imagine\Data\DataManager;
@@ -43,6 +42,6 @@ class EasyMediaExtension extends AbstractExtension
             new TwigFunction('easy_media_path', [EasyMediaRuntime::class, 'path']),
         ];
     }
-=======
->>>>>>> main
+    === === =
+    >> >> >> > main
 }

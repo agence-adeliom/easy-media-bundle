@@ -12,7 +12,10 @@ class EasyMediaField implements FieldInterface
 {
     use FieldTrait;
 
-    public static function new(string $propertyName, string|false|null $label = null): self
+    /**
+     * @param string|true|null $label
+     */
+    public static function new(string $propertyName, $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)

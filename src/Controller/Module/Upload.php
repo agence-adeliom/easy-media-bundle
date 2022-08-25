@@ -6,7 +6,6 @@ namespace Adeliom\EasyMediaBundle\Controller\Module;
 
 use Adeliom\EasyMediaBundle\Event\EasyMediaFileSaved;
 use Adeliom\EasyMediaBundle\Event\EasyMediaFileUploaded;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\HttpFoundation\File\File;
@@ -41,28 +40,29 @@ trait Upload
                 $orig_name = $one->getClientOriginalName();
                 $name = $random_name ? $this->helper->getRandomString() : null;
 
-                if($request->request->get("dzuuid")){
+                if ($request->request->get("dzuuid")) {
                     $chunksRes = self::resumableUpload($request, $one->getRealPath(), $orig_name, $this->chunksDir);
                     dump($chunksRes);
-                    if(!$chunksRes['final']){
+                    if (!$chunksRes['final']) {
                         return new JsonResponse($chunksRes);
                     }
+
                     $one = new File($chunksRes['path']);
                 }
 
                 if (! empty($custom_attr)) {
-                    $custom_attr = array_filter($custom_attr, static function ($entry) use ($orig_name) {
-                        return $entry['name'] === $orig_name;
-                    });
+                    $custom_attr = array_filter($custom_attr, static fn($entry) => $entry['name'] === $orig_name);
                     $custom_attr = current($custom_attr);
                 }
+
                 $file_options = empty($custom_attr) ? [] : $custom_attr['options'];
 
                 $media = $this->manager->createMedia($one, $folder ? $folder->getPath() : null, $name);
-                if($one instanceof File){
+                if ($one instanceof File) {
                     $filesystem = new Filesystem();
                     $filesystem->remove(Path::normalize($one->getRealPath()));
                 }
+
                 $media->setMetas(array_merge($media->getMetas(), $file_options));
                 $this->manager->save($media);
                 $this->eventDispatcher->dispatch(new EasyMediaFileUploaded($media->getPath(), $media->getMime(), $media->getMetas()), EasyMediaFileUploaded::NAME);
@@ -109,7 +109,7 @@ trait Upload
 
             $upload_path = $folder ? $folder->getPath() : null;
             $original = $data['name'];
-            $name_only = pathinfo($original, PATHINFO_FILENAME).'_'.$this->helper->getRandomString();
+            $name_only = pathinfo((string) $original, PATHINFO_FILENAME) . '_' . $this->helper->getRandomString();
 
             try {
                 $media = $this->manager->createMedia($data['data'], $upload_path, $name_only);
@@ -201,100 +201,119 @@ trait Upload
         return $file;
     }
 
-    private static function resumableUpload(Request $request, string $tmpFilePath, string $filename, string $chunksDir){
+    private static function resumableUpload(Request $request, string $tmpFilePath, string $filename, string $chunksDir)
+    {
         $successes = [];
         $errors = [];
         $warnings = [];
 
         $identifier = trim($request->get('dzuuid', ''));
-        $fileChunksFolder = "$chunksDir/$identifier";
+        $fileChunksFolder = sprintf('%s/%s', $chunksDir, $identifier);
         $filesystem = new Filesystem();
         $filesystem->mkdir(Path::normalize($fileChunksFolder));
 
 
-        $filename = str_replace( [' ','(', ')'], '_', $filename ); # remove problematic symbols
+        $filename = str_replace([' ','(', ')'], '_', $filename); # remove problematic symbols
         $info = pathinfo($filename);
-        $extension = isset($info['extension'])? '.'.strtolower($info['extension']) : '';
+        $extension = isset($info['extension']) ? '.' . strtolower($info['extension']) : '';
         $filename = $info['filename'];
 
-        $totalSize =(int) $request->get('dztotalfilesize', 0);
+        $totalSize = (int) $request->get('dztotalfilesize', 0);
         $totalChunks = (int) $request->get('dztotalchunkcount', 0);
         $chunkInd = (int) $request->get('dzchunkindex', 0);
         $chunkSize = (int) $request->get('dzchunksize', 0);
         $startByte = (int) $request->get('dzchunkbyteoffset', 0);
 
-        $chunkFile = "$fileChunksFolder/{$filename}.part{$chunkInd}";
+        $chunkFile = sprintf('%s/%s.part%d', $fileChunksFolder, $filename, $chunkInd);
 
         if (!move_uploaded_file($tmpFilePath, $chunkFile)) {
             $errors[] = ['text' => 'Move error', 'name' => $filename, 'index' => $chunkInd];
         }
 
-        if( count($errors) === 0 && $newPath = self::checkAllParts($fileChunksFolder, $filename, $extension, $totalSize, $totalChunks, $chunksDir, $successes, $errors, $warnings)){
+        if (count($errors) === 0 && $newPath = self::checkAllParts($fileChunksFolder, $filename, $extension, $totalSize, $totalChunks, $chunksDir, $successes, $errors, $warnings)) {
             return ['final' => true, 'path' => $newPath, 'successes' => $successes, 'errors' => $errors, 'warnings' => $warnings];
         }
+
         return ['final' => false, 'successes' => $successes, 'errors' => $errors, 'warnings' => $warnings];
     }
 
-    private static function checkAllParts( string $fileChunksFolder, string $filename, string $extension, int $totalSize, int $totalChunks, string $chunksDir, array &$successes, array &$errors, array &$warnings){
+    private static function checkAllParts(string $fileChunksFolder, string $filename, string $extension, int $totalSize, int $totalChunks, string $chunksDir, array &$successes, array &$errors, array &$warnings)
+    {
 
-        $parts = glob(Path::normalize("$fileChunksFolder/*"));
-        $successes[] = count($parts)." of $totalChunks parts done so far in $fileChunksFolder";
+        $parts = glob(Path::normalize(sprintf('%s/*', $fileChunksFolder)));
+        $successes[] = count($parts) . sprintf(' of %d parts done so far in %s', $totalChunks, $fileChunksFolder);
         $filesystem = new Filesystem();
 
         // check if all the parts present, and create the final destination file
-        if( count($parts) === (int) $totalChunks ){
+        if (count($parts) === (int) $totalChunks) {
             $loaded_size = 0;
-            foreach($parts as $file) {
+            foreach ($parts as $file) {
                 $loaded_size += filesize($file);
             }
-            if ($loaded_size >= $totalSize && count($errors) === 0 && $newPath = self::createFileFromChunks(
+
+            if (
+                $loaded_size >= $totalSize && $errors === [] && $newPath = self::createFileFromChunks(
                     $fileChunksFolder,
                     $filename,
                     $extension,
                     $totalSize,
                     $totalChunks,
                     $chunksDir,
-                    $successes, $errors, $warnings)){
+                    $successes,
+                    $errors,
+                    $warnings
+                )
+            ) {
                 $filesystem->remove(Path::normalize($fileChunksFolder));
                 return $newPath;
             }
         }
+
         return false;
     }
 
-    private static function createFileFromChunks(string $fileChunksFolder,string $fileName,string $extension,int $totalSize,int $totalChunks,string $chunksDir,array &$successes,array &$errors,array &$warnings) {
+    private static function createFileFromChunks(string $fileChunksFolder, string $fileName, string $extension, int $totalSize, int $totalChunks, string $chunksDir, array &$successes, array &$errors, array &$warnings)
+    {
 
-        $relPath = Path::normalize($chunksDir.'/assembled');
+        $relPath = Path::normalize($chunksDir . '/assembled');
         $filesystem = new Filesystem();
         $filesystem->mkdir($relPath);
-        $saveName = self::getNextAvailableFilename( $relPath, $fileName, $extension, $errors );
 
-        if( !$saveName ){
+        $saveName = self::getNextAvailableFilename($relPath, $fileName, $extension, $errors);
+
+        if (!$saveName) {
             return false;
         }
 
-        $fp = fopen("$relPath/$saveName$extension", 'w');
+        $fp = fopen(sprintf('%s/%s%s', $relPath, $saveName, $extension), 'w');
         if ($fp === false) {
             $errors[] = 'cannot create the destination file';
             return false;
         }
-        for ($i=0; $i<$totalChunks; $i++) {
-            fwrite($fp, file_get_contents(Path::normalize($fileChunksFolder.'/'.$fileName.'.part'.$i)));
+
+        for ($i = 0; $i < $totalChunks; ++$i) {
+            fwrite($fp, file_get_contents(Path::normalize($fileChunksFolder . '/' . $fileName . '.part' . $i)));
         }
+
         fclose($fp);
-        return Path::normalize("$relPath/$saveName$extension");
+        return Path::normalize(sprintf('%s/%s%s', $relPath, $saveName, $extension));
     }
 
-    private static function getNextAvailableFilename(string $relPath,string $origFileName,string $extension,array &$errors ){
-        if( file_exists(Path::normalize("$relPath/$origFileName$extension")) ){
-            $i=0;
-            while(file_exists(Path::normalize("$relPath/{$origFileName}_".(++$i).$extension)) and $i<10000){}
-            if( $i >= 10000 ){
-                $errors[] = "Can not create unique name for saving file $origFileName$extension";
+    private static function getNextAvailableFilename(string $relPath, string $origFileName, string $extension, array &$errors)
+    {
+        if (file_exists(Path::normalize(sprintf('%s/%s%s', $relPath, $origFileName, $extension)))) {
+            $i = 0;
+            while (file_exists(Path::normalize(sprintf('%s/%s_', $relPath, $origFileName) . (++$i) . $extension)) && $i < 10000) {
+            }
+
+            if ($i >= 10000) {
+                $errors[] = sprintf('Can not create unique name for saving file %s%s', $origFileName, $extension);
                 return false;
             }
-            return $origFileName."_".$i;
+
+            return $origFileName . "_" . $i;
         }
+
         return $origFileName;
     }
 }

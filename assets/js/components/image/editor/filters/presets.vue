@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import chunk     from 'lodash/chunk'
+import chunk from 'lodash/chunk'
 import camelCase from 'lodash/camelCase'
 import snakeCase from 'lodash/snakeCase'
 

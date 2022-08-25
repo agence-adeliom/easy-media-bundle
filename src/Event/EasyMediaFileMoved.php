@@ -6,5 +6,8 @@ namespace Adeliom\EasyMediaBundle\Event;
 
 class EasyMediaFileMoved extends EasyMediaFileRenamed
 {
+    /**
+     * @var string
+     */
     public const NAME = 'em.file.moved';
 }
