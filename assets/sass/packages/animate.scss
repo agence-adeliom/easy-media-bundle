@@ -1,0 +1,325 @@
+$anim_1: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+$anim_2: cubic-bezier(0.215, 0.61, 0.355, 1);
+
+// https://github.com/ConnorAtherton/loaders.css
+@keyframes ball-grid-pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(0.5);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.ball-grid-pulse {
+    width: 57px;
+
+    > div {
+        @apply bg-white float-left inline-block rounded-full;
+        animation-delay: 0;
+        animation-fill-mode: both;
+        animation-iteration-count: infinite;
+        animation-name: ball-grid-pulse;
+        height: 15px;
+        margin: 2px;
+        width: 15px;
+    }
+
+    > div:nth-child(1) {
+        animation-delay: 0.22s;
+        animation-duration: 0.9s;
+    }
+
+    > div:nth-child(2) {
+        animation-delay: 0.64s;
+        animation-duration: 1s;
+    }
+
+    > div:nth-child(3) {
+        animation-delay: -0.15s;
+        animation-duration: 0.63s;
+    }
+
+    > div:nth-child(4) {
+        animation-delay: -0.03s;
+        animation-duration: 1.24s;
+    }
+
+    > div:nth-child(5) {
+        animation-delay: 0.08s;
+        animation-duration: 1.37s;
+    }
+
+    > div:nth-child(6) {
+        animation-delay: 0.43s;
+        animation-duration: 1.55s;
+    }
+
+    > div:nth-child(7) {
+        animation-delay: 0.05s;
+        animation-duration: 0.7s;
+    }
+
+    > div:nth-child(8) {
+        animation-delay: 0.05s;
+        animation-duration: 0.97s;
+    }
+
+    > div:nth-child(9) {
+        animation-delay: 0.3s;
+        animation-duration: 0.63s;
+    }
+}
+
+// animate.css
+.mm-animated {
+    animation-duration: 750ms;
+    animation-fill-mode: both;
+}
+
+.fadeInDown,
+.fadeIn {
+    animation-duration: 500ms;
+    animation-timing-function: cubic-bezier(1, 0, 0, 1);
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translate3d(0, -100%, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.fadeInDown {
+    animation-name: fadeInDown;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fadeIn {
+    animation-name: fadeIn;
+}
+
+/**
+ * all the below animation are edited
+ * 'from/0%' is removed + some changes for the 'bounceIn' to make it more natural
+ * for the manager purposes
+ * this are not the same as the original animate.css examples
+ */
+
+@keyframes bounceInUp {
+    60%,
+    75%,
+    90%,
+    to {
+        animation-timing-function: $anim_2;
+        transform: translate3d(0, 0, 0);
+    }
+
+    40%,
+    43% {
+        animation-timing-function: $anim_1;
+        transform: translate3d(0, -30px, 0);
+    }
+
+    70% {
+        animation-timing-function: $anim_1;
+        transform: translate3d(0, -15px, 0);
+    }
+
+    90% {
+        transform: translate3d(0, -4px, 0);
+    }
+}
+
+.bounceInUp {
+    animation-name: bounceInUp;
+}
+
+@keyframes bounceInDown {
+    60%,
+    75%,
+    90%,
+    to {
+        animation-timing-function: $anim_2;
+        transform: translate3d(0, 0, 0);
+    }
+
+    40%,
+    43% {
+        animation-timing-function: $anim_1;
+        transform: translate3d(0, 60px, 0);
+    }
+
+    70% {
+        animation-timing-function: $anim_1;
+        transform: translate3d(0, -15px, 0);
+    }
+
+    85% {
+        animation-timing-function: $anim_1;
+        transform: translate3d(0, -10px, 0);
+    }
+
+    90% {
+        transform: translate3d(0, -4px, 0);
+    }
+}
+
+.bounceInDown {
+    animation-name: bounceInDown;
+}
+
+@keyframes bounceInRight {
+    60%,
+    75%,
+    90%,
+    to {
+        animation-timing-function: $anim_2;
+    }
+
+    60% {
+        transform: translate3d(-25px, 0, 0);
+    }
+
+    75% {
+        transform: translate3d(10px, 0, 0);
+    }
+
+    90% {
+        transform: translate3d(-5px, 0, 0);
+    }
+
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.bounceInRight {
+    animation-name: bounceInRight;
+}
+
+@keyframes bounceInLeft {
+    60%,
+    75%,
+    90%,
+    to {
+        animation-timing-function: $anim_2;
+    }
+
+    60% {
+        transform: translate3d(25px, 0, 0);
+    }
+
+    75% {
+        transform: translate3d(-10px, 0, 0);
+    }
+
+    90% {
+        transform: translate3d(5px, 0, 0);
+    }
+
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.bounceInLeft {
+    animation-name: bounceInLeft;
+}
+
+@keyframes bounceIn {
+    20%,
+    40%,
+    60%,
+    80%,
+    to {
+        animation-timing-function: $anim_2;
+    }
+
+    20% {
+        transform: scale3d(1.1, 1.1, 1.1);
+    }
+
+    40% {
+        transform: scale3d(0.9, 0.9, 0.9);
+    }
+
+    60% {
+        transform: scale3d(1.03, 1.03, 1.03);
+    }
+
+    80% {
+        transform: scale3d(0.97, 0.97, 0.97);
+    }
+
+    to {
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+.bounceIn {
+    animation-name: bounceIn;
+}
+
+@keyframes jackInTheBox {
+    25% {
+        transform: scale(1) rotate(30deg);
+        transform-origin: center bottom;
+    }
+
+    50% {
+        transform: rotate(-10deg);
+    }
+
+    70% {
+        transform: rotate(3deg);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+.jackInTheBox {
+    animation-name: jackInTheBox;
+}
+
+@keyframes pulse {
+    from {
+        transform: scale3d(1, 1, 1);
+    }
+
+    50% {
+        transform: scale3d(1.05, 1.05, 1.05);
+    }
+
+    to {
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+.pulse {
+    animation-iteration-count: infinite;
+    animation-name: pulse;
+}

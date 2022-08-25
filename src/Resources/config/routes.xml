@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing
+        http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route methods="GET" id="media.index" controller="Adeliom\EasyMediaBundle\Controller\MediaController::index"
+           path="/easymedia/medias/"/>
+    <route methods="GET" id="media.browse" controller="Adeliom\EasyMediaBundle\Controller\MediaController::browse"
+           path="/easymedia/medias/browse"/>
+
+    <route methods="POST" id="media.upload" controller="Adeliom\EasyMediaBundle\Controller\MediaController::upload"
+           path="/easymedia/medias/upload"/>
+    <route methods="POST" id="media.uploadCropped"
+           controller="Adeliom\EasyMediaBundle\Controller\MediaController::uploadEditedImage"
+           path="/easymedia/medias/upload-cropped"/>
+    <route methods="POST" id="media.uploadLink"
+           controller="Adeliom\EasyMediaBundle\Controller\MediaController::uploadLink"
+           path="/easymedia/medias/upload-link"/>
+
+    <route methods="POST" id="media.get_files" controller="Adeliom\EasyMediaBundle\Controller\MediaController::getFiles"
+           path="/easymedia/medias/get-files"/>
+    <route methods="POST" id="media.get_file_info"
+           controller="Adeliom\EasyMediaBundle\Controller\MediaController::getItemInfos"
+           path="/easymedia/medias/get-file-info"/>
+    <route methods="POST" id="media.new_folder"
+           controller="Adeliom\EasyMediaBundle\Controller\MediaController::createNewFolder"
+           path="/easymedia/medias/create-new-folder"/>
+    <route methods="POST" id="media.delete_file"
+           controller="Adeliom\EasyMediaBundle\Controller\MediaController::deleteItem"
+           path="/easymedia/medias/delete-file"/>
+    <route methods="POST" id="media.move_file" controller="Adeliom\EasyMediaBundle\Controller\MediaController::moveItem"
+           path="/easymedia/medias/move-file"/>
+    <route methods="POST" id="media.rename_file"
+           controller="Adeliom\EasyMediaBundle\Controller\MediaController::renameItem"
+           path="/easymedia/medias/rename-file"/>
+    <route methods="POST" id="media.edit_metas_file"
+           controller="Adeliom\EasyMediaBundle\Controller\MediaController::editMetasItem"
+           path="/easymedia/medias/edit-metas-file"/>
+
+    <route methods="GET" id="media.global_search"
+           controller="Adeliom\EasyMediaBundle\Controller\MediaController::globalSearch"
+           path="/easymedia/medias/global-search"/>
+
+    <route methods="POST" id="media.folder_download"
+           controller="Adeliom\EasyMediaBundle\Controller\MediaController::downloadFolder"
+           path="/easymedia/medias/folder-download"/>
+    <route methods="POST" id="media.files_download"
+           controller="Adeliom\EasyMediaBundle\Controller\MediaController::downloadFiles"
+           path="/easymedia/medias/files-download"/>
+
+</routes>

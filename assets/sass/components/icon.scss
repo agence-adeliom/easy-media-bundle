@@ -1,0 +1,7 @@
+.icon{
+  @apply inline-flex justify-center items-center;
+  @include state-colors();
+  &.is-large {
+    @apply w-12 h-12;
+  }
+}

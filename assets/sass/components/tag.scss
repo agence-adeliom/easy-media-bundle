@@ -1,0 +1,6 @@
+.tag:not(body) {
+  @apply items-center bg-gray-200 rounded text-gray-700 inline-flex text-xs justify-center leading-normal whitespace-nowrap;
+  height: 2em;
+  padding-left: .75em;
+  padding-right: .75em;
+}

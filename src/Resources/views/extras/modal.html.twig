@@ -1,0 +1,9 @@
+<div class="modal mm-animated is-active modal-manager__Inmodal">
+    <div class="modal-background" @click.stop="hideInputModal()"></div>
+    <button type="button" class="modal-close is-large is-hidden-touch" @click.stop="hideInputModal()"></button>
+    <div class="modal-content mm-animated fadeInDown">
+        <div class="box">
+            {% include '@EasyMedia/manager.html.twig' with {'modal': true}  %}
+        </div>
+    </div>
+</div>

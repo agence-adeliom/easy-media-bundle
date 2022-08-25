@@ -1,0 +1,154 @@
+@import './tailwind';
+@import '~plyr/dist/plyr.css';
+
+@mixin state-colors {
+  &.is-warning { @apply bg-warning }
+  &.is-danger { @apply bg-danger }
+  &.is-link  { @apply bg-link }
+  &.is-success { @apply bg-success }
+  &.is-black {  @apply bg-black }
+
+  &.is-danger,
+  &.is-warning,
+  &.is-link,
+  &.is-black,
+  &.is-success {
+    * {
+      @apply text-white;
+    }
+  }
+}
+
+.tippy-popper{
+  z-index: 10000075 !important;
+}
+
+@import './partials/vue';
+@import './packages/notie';
+
+.easy-media-widget,
+.media-manager{
+  @import './partials/loaders';
+  @import './partials/utils';
+  @import './packages/animate';
+  @import './packages/switcher';
+  @import './packages/progress';
+  @import './modules/media_player';
+
+  @import './components/dropzone';
+  @import './components/breadcrumb';
+  @import './components/sidebar';
+  @import './components/stack';
+  @import './components/movable';
+  @import './components/modal';
+  @import './components/image';
+  @import './components/media';
+  @import './components/files';
+  @import './components/box';
+  @import './components/card';
+  @import './components/icon';
+  @import './components/dropdown';
+  @import './components/tag';
+  @import './components/field';
+}
+
+.media-manager {
+  @apply bg-theme;
+  &.top-space {
+    @apply pt-8;
+  }
+
+  &__toolbar {
+    @apply flex-wrap p-4 sm:py-2 bg-dark m-0;
+    @apply border-solid border-0 border-b border-theme-5;
+  }
+
+  &__dz {
+    @apply h-0 m-0 opacity-0 p-0 bg-theme invisible transition-all duration-200;
+    &.__dz-active {
+      @apply p-2 m-2 opacity-100 visible h-auto border-2 border-dashed border-gray-400;
+    }
+  }
+
+  &__stack{
+    @apply flex relative flex-col rounded-sm flex-1;
+  }
+
+  .__toolbar {
+    &-container{
+      @apply mx-auto;
+    }
+    &-level{
+      @apply relative flex flex-col items-center justify-between sm:flex-row gap-4 sm:h-16;
+      &_main{
+        @apply flex-1 flex items-center justify-between w-full sm:items-stretch sm:justify-start gap-4;
+      }
+      &_second{
+        @apply flex items-center justify-between w-full sm:w-auto sm:static sm:inset-auto sm:ml-6 sm:pr-0 gap-4;
+      }
+    }
+  }
+}
+
+
+.easy-media-widget{
+  .selection-preview{
+    @apply mt-2;
+    .__box-data{
+      @apply rounded mt-2 p-2 px-4 flex-row cursor-pointer border-2 border-dashed border-theme-5;
+      .__box-img{
+        @apply rounded h-12 w-12 border border-dashed border-theme-25;
+      }
+    }
+  }
+}
+
+
+#media-holder.fullscreen,
+#main > #media-holder,
+.easy-media-widget{
+  .media-manager{
+    @apply h-full;
+    &__stack{
+      .progress-bar strong {
+        @apply hidden;
+      }
+      .__stack-container{
+        @apply flex-1;
+        .extra-func-btns {
+          @apply absolute bottom-4 right-4 z-2;
+        }
+      }
+    }
+  }
+}
+
+.easy-media-admin{
+  @media (max-width: 992px) {
+    .ea-search-disabled{@apply hidden}
+  }
+  #content-resizer-handler{
+    @apply hidden;
+  }
+
+  .main-content {
+    @apply flex flex-col;
+  }
+
+  .content-wrapper {
+    @apply flex flex-1 flex-wrap;
+
+    article.content {
+      @apply flex-1;
+    }
+
+    section.content-body,div#media-holder {
+      @apply h-full;
+    }
+
+    .media-manager.hide-native-scrollbar {
+      @apply flex flex-col;
+    }
+  }
+}
+

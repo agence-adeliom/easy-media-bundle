@@ -1,0 +1,338 @@
+{% trans_default_domain 'EasyMediaBundle' %}
+
+{% set isModal = (modal is defined and modal) ? true : false %}
+{% set isBrowser = (browser is defined and browser) ? true : false %}
+
+{# easy_media.base_url #}
+{% set options = {
+    'baseUrl' : easy_media.base_url,
+    'hideFilesExt' : easy_media.hide_files_ext,
+    'mimeTypes' : easy_media.extended_mimes,
+    'broadcasting' : easy_media.enable_broadcasting,
+} %}
+
+{% set routes = {
+    'files' : path('media.get_files'),
+    'upload' : path('media.upload'),
+} %}
+
+{% set translations = {
+    'add_to_list' : 'add.list'|trans,
+    'added' : 'add.added'|trans,
+    'already_exists' : 'error.already_exists'|trans,
+    'application' : 'application'|trans,
+    'pdf' : 'filter.type.pdf'|trans,
+    'oembed' : 'filter.type.oembed'|trans,
+    'audio' : 'audio.main'|trans,
+    'bm_add_to_list' : 'bookmarks.add'|trans,
+    'bm' : 'bookmarks.main'|trans,
+    'clear' : 'clear'|trans({'attr' : 'crop.selection'|trans}),
+    'copy_success' : 'copy.success'|trans,
+    'copy' : 'copy.main'|trans,
+    'create_folder_notif' : 'new.create_folder_notif'|trans,
+    'create_success' : 'create_success'|trans,
+    'crop_apply' : 'crop.apply'|trans,
+    'crop_flip_horizontal' : 'crop.flip_horizontal'|trans,
+    'crop_flip_vertical' : 'crop.flip_vertical'|trans,
+    'crop_reset_filters' : 'crop.reset_filters'|trans,
+    'crop_reset' : 'crop.reset'|trans,
+    'crop_cancel' : 'crop.cancel'|trans,
+    'crop_rotate_left' : 'crop.rotate_left'|trans,
+    'crop_rotate_right' : 'crop.rotate_right'|trans,
+    'crop_zoom_in' : 'crop.zoom_in'|trans,
+    'crop_zoom_out' : 'crop.zoom_out'|trans,
+    'crop' : 'crop.main'|trans,
+    'delete_success' : 'delete.success'|trans,
+    'delete' : 'delete.main'|trans,
+    'description' : 'description'|trans,
+    'diff' : 'editor.diff'|trans,
+    'dimension' : 'dimension'|trans,
+    'downloaded' : 'download.downloaded'|trans,
+    'editor' : 'editor.main'|trans,
+    'error_altered_fwli' : 'error.altered_fwli'|trans,
+    'filter_by' : 'filter.by'|trans({'attr' : ''}),
+    'filtration' : 'filter.filtration'|trans,
+    'find' : 'find'|trans,
+    'focals' : 'focals'|trans,
+    'folder' : 'folder'|trans,
+    'found' : 'found'|trans,
+    'glbl_search_avail' : 'search.glbl_avail'|trans,
+    'glbl_search' : 'search.glbl'|trans,
+    'go_to_folder' : 'go_to_folder'|trans,
+    'image' : 'image'|trans,
+    'last_modified' : 'last_modified'|trans,
+    'locked' : 'locked'|trans,
+    'move_clear' : 'move.clear_list'|trans,
+    'move_success' : 'move.success'|trans,
+    'move' : 'move.main'|trans,
+    'name' : 'name'|trans,
+    'new_uploads_notif' : 'upload.new_uploads_notif'|trans,
+    'no_val' : 'no_val'|trans,
+    'non' : 'non'|trans,
+    'nothing_found' : 'nothing_found'|trans,
+    'open' : 'open'|trans,
+    'close' : 'close'|trans,
+    'options' : 'options'|trans,
+    'presets' : 'crop.presets'|trans,
+    'refresh_notif' : 'refresh_notif'|trans,
+    'rename_success' : 'rename.success'|trans,
+    'rename' : 'rename.main'|trans,
+    'reset' : 'crop.reset'|trans,
+    'save_success' : 'save.success'|trans,
+    'save' : 'save.main'|trans,
+    'selected' : 'select.selected'|trans,
+    'sep_download' : 'download.sep'|trans,
+    'size' : 'size'|trans,
+    'sort_by' : 'sort_by'|trans,
+    'stand_by' : 'stand_by'|trans,
+    'text' : 'text'|trans,
+    'to_cp' : 'copy.to_cp'|trans,
+    'upload_in_progress' : 'upload.in_progress'|trans,
+    'upload_success' : 'upload.success'|trans,
+    'video' : 'video'|trans,
+    'clarity' : 'editor.clarity'|trans,
+    'pinhole' : 'editor.pinhole'|trans,
+    'love' : 'editor.love'|trans,
+    'jarques' : 'editor.jarques'|trans,
+    'orange_peel' : 'editor.orange_peel'|trans,
+    'sin_city' : 'editor.sin_city'|trans,
+    'grungy' : 'editor.grungy'|trans,
+    'old_boot' : 'editor.old_boot'|trans,
+    'lomo' : 'editor.lomo'|trans,
+    'vintage' : 'editor.vintage'|trans,
+    'cross_process' : 'editor.cross_process'|trans,
+    'concentrate' : 'editor.concentrate'|trans,
+    'glowing_sun' : 'editor.glowing_sun'|trans,
+    'sunrise' : 'editor.sunrise'|trans,
+    'nostalgia' : 'editor.nostalgia'|trans,
+    'hemingway' : 'editor.hemingway'|trans,
+    'her_majesty' : 'editor.her_majesty'|trans,
+    'hazy_days' : 'editor.hazy_days'|trans,
+    'brightness' : 'editor.brightness'|trans,
+    'contrast' : 'editor.contrast'|trans,
+    'saturation' : 'editor.saturation'|trans,
+    'vibrance' : 'editor.vibrance'|trans,
+    'exposure' : 'editor.exposure'|trans,
+    'hue' : 'editor.hue'|trans,
+    'sepia' : 'editor.sepia'|trans,
+    'gamma' : 'editor.gamma'|trans,
+    'noise' : 'editor.noise'|trans,
+    'clip' : 'editor.clip'|trans,
+    'sharpen' : 'editor.sharpen'|trans,
+    'stack_blur' : 'editor.stack_blur'|trans,
+    'greyscale' : 'editor.greyscale'|trans,
+    'invert' : 'editor.invert'|trans,
+    'public' : 'visibility.public'|trans,
+    'private' : 'visibility.private'|trans,
+    'seo.title' : 'seo.title'|trans,
+    'seo.alt' : 'seo.alt'|trans,
+    'seo.description' : 'seo.description'|trans,
+    'edit_metas_success' : 'seo.edit_metas'|trans
+} %}
+
+<media-manager inline-template
+               v-cloak
+               class="hide-native-scrollbar"
+               :config="{{ options|json_encode }}"
+               :routes="{{ routes|json_encode }}"
+               :translations="{{ translations|json_encode }}"
+               :in-modal="{{ modal|default(null) ? 'true' : 'false' }}"
+               :hide-ext="{{ hideExt|default(null) ? hideExt|json_encode : '[]' }}"
+               :hide-path="{{ hidePath|default(null) ? hidePath|json_encode : '[]' }}"
+               :restrict="{{ restrict|default(null) ? restrict|json_encode : '{}' }}"
+               :user-id="{{ easy_media.enable_broadcasting ? app.user.id : 0 }}"
+               :upload-panel-img-list="{{ patterns|default(null) ?: '[]' }}"
+               :enable-editor="{{ (editor is defined and not editor) ? 'false' : 'true' }}"
+               :enable-upload="{{ (upload is defined and not upload) ? 'false' : 'true' }}"
+               :enable-move="{{ (move is defined and not move) ? 'false' : 'true' }}"
+               :enable-rename="{{ (rename is defined and not rename) ? 'false' : 'true' }}"
+               :enable-metas="{{ (metas is defined and not metas) ? 'false' : 'true' }}"
+               :enable-delete="{{ (delete is defined and not delete) ? 'false' : 'true' }}"
+               :enable-bulk-selection="{{ (bulk_selection is defined and not bulk_selection) ? 'false' : 'true' }}"
+>
+
+    <div class="media-manager" >
+
+        {# top toolbar #}
+        {% include '@EasyMedia/partials/manager/toolbar.html.twig' %}
+        {# ====================================================================== #}
+
+        {# dropzone #}
+        {% include '@EasyMedia/partials/manager/dropzone.html.twig' %}
+        {# ====================================================================== #}
+
+
+        <!--<div class="level-right">
+            {# upload preview info #}
+            <div class="level-item" v-if="waitingForUpload">
+                <nav class="breadcrumb">
+                    <ul>
+                        <li><p class="level has-text-weight-bold">{% verbatim %}{{ uploadPreviewList.length }}{% endverbatim %} File's</p></li>
+                        <li><p class="level has-text-weight-bold">{% verbatim %}{{ uploadPreviewListSize }}{% endverbatim %}</p></li>
+                    </ul>
+                </nav>
+            </div>
+
+            {# toggle sidebar #}
+            <div class="level-item" v-show="!isLoading && !waitingForUpload">
+                {# show/hide toolbar #}
+                <div class="block sm:hidden">
+                    <button type="button" class="button is-link __stack-left-toolbarToggle" @click.stop="toolBar = !toolBar">
+                        <span class="icon"><icon :name="toolBar ? 'times' : 'bars'"></icon></span>
+                    </button>
+                </div>
+            </div>
+        </div>-->
+
+        <div class="media-manager__stack">
+            {# path toolbar #}
+            {% include '@EasyMedia/partials/manager/breadcrumb.html.twig' %}
+            {# ====================================================================== #}
+
+            <section class="__stack-container">
+                {# upload preview #}
+                {% include '@EasyMedia/partials/manager/upload-preview.html.twig' %}
+
+                {# loadings #}
+                {% include '@EasyMedia/partials/manager/loadings.html.twig' %}
+
+                {# overlay #}
+                <container-click-overlay></container-click-overlay>
+
+                <div class="extra-func-btns" v-if="enableMove">
+                    {# intro #}
+{#                    <usage-intro-btn v-show="!isLoading && !waitingForUpload"></usage-intro-btn>#}
+
+                    {# movable list #}
+                    <v-touch v-if="allItemsCount && !isLoading && !waitingForUpload && !inMovableList()"
+                             class="movable-list"
+                             v-tippy="{arrow: true, hideOnClick: false}"
+                             :title="'{{ 'add.list'|trans }} (c / x)'"
+                             @tap="addToMovableList()">
+                        <span class="icon is-large">
+                            <icon name="plus" scale="1.2"></icon>
+                        </span>
+                    </v-touch>
+
+                    <v-touch v-if="allItemsCount && movableItemsCount && !isLoading && !waitingForUpload"
+                             class="movable-list mt-4"
+                             v-tippy="{arrow: true, hideOnClick: false}"
+                             :title="'{{ 'show.list'|trans }}'"
+                             @tap="showMovableList()"
+                             @hold="clearMovableList()">
+                        <span class="icon is-large">
+                            <icon name="list-ul" scale="1.2"></icon>
+                        </span>
+                        <span class="counter">{% verbatim %}{{ movableItemsCount || null }}{% endverbatim %}</span>
+                    </v-touch>
+                </div>
+
+                {# ====================================================================== #}
+
+
+                {# files box #}
+                <v-touch class="__stack-files mm-animated"
+                         :class="{'__stack-sidebar-hidden' : !infoSidebar}"
+                         ref="__stack-files"
+                         @swiperight="goToPrevFolder()"
+                         @swipeleft="goToPrevFolder()"
+                         @hold="containerClick($event)"
+                         @dbltap="containerClick($event)"
+                         @pinchin="containerClick($event)">
+
+
+                    {# no search #}
+                    <section>
+                        <div id="no_search" v-show="no_search">
+                            <div id="no_search_anim" data-json="{{ asset('bundles/easymedia/dist/lottie/ice_cream.json') }}"></div>
+                            <h3>{{ 'nothing_found'|trans }}</h3>
+                        </div>
+                    </section>
+
+                    {# files #}
+                    <ul class="__files-boxs" ref="filesList">
+                        <li v-for="(file, index) in orderBy(filterBy(allFiles, searchFor, 'name'), sortName, sortDirection)"
+                            :key="file.name"
+                            :data-file-index="index"
+                            @click.stop="setSelected(file, index, $event)">
+                            <v-touch class="__file-box mm-animated"
+                                     :class="{'bulk-selected': IsInBulkList(file), 'selected' : isSelected(file)}"
+                                     @swipeup="swipGesture($event, file, index)"
+                                     @swipedown="swipGesture($event, file, index)"
+                                     @swiperight="swipGesture($event, file, index)"
+                                     @swipeleft="swipGesture($event, file, index)"
+                                     @hold="pressGesture($event, file, index)"
+                                     @dbltap="pressGesture($event, file, index)">
+
+                                {# copy file link #}
+                                <div v-if="!fileTypeIs(file, 'folder') && !fileTypeIs(file, 'oembed')"
+                                     class="__box-copy-link icon"
+                                     @click.stop="copyLink(file.path)"
+                                     :title="linkCopied ? trans('copied') : trans('to_cp')"
+                                     v-tippy="{arrow: true, hideOnClick: false}"
+                                     @hidden="linkCopied = false">
+                                    <icon name="regular/clone" scale="0.9"></icon>
+                                </div>
+
+                                <div class="__box-data">
+                                    <div class="__box-preview">
+                                        <template v-if="fileTypeIs(file, 'image')">
+                                            <image-intersect
+                                                    :file="file"
+                                                    :check-for-dimensions="checkForDimensions"
+                                                    :browser-support="browserSupport"
+                                                    root-el=".__stack-files">
+                                            </image-intersect>
+                                        </template>
+
+                                        <template v-else-if="fileTypeIs(file, 'oembed')">
+                                            <img v-if="file.metas.icon" :src="file.metas.icon">
+                                            <icon v-else name="external-link-alt" scale="2.6"></icon>
+                                        </template>
+
+                                        <span v-else class="icon is-large">
+                                            <icon v-if="fileTypeIs(file, 'folder')" name="folder" scale="2.6"></icon>
+                                            <icon v-else-if="fileTypeIs(file, 'application')" name="cogs" scale="2.6"></icon>
+                                            <icon v-else-if="fileTypeIs(file, 'compressed')" name="regular/file-archive" scale="2.6"></icon>
+                                            <icon v-else-if="fileTypeIs(file, 'video')" name="film" scale="2.6"></icon>
+                                            <icon v-else-if="fileTypeIs(file, 'audio')" name="music" scale="2.6"></icon>
+                                            <icon v-else-if="fileTypeIs(file, 'pdf')" name="regular/file-pdf" scale="2.6"></icon>
+                                            <icon v-else-if="fileTypeIs(file, 'text')" name="regular/file-alt" scale="2.6"></icon>
+                                        </span>
+                                    </div>
+
+                                    <div class="__box-info">
+                                        {# folder #}
+                                        <template v-if="fileTypeIs(file, 'folder')">
+                                            <h4>{% verbatim %}{{ file.name }}{% endverbatim %}</h4>
+                                        </template>
+
+                                        {# any other #}
+                                        <template v-else>
+                                            <h4>{% verbatim %}{{ file.name }}{% endverbatim %}</h4>
+                                            <small class="__info-file-size" v-if="file.size">{% verbatim %}{{ getFileSize(file.size) }}{% endverbatim %}</small>
+                                        </template>
+                                    </div>
+                                </div>
+                            </v-touch>
+                        </li>
+                    </ul>
+
+                    <infinite-loading v-if="firstRun && files.next"
+                                      spinner="waveDots"
+                                      @infinite="loadPaginatedFiles">
+                        <span slot="no-more"></span>
+                    </infinite-loading>
+                </v-touch>
+
+            </section>
+
+
+        </div>
+
+        {# ====================================================================== #}
+
+        {# modals #}
+        {% include '@EasyMedia/partials/modal/ops.html.twig' %}
+    </div>
+</media-manager>

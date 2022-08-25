@@ -1,0 +1,17 @@
+/*                movable                */
+.movable-list {
+  @apply cursor-pointer relative bg-header text-color shadow-md rounded-full transition-all duration-200;
+
+  .counter {
+    @apply text-xs font-bold leading-none py-1 px-2 absolute text-white z-1 rounded-full -top-2 -right-2 bg-primary;
+
+    &:empty {
+      @apply hidden;
+    }
+  }
+
+  &:hover {
+    @apply text-color-active shadow-xl;
+    transform: translateY(-0.7rem);
+  }
+}

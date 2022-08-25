@@ -1,0 +1,44 @@
+{% trans_default_domain 'EasyMediaBundle' %}
+
+<section class="__stack-breadcrumb level">
+    <div class="level-left">
+        {# directories breadCrumb #}
+        <div class="level-item">
+            <nav class="breadcrumb has-arrow-separator is-hidden-touch">
+                <transition-group tag="ul" name="mm-list">
+                    <li key="library-bc">
+                        <a v-if="pathBarDirsList.length > 0 && !(isBulkSelecting() || isLoading)"
+                           class="p-l-0 level"
+                           v-tippy="{arrow: true}"
+                           title="{{ 'backspace'|trans }}"
+                           @click.stop="goToFolder(0)">
+                            <span class="icon level-item is-marginless"><icon name="map"></icon></span>
+                            <span class="level-item m-l-5 is-marginless">{{ 'library'|trans }}</span>
+                        </a>
+                        <p v-else class="p-l-0 level">
+                            <span class="icon level-item is-marginless"><icon name="regular/map"></icon></span>
+                            <span class="level-item m-l-5 is-marginless">{{ 'library'|trans }}</span>
+                        </p>
+                    </li>
+
+                    <li v-for="(folder, index) in pathBarDirsList" :key="`${index}-${folder}`">
+                        <p v-if="isLastItemByIndex(index, pathBarDirsList) || isBulkSelecting() || isLoading"
+                           class="level">
+                            <span class="icon level-item is-marginless"><icon name="regular/folder-open"></icon></span>
+                            <span class="level-item m-l-5 is-marginless">{% verbatim %}{{ folder }}{% endverbatim %}</span>
+                        </p>
+                        <a v-else
+                           v-tippy="{arrow: true}"
+                           title="{{ 'backspace'|trans }}"
+                           class="level"
+                           @click.stop="pathBarDirsList.length > 1 ? goToFolder(index+1) : false">
+                            <span class="icon level-item is-marginless"><icon name="folder"></icon></span>
+                            <span class="level-item m-l-5 is-marginless">{% verbatim %}{{ folder }}{% endverbatim %}</span>
+                        </a>
+                    </li>
+                </transition-group>
+            </nav>
+        </div>
+    </div>
+
+</section>

@@ -1,0 +1,33 @@
+.__stack{
+  &-container {
+    @apply flex overflow-hidden relative bg-body transition-all duration-200 z-1;
+    @apply accelerate-3D;
+    min-height: 60vh;
+    @screen sm{
+      max-height: 75vh;
+    }
+    @screen md{
+      max-height: none;
+    }
+    &.more-height {
+      min-height: 75vh;
+    }
+
+    &.dz-drag-hover {
+      @apply bg-blue-500 bg-opacity-20;
+
+      .__stack-files,
+      .__stack-sidebar {
+        @apply filter blur opacity-25;
+      }
+    }
+  }
+
+  &-files {
+    @apply bottom-0 overflow-y-scroll absolute right-0 top-0 left-0 transition-all duration-200;
+    @apply accelerate-3D;
+    touch-action: initial !important;
+    will-change: height, width, left, right;
+  }
+}
+

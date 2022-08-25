@@ -1,0 +1,58 @@
+{% trans_default_domain 'EasyMediaBundle' %}
+
+<div id="uploadPreview">
+    {# ops #}
+    <div class="dz-preview-ops btn-animate extra-func-btns">
+        {# add more files #}
+        <button type="button" v-tippy="{arrow: true, placement: 'left'}"
+                title="{{ 'add.more'|trans({'attr' : null}) }} (u)"
+                @click.stop="toggleUploadPanel()"
+                class="btn-plain">
+                            <span class="icon is-large">
+                                <icon>
+                                    <icon name="circle" scale="2.5"></icon>
+                                    <icon class="icon-btn" name="cloud-upload-alt"/>
+                                </icon>
+                            </span>
+        </button>
+        {# upload #}
+        <button type="button" v-tippy="{arrow: true, placement: 'left'}"
+                title="{{ 'upload.main'|trans }} (Enter)"
+                ref="process-dropzone"
+                class="btn-plain">
+                            <span class="icon is-large">
+                                <icon>
+                                    <icon name="circle" scale="2.5"></icon>
+                                    <icon class="icon-btn" name="check"/>
+                                </icon>
+                            </span>
+        </button>
+        {# reset #}
+        <button type="button" v-tippy="{arrow: true, placement: 'left'}"
+                title="{{ 'clear'|trans({'attr' : null}) }} (Esc)"
+                ref="clear-dropzone"
+                class="btn-plain">
+                            <span class="icon is-large">
+                                <icon>
+                                    <icon name="circle" scale="2.5"></icon>
+                                    <icon class="icon-btn" name="times"/>
+                                </icon>
+                            </span>
+        </button>
+    </div>
+
+    {# preview #}
+    <section class="sidebar-container">
+        <div class="sidebar"></div>
+    </section>
+    <template v-for="file in uploadPreviewList">
+        <keep-alive v-if="checkForUploadedFile(file.name)">
+            <upload-preview v-if="file.name == selectedUploadPreviewName"
+                            :key="file.name"
+                            :file="file"
+                            :file-type-is="fileTypeIs"
+                            :trans="trans">
+            </upload-preview>
+        </keep-alive>
+    </template>
+</div>

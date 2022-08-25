@@ -1,0 +1,46 @@
+// default
+.__stack-breadcrumb {
+  @apply py-3 px-6 bg-theme z-1 shadow-lg;
+  @apply border-solid border-0 border-b border-theme-5;
+  @apply m-0;
+
+  .level-left, .level-right{
+    @apply mb-0 w-auto;
+  }
+
+  .breadcrumb {
+    @apply mb-0;
+    @apply p-0;
+
+    & > ul {
+      @apply flex items-center p-0 m-0;
+    }
+
+    li {
+      @apply relative inline-flex;
+      &::before {
+        content: "\2794";
+        @apply text-theme-50
+      }
+      &:first-child{
+        &::before{
+          content: none;
+        }
+      }
+      .icon{
+        @apply mr-1;
+      }
+      .level{
+        @apply flex;
+      }
+    }
+
+    a {
+      @apply font-bold cursor-pointer text-blue-400 hover:text-theme-50 py-0 px-2;
+    }
+
+    p {
+      @apply m-0 py-0 px-2;
+    }
+  }
+}

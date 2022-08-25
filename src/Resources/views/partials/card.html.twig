@@ -1,0 +1,238 @@
+{% trans_default_domain 'EasyMediaBundle' %}
+
+{% set lightMode = (light is defined and light) ? true : false %}
+
+<v-touch class="card"
+         :class="{'pdf-prev': selectedFileIs('pdf') || selectedFileIs('text')}"
+         {% if not lightMode %}
+         @swiperight="cardSwipGesture"
+         @swipeleft="cardSwipGesture"
+         @swipeup="cardSwipGesture"
+         @swipedown="cardSwipGesture"{% endif %}>
+
+    <div class="card-image">
+        {# pdf / text #}
+        <object v-if="selectedFileIs('pdf') || selectedFileIs('text')"
+                :data="selectedFile.path"
+                :type="selectedFile.type">
+            <p v-if="selectedFileIs('pdf')">{{ 'pdf'|trans }}</p>
+        </object>
+
+        {# oembed #}
+        <div v-else-if="selectedFileIs('oembed') && selectedFile.metas.code">
+            <div v-if="selectedFile.metas.type && selectedFile.metas.type == 'video'" class="responsive" :style="{ paddingBottom: (selectedFile.metas.code.ratio ? selectedFile.metas.code.ratio + '%' : 0) }" v-html="selectedFile.metas.code.html"></div>
+            <div v-else v-html="selectedFile.metas.code.html" ></div>
+        </div>
+
+        {# video #}
+        <div v-else-if="selectedFileIs('video')">
+            <video controls
+                   playsinline
+                   preload="metadata"
+                   data-player
+                   :src="selectedFile.path">
+                {{ 'video_support'|trans }}
+            </video>
+        </div>
+
+        {# audio #}
+        <div v-else-if="selectedFileIs('audio')" class="audio-prev">
+            <template>
+                <img v-if="audioFileMeta && audioFileMeta.cover"
+                     :src="audioFileMeta.cover"
+                     :alt="selectedFile.name"
+                     class="image"/>
+
+                <div v-else class="audio-icon">
+                    <icon class="svg-prev-icon" name="music" scale="8"></icon>
+                </div>
+            </template>
+
+            <audio controls
+                   class="is-hidden"
+                   preload="metadata"
+                   data-player
+                   :src="selectedFile.path">
+                {{ 'audio.support'|trans }}
+            </audio>
+        </div>
+
+        {# image #}
+        <image-preview v-else
+                       {% if not lightMode %}:show-ops="!ops_btn_disable"{% endif %}
+                       :trans="trans"
+                       {% if not lightMode %}:ops_btn_disable="ops_btn_disable"
+                       :in-movable-list="inMovableList"
+                       :rename-item="renameItem"
+                       :delete-item="deleteItem"
+                       :image-editor-card="imageEditorCard"
+                       :add-to-movable-list="addToMovableList"
+                       :edit-metas-item="editMetasItem"{% endif %}>
+            <a :href="selectedFile.path"
+               rel="noreferrer noopener"
+               target="_blank"
+               class="image">
+                <img :src="selectedFile.path" :alt="selectedFile.name">
+            </a>
+        </image-preview>
+    </div>
+
+    <div class="card-content">
+        {# ops #}
+        <div class="level mt-2 mb-2">
+            <div class="level-left">
+                <div class="level-item">
+                    {# name #}
+                    <p class="title">
+                        <span class="link"
+                              v-if="!selectedFileIs('oembed')"
+                              {% if not lightMode %}@click.stop="copyLink(selectedFile.path)"
+                              :title="linkCopied ? trans('copied') : trans('to_cp')"
+                              v-tippy="{arrow: true, hideOnClick: false, followCursor: true}"
+                              @hidden="linkCopied = false"{% endif %}>
+                            {% verbatim %}{{ selectedFile.name }}{% endverbatim %}
+                        </span>
+
+                        {# open url #}
+                        <!--a :href="selectedFile.path"
+                           v-if="selectedFileIs('pdf') || selectedFileIs('text')"
+                           rel="noreferrer noopener"
+                           target="_blank"
+                           title="{{ 'public_url'|trans }}"
+                           v-tippy="{arrow: true}">
+                            <icon name="search" scale="1.1"></icon>
+                        </a-->
+                    </p>
+                </div>
+            </div>
+
+            <div class="level-right hidden sm:flex">
+                {# download #}
+                <div class="level-item">
+                    <span class="icon is-large link is-black" v-if="!selectedFileIs('oembed')"
+                          title="{{ 'download.file'|trans }}"
+                          v-tippy="{arrow: true}"
+                          @click.prevent="saveFile(selectedFile)">
+                        <icon name="download" scale="1.1"></icon>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="card-details">
+            <table>
+                <tbody>
+                    <tr v-if="!selectedFileIs('oembed')">
+                        <td class="t-key">{{ 'type'|trans }}:</td>
+                        <td class="t-val">{% verbatim %}{{ selectedFile.type }}{% endverbatim %}</td>
+                    </tr>
+                    <tr v-if="selectedFile.size > 0">
+                        <td class="t-key">{{ 'size'|trans }}:</td>
+                        <td class="t-val">{% verbatim %}{{ getFileSize(selectedFile.size) }}{% endverbatim %}</td>
+                    </tr>
+                    <tr v-if="(selectedFileIs('image') || selectedFileIs('video')) && dimensions.length">
+                        <td class="t-key">{{ 'dimension'|trans }}:</td>
+                        <td class="t-val">{% verbatim %}{{ selectedFileDimensions }}{% endverbatim %}</td>
+                    </tr>
+                    <tr v-if="selectedFile.last_modified_formated">
+                        <td class="t-key">{{ 'last_modified'|trans }}:</td>
+                        <td class="t-val">{% verbatim %}{{ selectedFile.last_modified_formated }}{% endverbatim %}</td>
+                    </tr>
+                    <tr v-if="(selectedFileIs('image') || selectedFileIs('video')) && selectedFile.metas.title">
+                        <td class="t-key">{{ 'seo.title'|trans }}:</td>
+                        <td class="t-val">{% verbatim %}{{ selectedFile.metas.title }}{% endverbatim %}</td>
+                    </tr>
+                    <tr v-if="(selectedFileIs('image') || selectedFileIs('video')) && selectedFile.metas.alt">
+                        <td class="t-key">{{ 'seo.alt'|trans }}:</td>
+                        <td class="t-val">{% verbatim %}{{ selectedFile.metas.alt }}{% endverbatim %}</td>
+                    </tr>
+                    <tr v-if="selectedFile.metas.description">
+                        <td class="t-key">{{ 'seo.description'|trans }}:</td>
+                        <td class="t-val">{% verbatim %}{{ selectedFile.metas.description }}{% endverbatim %}</td>
+                    </tr>
+
+                    <tr v-if="selectedFileIs('audio') && selectedFile.metas.tags && selectedFile.metas.tags.title">
+                        <td class="t-key">{{ 'audio.title'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ selectedFile.metas.tags.title }}{% endverbatim %}
+                        </td>
+                    </tr>
+
+                    <tr v-if="selectedFileIs('audio') && selectedFile.metas.tags && selectedFile.metas.tags.album">
+                        <td class="t-key">{{ 'audio.album'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ selectedFile.metas.tags.album }}{% endverbatim %}
+                        </td>
+                    </tr>
+
+                    <tr v-if="selectedFileIs('audio') && selectedFile.metas.tags && selectedFile.metas.tags.artist">
+                        <td class="t-key">{{ 'audio.artist'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ selectedFile.metas.tags.artist }}{% endverbatim %}
+                        </td>
+                    </tr>
+
+                    <tr v-if="selectedFileIs('audio') && selectedFile.metas.tags && selectedFile.metas.tags.genre">
+                        <td class="t-key">{{ 'audio.genre'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ selectedFile.metas.tags.genre }}{% endverbatim %}
+                        </td>
+                    </tr>
+
+                    <tr v-if="selectedFileIs('audio') && selectedFile.metas.tags && selectedFile.metas.tags.year">
+                        <td class="t-key">{{ 'audio.year'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ selectedFile.metas.tags.year }}{% endverbatim %}
+                        </td>
+                    </tr>
+
+                    <tr v-if="(selectedFileIs('audio') || selectedFileIs('video')) && selectedFile.metas.duration">
+                        <td class="t-key">{{ 'duration'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ new Date(selectedFile.metas.duration * 1000).toISOString().slice(11, 19) }}{% endverbatim %}
+                        </td>
+                    </tr>
+
+                    <tr v-if="selectedFileIs('oembed') && selectedFile.metas.provider && selectedFile.metas.provider.name">
+                        <td class="t-key">{{ 'oembed.provider'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ selectedFile.metas.provider.name }}{% endverbatim %}
+                        </td>
+                    </tr>
+                    <tr v-if="selectedFileIs('oembed') && selectedFile.metas.author && selectedFile.metas.author.name">
+                        <td class="t-key">{{ 'oembed.author'|trans }}:</td>
+                        <td class="t-val">
+                            <a v-if="selectedFile.metas.author.url" :href="selectedFile.metas.author.url" target="_blank">
+                                {% verbatim %}{{ selectedFile.metas.author.name }}{% endverbatim %}
+                            </a>
+                            <span v-else>{% verbatim %}{{ selectedFile.metas.author.name }}{% endverbatim %}</span>
+                        </td>
+                    </tr>
+                    <tr v-if="selectedFileIs('oembed') && selectedFile.metas.type">
+                        <td class="t-key">{{ 'oembed.type'|trans }}:</td>
+                        <td class="t-val">
+                            {% verbatim %}{{ selectedFile.metas.type }}{% endverbatim %}
+                        </td>
+                    </tr>
+                    <tr v-if="selectedFileIs('oembed') && selectedFile.metas.url">
+                        <td class="t-key">{{ 'oembed.url'|trans }}:</td>
+                        <td class="t-val">
+                            <a :href="selectedFile.metas.url" target="_blank">
+                                {% verbatim %}{{ selectedFile.metas.url }}{% endverbatim %}
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr v-for="(value, name) in selectedFile.metas.extra" :key="name">
+                        <td class="t-key">{% verbatim %}{{ name }}{% endverbatim %}:</td>
+                        <td class="t-val">{% verbatim %}{{ value }}{% endverbatim %}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</v-touch>

@@ -1,0 +1,38 @@
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer utilities {
+  .accelerate-3D {
+    -webkit-overflow-scrolling: auto;
+  }
+
+  @responsive {
+    .scrolling-touch {
+      -webkit-overflow-scrolling: touch;
+    }
+    .scrolling-auto {
+      -webkit-overflow-scrolling: auto;
+    }
+  }
+}
+
+@layer base {
+  [v-cloak] {
+    display: none;
+  }
+
+  .hide-native-scrollbar {
+    * {
+      overflow: -moz-scrollbars-none;
+      -ms-overflow-style: none;
+
+      &::-webkit-scrollbar {
+        width: 0 !important;
+      }
+    }
+  }
+
+  img {
+    @apply accelerate-3D;
+  }
+}

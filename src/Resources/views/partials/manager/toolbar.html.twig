@@ -1,0 +1,214 @@
+{% trans_default_domain 'EasyMediaBundle' %}
+
+<transition name="mm-list" mode="out-in">
+    <!-- This example requires Tailwind CSS v2.0+ -->
+    <nav class="media-manager__toolbar" v-show="toolBar">
+        <div class="__toolbar-container">
+            <div class="__toolbar-level">
+                <div class="__toolbar-level_main">
+                    {# first #}
+                    <div class="level-item" v-if="enableUpload">
+                        <div class="field" :class="{'has-addons': !isBulkSelecting()}">
+                            {# upload #}
+                            <div class="control" v-if="!isBulkSelecting()">
+                                <button type="button" class="button"
+                                        ref="upload"
+                                        :disabled="isLoading"
+                                        @click.stop="toggleUploadPanel()"
+                                        v-tippy="{arrow: true}"
+                                        title="{{ 'upload.main'|trans }} (u)">
+                                    <span class="icon"><icon name="upload"></icon></span>
+                                </button>
+                            </div>
+
+                            {# new folder #}
+                            <div class="control">
+                                <button type="button" class="button"
+                                        ref="new_folder"
+                                        :disabled="isLoading"
+                                        @click.stop="createNewFolder()"
+                                        v-tippy="{arrow: true}"
+                                        title="{{ 'add.folder'|trans }} (n)">
+                                    <span class="icon"><icon name="folder-plus"></icon></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# middle #}
+                    <div class="level-item">
+                        <div class="field has-addons">
+                            {# move #}
+                            <div class="control" v-if="enableMove" v-show="isBulkSelecting() || !(isLoading || !movableItemsCount)">
+                                <button type="button" class="button is-link"
+                                        ref="move"
+                                        :disabled="isLoading || !movableItemsCount"
+                                        v-tippy="{arrow: true}"
+                                        title="{{ 'move.main'|trans }} (m / p)"
+                                        @click.stop="moveItem()">
+                                    <span class="icon"><icon name="share" scale="0.8"></icon></span>
+                                </button>
+                            </div>
+
+                            {# rename #}
+                            <div class="control" v-if="!isBulkSelecting() && enableRename">
+                                <button type="button" class="button is-link"
+                                        ref="rename"
+                                        :disabled="ops_btn_disable"
+                                        v-tippy="{arrow: true}"
+                                        title="{{ 'rename.main'|trans }}"
+                                        @click.stop="renameItem()">
+                                    <span class="icon"><icon name="i-cursor"></icon></span>
+                                </button>
+                            </div>
+
+                            {# editMetas #}
+                            <div class="control" v-if="!isBulkSelecting() && !(ops_btn_disable || !fileTypeIs(selectedFile, 'image')) && enableMetas">
+                                <button type="button" class="button is-link"
+                                        ref="editMetas"
+                                        :disabled="ops_btn_disable || !fileTypeIs(selectedFile, 'image')"
+                                        v-tippy="{arrow: true}"
+                                        title="{{ 'edit_metas.main'|trans }}"
+                                        @click.stop="editMetasItem()">
+                                    <span class="icon"><icon name="hashtag"></icon></span>
+                                </button>
+                            </div>
+
+
+                            {# editor #}
+                            <div class="control" v-show="!isBulkSelecting() && !editor_btn_disable">
+                                <button type="button" class="button is-link"
+                                        ref="editor"
+                                        :disabled="editor_btn_disable"
+                                        v-tippy="{arrow: true}"
+                                        title="{{ 'editor.main'|trans }} (e)"
+                                        @click.stop="imageEditor()">
+                                    <span class="icon"><icon name="regular/object-ungroup" scale="1.2"></icon></span>
+                                </button>
+                            </div>
+
+                            {# delete #}
+                            <div class="control" v-if="enableDelete">
+                                <button type="button" class="button is-link"
+                                        ref="delete"
+                                        :disabled="ops_btn_disable"
+                                        v-tippy="{arrow: true}"
+                                        title="{{ 'delete.main'|trans }} (d / del)"
+                                        @click.stop="deleteItem()">
+                                    <span class="icon"><icon name="regular/trash-alt"></icon></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="__toolbar-level_second">
+                    {# last #}
+                    <div class="level-item">
+                        <div class="field has-addons">
+                            {# refresh #}
+                            <div class="control" v-if="!isBulkSelecting()">
+                                <v-touch class="button is-primary"
+                                         ref="refresh"
+                                         :disabled="isLoading"
+                                         tag="button"
+                                         v-tippy="{arrow: true}"
+                                         title="{{ 'action.refresh'|trans }} (r)"
+                                         @tap="refresh()"
+                                         @hold="clearAll()">
+                                    <span class="icon">
+                                        <icon name="sync" :spin="isLoading"></icon>
+                                    </span>
+                                </v-touch>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="level-item" v-if="enableBulkSelection">
+                        <div class="field" :class="{'has-addons' : isBulkSelecting()}">
+                            {# bulk select all #}
+                            <div class="control">
+                                <button type="button" @click.stop="blkSlctAll()"
+                                        ref="bulkSelectAll"
+                                        class="button"
+                                        :class="{'is-warning' : bulkSelectAll}"
+                                        v-show="isBulkSelecting()"
+                                        :disabled="searchItemsCount == 0 || isLoading"
+                                        v-tippy="{arrow: true}"
+                                        title="a">
+                                    <template v-if="bulkSelectAll">
+                                        <span class="icon"><icon name="minus" scale="0.8"></icon></span>
+                                        <span>{{ 'select.non'|trans }}</span>
+                                    </template>
+                                    <template v-else>
+                                        <span class="icon"><icon name="plus" scale="0.8"></icon></span>
+                                        <span>{{ 'select.all'|trans }}</span>
+                                    </template>
+                                </button>
+                            </div>
+
+                            {# bulk select #}
+                            <div class="control">
+                                <button type="button" @click.stop="blkSlct()"
+                                        ref="bulkSelect"
+                                        class="button"
+                                        :class="{'is-danger' : bulkSelect}"
+                                        :disabled="searchItemsCount == 0 || !allItemsCount || isLoading"
+                                        v-tippy="{arrow: true}"
+                                        title="{{ 'select.bulk'|trans }} (b)">
+                                    <span class="icon"><icon name="layer-group"></icon></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="level-item flex">
+                        {# search #}
+                        <div v-if="allItemsCount">
+                            <div class="control">
+                                <div class="field has-addons">
+                                    {# local #}
+                                    <p class="control has-icons-left">
+                                        <input class="input"
+                                               :disabled="isLoading"
+                                               type="text"
+                                               ref="search"
+                                               v-model="searchFor"
+                                               :placeholder="trans('find')">
+                                        <span class="icon is-left">
+                                            <icon name="search"></icon>
+                                        </span>
+                                    </p>
+
+                                    {# clear #}
+                                    <p class="control">
+                                        <button type="button" class="button is-black" :disabled="!searchFor"
+                                                v-tippy="{arrow: true}"
+                                                title="{{ 'clear'|trans({'attr' : 'search.main'|trans|lower }) }}"
+                                                @click.stop="resetInput('searchFor')">
+                                            <span class="icon"><icon name="times"></icon></span>
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# filter & sort #}
+                        <div class="ml-3" v-if="searchItemsCount != 0 && allItemsCount">
+                            <filter-and-sorting :disabled="isLoading"
+                                                :filter-name-is="filterNameIs"
+                                                :sort-name-is="sortNameIs"
+                                                :set-filter-name="setFilterName"
+                                                :set-sort-name="setSortName"
+                                                :have-a-file-of-type="haveAFileOfType"
+                                                :trans="trans"
+                                                v-tippy="{arrow: true}"
+                                                title="{{ 'filter.filtration'|trans }}">
+                                >
+                            </filter-and-sorting>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</transition>

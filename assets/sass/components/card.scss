@@ -1,0 +1,37 @@
+.card {
+  @apply min-w-full rounded overflow-hidden;
+  @screen sm {
+    min-width: unset;
+  }
+  &-details {
+    @apply mb-4;
+
+    .tag {
+      @apply text-base text-white bg-gray-900;
+    }
+
+    table {
+      @apply mb-1 w-full;
+      td {
+        @apply text-base align-top;
+      }
+
+      .t-key {
+        @apply whitespace-nowrap text-color;
+      }
+
+      .t-val {
+        @apply pl-1 text-right text-color-secondary break-words;
+      }
+
+      a {
+        @apply text-color-active;
+      }
+    }
+  }
+  &-content{
+    .level{
+      @apply flex justify-between;
+    }
+  }
+}

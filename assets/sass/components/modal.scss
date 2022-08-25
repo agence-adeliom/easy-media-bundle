@@ -1,0 +1,235 @@
+.modal{
+  @apply hidden items-center overflow-hidden fixed justify-center inset-0;
+  z-index: 10000050;
+  &-background {
+    @apply fixed inset-0 bg-black bg-opacity-90;
+  }
+  &.is-active {
+    @apply flex p-3 pb-0;
+  }
+  &-close{
+    @apply select-none cursor-pointer pointer-events-auto inline-block flex-grow-0 flex-shrink-0 h-12 w-12 outline-none fixed top-3 right-3 align-top appearance-none bg-theme-75 bg-opacity-20 rounded-full border-none;
+    font-size: 0;
+
+    &:before,
+    &:after{
+      @apply bg-white block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45;
+      content: "";
+    }
+    &:before{
+      height: 2px;
+      width: 50%;
+    }
+    &:after{
+      height: 50%;
+      width: 2px;
+    }
+
+
+
+    /*
+        @apply h-12 fixed w-12 top-8 right-8;
+
+     */
+  }
+  &-card, &-content {
+    @apply flex flex-col overflow-hidden rounded;
+    max-height: calc(100vh - 40px);
+    -ms-overflow-y: visible;
+
+    @screen sm{
+      margin: 0 auto;
+      width: 640px;
+    }
+
+    &-foot,
+    &-head {
+      @apply items-center bg-header flex flex-shrink-0 justify-start p-5 relative;
+    }
+    &-head{
+      @apply rounded-t shadow-sm;
+    }
+    &-foot {
+      @apply rounded-b flex-col-reverse sm:flex-row gap-2 sm:gap-0 border-0 border-t border-solid border-theme-5;
+      & > .button {
+        @apply w-full m-0 sm:w-auto sm:mr-2;
+        &:last-child {
+          @apply sm:mr-0;
+        }
+      }
+
+      /*
+      .button:not(:last-child) {
+        @apply mr-2;
+      }
+       */
+
+      .level{
+        @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4;
+        &-left, &-right{
+          @apply flex flex-row gap-2;
+        }
+      }
+    }
+    &-title{
+      @apply text-gray-800 flex-grow flex-shrink-0 text-2xl leading-none;
+    }
+    &-body{
+      @apply bg-body flex-grow flex-shrink overflow-auto p-5 scrolling-touch;
+      ul{
+        @apply m-0 p-0;
+      }
+    }
+  }
+  &-card{
+    &-head{
+      @include state-colors();
+    }
+    &-title {
+      max-width: calc(100% - 20px);
+      @apply m-0;
+    }
+    &-foot {
+      @apply justify-end;
+    }
+  }
+}
+
+
+.__modal{
+
+  &-content-wrapper {
+    @apply self-center;
+  }
+
+  &-preview {
+    .level-left, .level-right{
+      @apply w-auto;
+    }
+    .title {
+      @apply break-all text-2xl;
+    }
+    .subtitle {
+      @apply break-all text-base text-theme-50;
+    }
+
+    .icon {
+      @apply rounded;
+    }
+
+    .modal-content {
+      @apply my-0 mx-auto;
+      @apply max-w-full bg-header;
+      .card{
+        @apply bg-header;
+      }
+      @screen sm{
+        max-width: 75vw;
+      }
+      @screen md{
+        max-width: 60vw;
+      }
+      @screen 2xl{
+        max-width: 45vw;
+      }
+
+    }
+
+    .card-image {
+      @apply overflow-y-scroll border-b border-theme-5;
+      .responsive {
+        position: relative;
+        iframe {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+
+    .pdf-prev {
+      .card-image {
+        height: 45vh;
+
+        object {
+          @apply block h-full w-full;
+        }
+      }
+    }
+
+    .audio-prev {
+      @apply border-b border-dashed border-theme-5;
+
+      .audio-icon {
+        @apply h-full text-center w-full bg-theme;
+      }
+      .image{
+        @apply static max-w-xs m-auto p-6;
+      }
+      audio {
+        @apply z-1;
+      }
+    }
+
+    .card-content{
+      @apply px-4 py-3;
+      .level{
+        @apply gap-4;
+      }
+    }
+  }
+
+  &-delete-total {
+    @apply mt-4 pt-4 text-right;
+  }
+  &-folder-warning {
+    @apply items-end flex mt-4 text-red-400;
+    .icon{
+      @apply mr-2;
+    }
+  }
+}
+
+.modal-manager__Inmodal {
+  > .modal-content {
+    width: 95%;
+
+    @screen md{
+      width: 85%;
+    }
+  }
+
+  .__stack-breadcrumb-mobile {
+    @apply pb-4;
+  }
+
+  .media-manager__stack {
+    @apply overflow-hidden;
+  }
+
+  .__stack-sidebar {
+    @apply overflow-scroll;
+    max-height: 65vh;
+  }
+
+  .__stack-sidebar-toggle {
+    span:not(.icon) {
+      @apply mb-0;
+    }
+  }
+
+  .__modal-preview {
+    .modal-content {
+      @apply w-full;
+    }
+  }
+}
+
+.__Inmodal{
+  &-editor,
+  &-editor-hide {
+    @apply hidden;
+  }
+}

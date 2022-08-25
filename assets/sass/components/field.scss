@@ -1,0 +1,149 @@
+
+.input {
+  @apply shadow-none #{!important};
+}
+
+label.input-label{
+  @apply text-base mb-2;
+}
+
+.input,
+.textarea,
+.select select {
+  @apply bg-white;
+  @apply border-theme-5 #{!important};
+  &:hover {
+    @apply border-theme-25 #{!important};
+  }
+}
+
+.input, .select select, .textarea {
+  @apply bg-white border border-gray-300 rounded-md text-black;
+}
+
+.input, .textarea {
+  @apply max-w-full w-full;
+}
+
+.button, .input, .textarea{
+  @apply inline-flex appearance-none rounded-md text-base align-top px-4 py-2 border border-solid border-gray-300;
+}
+
+.button{
+  @apply bg-white justify-center text-center whitespace-nowrap cursor-pointer text-black border border-solid border-gray-300;
+
+  .icon{
+    @apply w-6 h-6 mr-1 -ml-2;
+    &:first-child:last-child{
+      @apply -ml-2 -mr-2;
+    }
+    &:last-child:not(:first-child){
+      @apply ml-1 -mr-2;
+    }
+  }
+  &[disabled],
+  &.disabled{
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  &.is-link {
+    @apply border-transparent text-white bg-link;
+  }
+  &.is-primary {
+    @apply border-transparent text-white bg-primary;
+  }
+  &.is-success {
+    @apply border-transparent text-white bg-success;
+  }
+  &.is-warning {
+    @apply border-transparent text-white bg-warning;
+  }
+  &.is-danger {
+    @apply border-transparent text-white bg-danger;
+  }
+}
+
+button.delete,
+.media-right span.delete,
+.__box-delete span.delete{
+  @apply select-none cursor-pointer pointer-events-auto inline-block flex-grow-0 flex-shrink-0 h-5 w-5 outline-none relative align-top appearance-none bg-black bg-opacity-20 rounded-full border-none;
+  font-size: 0;
+
+  &:before,
+  &:after{
+    @apply bg-header block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45;
+    content: "";
+  }
+  &:before{
+    height: 2px;
+    width: 50%;
+  }
+  &:after{
+    height: 50%;
+    width: 2px;
+  }
+  &:hover{
+    @apply bg-active;
+
+    &:before,
+    &:after {
+      @apply bg-color-active;
+    }
+  }
+}
+
+.field{
+  &.has-addons{
+    @apply flex justify-start rounded overflow-hidden;
+    &:not(:last-child){
+      margin-right: -1px;
+    }
+    .control{
+      @apply relative mb-0;
+      .button,
+      .input,
+      .select select{
+         @apply rounded-none;
+      }
+      &.has-icons-left,
+      &.has-icons-right{
+        .icon{
+          @apply absolute top-0 h-10 w-10 text-gray-300;
+        }
+      }
+      &.has-icons-left{
+        .input,
+        .select select{
+          @apply pl-10;
+        }
+        .icon.is-left{
+          @apply left-0;
+        }
+      }
+      &:not(:only-child){
+        margin-right: -1px;
+      }
+      //&:first-child:not(:only-child){
+      //  .button,
+      //  .input,
+      //  .select select{
+      //    @apply rounded-r-none;
+      //  }
+      //}
+      //&:last-child:not(:only-child){
+      //  .button,
+      //  .input,
+      //  .select select{
+      //    @apply rounded-l-none;
+      //  }
+      //}
+      //&:not(:first-child):not(:last-child){
+      //  .button,
+      //  .input,
+      //  .select select{
+      //    @apply rounded-none;
+      //  }
+      //}
+    }
+  }
+}

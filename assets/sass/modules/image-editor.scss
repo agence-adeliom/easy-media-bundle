@@ -1,0 +1,248 @@
+@import '~cropperjs/dist/cropper.css';
+
+:root{
+    --range: theme('colors.yellow.400');
+    --editor-btns: rgba(theme("colors.theme-70"), 0.8);
+}
+
+.__modal-editor {
+    @apply bg-transparent shadow-none transition-all transform;
+    .__modal-content-wrapper{
+        @apply w-full h-full;
+    }
+    .__editor {
+        --tw-translate-x: -50px;
+        @apply bg-transparent shadow-none transition-all transform h-full flex-grow;
+        min-width: unset !important;
+        overflow: unset !important;
+
+        .top,
+        .mid {
+            @apply flex;
+        }
+
+        .__side-toolbar {
+            @apply self-start flex;
+        }
+
+        .top {
+            @apply sticky top-0 z-30;
+
+            .__top-toolbar {
+                @apply flex w-full;
+
+                .left,
+                .right {
+                    @apply flex;
+                }
+
+                .__left-index {
+                    @apply flex mr-4;
+                }
+            }
+        }
+
+        .mid {
+            height: calc(100% - 65px);
+            .__side-toolbar {
+                flex-flow: column nowrap;
+            }
+
+            .__cropper {
+                @apply m-4 mr-0 relative w-full;
+
+                .image {
+                    @apply block;
+
+
+                    img {
+                        @apply max-w-full;
+                    }
+                }
+
+                .__loader {
+                    @apply items-center flex h-full justify-center left-0 absolute top-0 w-full opacity-50;
+                }
+
+                .__diff {
+                    @apply overflow-hidden absolute top-0 z-10 h-full;
+                    @apply w-full #{!important};
+                    max-height: 85vh;
+
+                    .handle {
+                        @apply text-indigo-600;
+                    }
+
+                    .wrapper {
+                        --tw-shadow: 10px 0 40px 0 rgba(theme('colors.black'), 0.5);
+                        @apply bg-black bg-opacity-50 shadow m-0;
+                    }
+
+                    &.is-draggable {
+                        .wrapper {
+                            background-color: unset;
+                        }
+                    }
+                }
+
+                .__caman-presets {
+                    @apply pl-4 absolute right-0 top-0 transform translate-x-full z-1;
+
+                    h3 {
+                        @apply rounded-sm font-bold p-3 text-center text-white m-0 mb-2 bg-purple-500;
+                    }
+
+                    section {
+                        @apply flex;
+                    }
+
+                    .col {
+                        @apply flex;
+                        flex-flow: column nowrap;
+
+                        &:first-of-type {
+                            button {
+                                @apply ml-0;
+                            }
+                        }
+
+                        &:last-of-type {
+                            button {
+                                @apply mr-0;
+                            }
+                        }
+
+                        button {
+                            @apply rounded-sm m-1;
+
+                            &:first-of-type {
+                                @apply mt-0;
+                            }
+
+                            &:last-of-type {
+                                @apply mb-0;
+                            }
+
+                            &:hover,
+                            &.is-active {
+                                @apply bg-indigo-600;
+                            }
+
+                            &:disabled {
+                                @apply bg-black bg-opacity-80;
+                            }
+                        }
+                    }
+                }
+
+                .__bottom-toolbar {
+                    --tw-translate-x: calc(100% + 1rem);
+                    @apply bottom-0 flex absolute right-0 transform z-1;
+                }
+            }
+        }
+    }
+
+    .btn-plain {
+        @apply text-white p-3 transition-all leading-none w-10 h-10 items-center;
+        @apply bg-opacity-80 bg-theme-70;
+
+
+        &:hover,
+        &.is-active {
+            @apply bg-indigo-600;
+        }
+
+        &:disabled {
+            @apply bg-black bg-opacity-80 opacity-70;
+        }
+
+        &.is-danger{
+            @apply bg-opacity-100 bg-danger;
+        }
+        &.is-success{
+            @apply bg-opacity-100 bg-success;
+        }
+
+
+    }
+}
+
+// crop styles
+.cropper-line {
+    @apply bg-transparent #{!important};
+}
+
+.cropper-point {
+    @apply z-1;
+
+    &.point-e,
+    &.point-w,
+    &.point-s,
+    &.point-n {
+        @apply bg-transparent #{!important};
+    }
+
+    &.point-ne,
+    &.point-se,
+    &.point-nw,
+    &.point-sw {
+        @apply bg-transparent #{!important};
+        @apply border-white border-solid h-5 w-5;
+    }
+
+    &.point-ne {
+        border-width: 3px 3px 0 0;
+    }
+
+    &.point-nw {
+        border-width: 3px 0 0 3px;
+    }
+
+    &.point-se {
+        border-width: 0 3px 3px 0;
+    }
+
+    &.point-sw {
+        border-width: 0 0 3px 3px;
+    }
+}
+
+// filter slider
+#contentpopup2 {
+    .title,
+    .icon {
+        color: var(--range);
+    }
+
+    .range-neg {
+        background-image: linear-gradient(to right, var(--editor-btns) var(--length), var(--range) var(--length), var(--range) 50%, var(--editor-btns) 50%) !important;
+    }
+
+    .range-pos {
+        background-image: linear-gradient(to right, var(--editor-btns) 50%, var(--range) 50%, var(--range) var(--length), var(--editor-btns) var(--length)) !important;
+    }
+
+    input[type='range'] {
+        @apply appearance-none h-2 w-full mx-0 my-2 rounded-full;
+        background-color: var(--editor-btns);
+        background-image: linear-gradient(to right, var(--range) var(--length), var(--editor-btns) var(--length));
+
+        &::-webkit-slider-thumb {
+            @apply appearance-none cursor-pointer h-4 w-4 rounded-full bg-white;
+        }
+
+        &::-moz-range-thumb {
+            @apply cursor-pointer h-4 w-4 rounded-full bg-white;
+        }
+    }
+}
+
+// tippy theme
+.tippy-tooltip.mm-theme {
+    @apply bg-black text-white;
+}
+
+.tippy-popper[x-placement^=top] .tippy-tooltip.mm-theme .tippy-arrow {
+    @apply border-black;
+}

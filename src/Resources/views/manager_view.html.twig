@@ -1,0 +1,31 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% trans_default_domain 'EasyMediaBundle' %}
+
+{% block page_title %}{{ 'title'|trans|striptags|raw }}{% endblock %}
+
+{% block content_header_wrapper %}{% endblock %}
+
+{% block main %}
+    <div id="media-holder">
+        {% include '@EasyMedia/manager.html.twig' %}
+    </div>
+{% endblock %}
+
+{% block body_class %}{{- parent() -}} easy-media-admin{% endblock %}
+
+{# styles #}
+{% block head_stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/easymedia/style/style.css') }}"/>
+    <style>
+        .content-wrapper{
+            padding: 0;
+        }
+    </style>
+{% endblock %}
+
+{# scripts #}
+{% block body_javascript %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/easymedia/js/app.js') }}"></script>
+{% endblock %}

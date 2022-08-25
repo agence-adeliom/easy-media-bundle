@@ -1,0 +1,18 @@
+.__files{
+  &-boxs {
+    @apply grid p-3 pb-20 select-none list-none;
+    @apply grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4;
+    @apply accelerate-3D;
+
+    li {
+      @apply flex flex-1;
+      max-height: 200px;
+      min-height: 200px;
+
+      @screen md{
+        max-height: 112px;
+        min-height: unset;
+      }
+    }
+  }
+}

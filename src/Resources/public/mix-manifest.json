@@ -1,0 +1,7 @@
+{
+    "/js/app.js": "/js/app.js",
+    "/workers/db.js": "/workers/db.js",
+    "/workers/audio.js": "/workers/audio.js",
+    "/style/style.css": "/style/style.css",
+    "/dist/noPreview.jpg": "/dist/noPreview.jpg"
+}

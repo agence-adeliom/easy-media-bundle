@@ -1,0 +1,10 @@
+{% set responsive = options.responsive|default(true) %}
+<div {% for name, value in options.attributes|default({})|filter(value => value is not empty) %}{{ name }}="{{ value }}" {% endfor %}>
+{% if responsive %}
+    <div class="iframe-container"  {% if options.ratio|default(null) %}style="padding-top: {{ options.ratio }}%"{% endif %}>
+{% endif %}
+    {{ options.html|raw }}
+{% if responsive %}
+    </div>
+{% endif %}
+</div>

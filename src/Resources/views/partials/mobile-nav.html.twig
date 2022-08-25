@@ -1,0 +1,27 @@
+{% trans_default_domain 'EasyMediaBundle' %}
+
+<transition-group tag="ul"
+                  class="__stack-breadcrumb-mobile is-hidden-desktop"
+                  ref="bc"
+                  v-if="pathBarDirsList.length > 0"
+                  name="mm-list">
+    <li id="library-bc" key="library-bc">
+        <a v-if="pathBarDirsList.length > 0 && !(isBulkSelecting() || isLoading)"
+           v-tippy="{arrow: true}"
+           title="{{ 'backspace'|trans }}"
+           @click.stop="goToFolder(0)">
+            {{ 'library'|trans }}
+        </a>
+        <p v-else>{{ 'library'|trans }}</p>
+    </li>
+
+    <li v-for="(folder, index) in pathBarDirsList" :id="folder + '-bc'" :key="`${index}_${folder}`">
+        <p v-if="isLastItemByIndex(index, pathBarDirsList) || isBulkSelecting() || isLoading">{% verbatim %}{{ folder }}{% endverbatim %}</p>
+        <a v-else
+           v-tippy="{arrow: true}"
+           title="{{ 'backspace'|trans }}"
+           @click.stop="pathBarDirsList.length > 1 ? goToFolder(index+1) : false">
+            {% verbatim %}{{ folder }}{% endverbatim %}
+        </a>
+    </li>
+</transition-group>

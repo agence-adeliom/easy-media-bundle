@@ -1,0 +1,64 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+{% trans_default_domain 'EasyMediaBundle' %}
+
+{% if field.value %}
+    {% set html_id = 'ea-media-field-' ~ field.uniqueId %}
+    {% set infos = field.value|media_infos %}
+    {% if infos %}
+    <a href="#" class="d-flex align-items-center text-dark" data-bs-toggle="modal" data-bs-target="#{{ html_id }}">
+        <div class="flex-shrink-0 ratio ratio-1x1" style="height: 48px;width: 48px" {% if ea.crud.currentAction == 'detail' %}data-bs-toggle="tooltip" data-bs-placement="top" title="{{ field.value|media_meta("title") ?: (infos ? infos.name : '') }}"{% endif %}>
+            {% if file_is_type(field.value, "image") %}
+                <img src="{{ field.value|resolve_media }}" alt="{{ field.value|media_meta("alt") }}" title="{{ field.value|media_meta("title") }}" class="align-self-center mr-3 rounded" style="object-fit:cover;">
+            {% elseif file_is_type(field.value, "oembed") and field.value|media_meta("icon") %}
+                <img src="{{ field.value|media_meta("icon") }}" alt="{{ field.value|media_meta("alt") }}" title="{{ field.value|media_meta("title") }}" class="align-self-center mr-3 rounded" style="object-fit:cover;">
+            {% else %}
+                <span class="align-self-center mr-3 d-inline-flex align-items-center justify-content-center">
+                    {% if field.value|media_infos %}
+                        <i class="fa fa-2x {{ mime_icon((field.value|media_infos).type) }}"></i>
+                    {% endif %}
+                </span>
+            {% endif %}
+        </div>
+        {% if ea.crud.currentAction == 'detail' %}
+        <div class="flex-grow-1 ms-3">
+            <span class="fs-5 d-block">{{ infos ? infos.name : '' }}</span>
+            {% if field.value|media_meta("title") and file_is_type(field.value, "image") %}
+                <span class="d-block"><b>{{ 'seo.title'|trans }} :</b> {{ field.value|media_meta("title") }}</span>
+            {% endif %}
+            {% if field.value|media_meta("alt") and file_is_type(field.value, "image") %}
+                <span class="d-block"><b>{{ 'seo.alt'|trans }} :</b> {{ field.value|media_meta("alt") }}</span>
+            {% endif %}
+        </div>
+        {% endif %}
+    </a>
+
+    <div class="modal fade" id="{{ html_id }}" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ field.label }}</h5>
+                    <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="{{ 'action.close'|trans([], domain = 'EasyAdminBundle') }}"></button>
+                </div>
+                <div class="modal-body">
+                    {% if file_is_type(field.value, "image") %}
+                        <img src="{{ field.value|resolve_media }}" alt="{{ field.value|media_meta("alt") }}" title="{{ field.value|media_meta("title") }}" class="img-fluid">
+                    {% elseif file_is_type(field.value, "oembed") %}
+                        {% set code = field.value|media_meta("code") %}
+                        <div class="ratio ratio-16x9 w-100">
+                            {{ code.html|raw }}
+                        </div>
+                    {% else %}
+                        <div class="ratio ratio-16x9 w-100">
+                            {% if field.value|media_infos %}
+                                <object data="{{ field.value|resolve_media }}" type="{{ (field.value|media_infos).type }}"  class="img-fluid"></object>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endif %}
