@@ -14,7 +14,7 @@
         <service id="Adeliom\EasyMediaBundle\Controller\MediaController" alias="easy_media.controller" public="true"/>
 
         <service id="easy_media.manager" class="Adeliom\EasyMediaBundle\Service\EasyMediaManager" public="true" autowire="true">
-            <argument key="$filesystemManager" type="service" id="easy_media.service.filesystem"/>
+            <argument key="$filesystem" type="service" id="easy_media.service.filesystem"/>
             <argument key="$helper" type="service" id="easy_media.helper"/>
             <argument key="$em" type="service" id="doctrine.orm.entity_manager"/>
             <argument key="$parameters" type="service" id="parameter_bag"/>

@@ -15,17 +15,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  */
 class DoctrineMappingListener implements EventSubscriber
 {
-    /**
-     * @readonly
-     */
-    private string $mediaClass;
-
-    /**
-     * @readonly
-     */
-    private string $folderClass;
-
-    public function __construct(string $mediaClass, string $folderClass)
+    public function __construct(private string $mediaClass, private string $folderClass)
     {
     }
 

@@ -59,7 +59,7 @@ class Media
         return $this->slug;
     }
 
-    public function setSlug(string $slug): void: void
+    public function setSlug(string $slug): void
     {
         $this->slug = $slug;
     }

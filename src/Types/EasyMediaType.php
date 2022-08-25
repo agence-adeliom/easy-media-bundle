@@ -21,7 +21,7 @@ class EasyMediaType extends Type
         return 'TEXT';
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): mixed
     {
         $listeners = $platform->getEventManager()->getListeners('getContainer');
         $listener = array_shift($listeners);
@@ -36,7 +36,7 @@ class EasyMediaType extends Type
         return null;
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         if ($value) {
             if ($value instanceof Media) {
@@ -49,15 +49,15 @@ class EasyMediaType extends Type
         return null;
     }
 
-    public function getName()
+    public function getName(): string
     {
-        return self::EASYMEDIATYPE; // modify to match your constant name
+        return self::EASYMEDIATYPE;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
         return true;
     }

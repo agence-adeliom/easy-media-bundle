@@ -17,13 +17,11 @@ use Adeliom\EasyMediaBundle\Controller\Module\Utils;
 use Adeliom\EasyMediaBundle\Service\EasyMediaHelper;
 use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use League\Flysystem\Filesystem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -50,11 +48,7 @@ class MediaController extends AbstractController
     protected ObjectManager $em;
     protected EasyMediaHelper $helper;
     protected EasyMediaManager $manager;
-
-    /**
-     * @readonly
-     */
-    protected $filesystem;
+    protected ManagerRegistry $managerRegistry;
 
     public function __construct(EasyMediaManager $manager, ManagerRegistry $managerRegistry, ParameterBagInterface $bag, EventDispatcherInterface $dispatcher, TranslatorInterface $translator)
     {

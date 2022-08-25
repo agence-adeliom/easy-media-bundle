@@ -15,16 +15,12 @@ use Twig\TwigFunction;
 
 class EasyMediaExtension extends AbstractExtension
 {
-    protected EasyMediaManager $manager;
-    protected FilterManager $filterManager;
 
-    public function __construct(EasyMediaManager $manager, FilterManager $filterManager)
+    public function __construct(protected EasyMediaManager $manager, protected FilterManager $filterManager)
     {
-        $this->manager = $manager;
-        $this->filterManager = $filterManager;
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('resolve_media', [EasyMediaRuntime::class, 'resolveMedia']),
@@ -33,7 +29,7 @@ class EasyMediaExtension extends AbstractExtension
         ];
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('mime_icon', [EasyMediaRuntime::class, 'getMimeIcon']),
@@ -42,6 +38,4 @@ class EasyMediaExtension extends AbstractExtension
             new TwigFunction('easy_media_path', [EasyMediaRuntime::class, 'path']),
         ];
     }
-    === === =
-    >> >> >> > main
 }

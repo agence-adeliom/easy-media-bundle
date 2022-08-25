@@ -6,6 +6,7 @@ namespace Adeliom\EasyMediaBundle\Service;
 
 use Adeliom\EasyMediaBundle\Entity\Media;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -43,7 +44,6 @@ class EasyMediaHelper
 
     /**
      * sanitize input.
-     *
      * @return [type] [description]
      */
     public function getRandomString()
