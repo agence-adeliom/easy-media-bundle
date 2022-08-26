@@ -268,8 +268,23 @@ yield EasyMediaField::new('property', "label")
 {{ easy_media(object.media, format, options) }} // By default format is the reference file and options
 
 # Examples :
-{{ easy_media(object.media, format, {'class': 'myclass'}) }} 
+{{ easy_media(object.media, "reference") }}
 
+{{ easy_media(object.media, "cover_full", {'class': 'myclass'}) }} 
+
+## For images 
+{{ easy_media(object.media, "cover_full", {'loading': "lazy"}) }} 
+{{ easy_media(object.media, "cover_full", {'picture': ["cover_full__2xl","cover_full__xl","cover_full__lg","cover_full__sm","cover_full__xs"]}) }}
+{{ easy_media(object.media, "cover_full", {'srcset': ["cover_full__2xl","cover_full__xl","cover_full__lg","cover_full__sm","cover_full__xs"]}) }}
+{{ easy_media(object.media, "cover_full", {'loading': "lazy", 'srcset': {'(max-width: 500px)': 'cover_full__2xl', '(max-width: 1200px)': 'cover_full__xl'}}) }}
+
+## For oembed 
+{{ easy_media(object.media, "reference") }}
+{{ easy_media(object.media, "reference", {'responsive': true}) }}
+
+## For video 
+{{ easy_media(object.media, "reference") }}
+{{ easy_media(object.media, "reference", {"responsive" : true, "controls" : true, "autoplay" : true}) }}
 
 # Get media path
 {{ easy_media_path(object.media, format) }} // By default format is the reference file
@@ -297,6 +312,12 @@ yield EasyMediaField::new('property', "label")
 # Get mimetype icon (font-awesome)
 {{ mime_icon("text/plain") }}
 ```
+
+#### You can override media render with twig
+
+* For images : `@EasyMedia/render/image.html.twig`
+* For oembed : `@EasyMedia/render/oembed.html.twig`
+* For video : `@EasyMedia/render/oembed.html.twig`
 
 ### Manage medias and folders programmatically
 
