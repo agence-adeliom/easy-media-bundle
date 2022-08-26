@@ -90,24 +90,37 @@ composer require agence-adeliom/easy-media-bundle
 # config/packages/easy_media.yaml
 
 twig:
-    form_themes:
-        - '@EasyMedia/form/easy-media.html.twig'
+  form_themes:
+    - '@EasyMedia/form/easy-media.html.twig'
 
 doctrine:
-    dbal:
-        types:
-            easy_media_type: Adeliom\EasyMediaBundle\Types\EasyMediaType
+  dbal:
+    types:
+      easy_media_type: Adeliom\EasyMediaBundle\Types\EasyMediaType
+
+flysystem:
+  storages:
+    medias.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/var/storage/medias'
 
 easy_media:
-    media_entity: App\Entity\EasyMedia\Media
-    folder_entity: App\Entity\EasyMedia\Folder
+  storage_name: flysystem.adapter.medias.storage
+  media_entity: App\Entity\EasyMedia\Media
+  folder_entity: App\Entity\EasyMedia\Folder
 ```
 
 ```yaml
 # config/routes/easy_media.yaml
 
 easy_media:
-    resource: '@EasyMediaBundle/Resources/config/routes.xml'
+  resource: '@EasyMediaBundle/Resources/config/routes.xml'
+  prefix: /admin
+
+easy_media_public:
+  resource: '@EasyMediaBundle/Resources/config/public_routes.xml'
+  prefix: /
 ```
 
 ```php
@@ -119,10 +132,8 @@ namespace App\Entity\EasyMedia;
 use Adeliom\EasyMediaBundle\Entity\Folder as BaseFolder;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- * @ORM\Table(name="easy_media__folder")
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'easy_media__folder')]
 class Folder extends BaseFolder
 {
 }
@@ -137,10 +148,8 @@ namespace App\Entity\EasyMedia;
 use Adeliom\EasyMediaBundle\Entity\Media as BaseMedia;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- * @ORM\Table(name="easy_media__media")
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'easy_media__media')]
 class Media extends BaseMedia
 {
 }
@@ -178,11 +187,11 @@ class DashboardController extends AbstractDashboardController
     ...
     
     // Add the custom form theme
-    public function configureCrud(Crud $crud): Crud
+    public function configureCrud(): Crud
     {
-        return $crud
+        return parent::configureCrud()
             ->addFormTheme('@EasyMedia/form/easy-media.html.twig')
-            ;
+        ;
     }
     
     public function configureMenuItems(): iterable
@@ -216,10 +225,7 @@ fos_ck_editor:
 ```yaml
 #config/packages/liip_imagine.yaml
 liip_imagine:
-  loaders:
-    default:
-      filesystem:
-        data_root: '%kernel.project_dir%/public'
+  data_loader: easy_media.imagine.data.loader
 ```
 
 ```php
@@ -258,6 +264,31 @@ yield EasyMediaField::new('property', "label")
 ### Twig usage
 
 ```php
+# Render the media
+{{ easy_media(object.media, format, options) }} // By default format is the reference file and options
+
+# Examples :
+{{ easy_media(object.media, "reference") }}
+
+{{ easy_media(object.media, "cover_full", {'class': 'myclass'}) }} 
+
+## For images 
+{{ easy_media(object.media, "cover_full", {'loading': "lazy"}) }} 
+{{ easy_media(object.media, "cover_full", {'picture': ["cover_full__2xl","cover_full__xl","cover_full__lg","cover_full__sm","cover_full__xs"]}) }}
+{{ easy_media(object.media, "cover_full", {'srcset': ["cover_full__2xl","cover_full__xl","cover_full__lg","cover_full__sm","cover_full__xs"]}) }}
+{{ easy_media(object.media, "cover_full", {'loading': "lazy", 'srcset': {'(max-width: 500px)': 'cover_full__2xl', '(max-width: 1200px)': 'cover_full__xl'}}) }}
+
+## For oembed 
+{{ easy_media(object.media, "reference") }}
+{{ easy_media(object.media, "reference", {'responsive': true}) }}
+
+## For video 
+{{ easy_media(object.media, "reference") }}
+{{ easy_media(object.media, "reference", {"responsive" : true, "controls" : true, "autoplay" : true}) }}
+
+# Get media path
+{{ easy_media_path(object.media, format) }} // By default format is the reference file
+
 # Get media URL
 {{ object.media|resolve_media }}
 
@@ -281,6 +312,12 @@ yield EasyMediaField::new('property', "label")
 # Get mimetype icon (font-awesome)
 {{ mime_icon("text/plain") }}
 ```
+
+#### You can override media render with twig
+
+* For images : `@EasyMedia/render/image.html.twig`
+* For oembed : `@EasyMedia/render/oembed.html.twig`
+* For video : `@EasyMedia/render/oembed.html.twig`
 
 ### Manage medias and folders programmatically
 
@@ -328,9 +365,7 @@ In your entity
 ```php
 class Article
 {
-    /**
-     * @ORM\Column(type="easy_media_type", nullable=true)
-     */
+    #[ORM\Column(type: 'easy_media_type', nullable: true)]
     private $file;
     
     ...
