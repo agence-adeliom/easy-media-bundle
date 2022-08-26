@@ -25,7 +25,7 @@
         "symfony/property-access": "^5.4 || ^6.0",
         "symfony/filesystem": "^5.4 || ^6.0",
         "easycorp/easyadmin-bundle": "^3.4 || ^v4.0",
-        "agence-adeliom/easy-common-bundle": "^6.1",
+        "agence-adeliom/easy-common-bundle": "*",
         "league/flysystem-bundle": "^2.1",
         "liip/imagine-bundle": "^2.8",
         "maennchen/zipstream-php": "^2.1.0",
@@ -40,19 +40,5 @@
         "psr-4": {
             "Adeliom\\EasyMediaBundle\\": "src/"
         }
-    },
-    "conflict": {
-        "agence-adeliom/easy-faq-bundle": "<6.0.1",
-        "agence-adeliom/easy-seo-bundle": "<6.0.1",
-        "agence-adeliom/easy-config-bundle": "<6.0.1",
-        "agence-adeliom/easy-redirect-bundle": "<6.0.1",
-        "agence-adeliom/easy-blog-bundle": "<6.0.1",
-        "agence-adeliom/easy-fields-bundle": "<6.0.1",
-        "agence-adeliom/easy-menu-bundle": "<6.0.1",
-        "agence-adeliom/easy-page-bundle": "<6.0.1",
-        "agence-adeliom/easy-block-bundle": "<6.0.1",
-        "agence-adeliom/easy-editor-bundle": "<6.0.1",
-        "agence-adeliom/easy-admin-user-bundle": "<6.0.1",
-        "agence-adeliom/easy-gutenberg-bundle": "<6.0.1"
     }
 }
