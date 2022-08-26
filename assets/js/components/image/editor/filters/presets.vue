@@ -10,7 +10,7 @@
                  class="col">
                 <button type="button" v-for="item in chunk"
                         :key="item"
-                        v-tippy="{arrow: true, theme: 'mm'}"
+                        v-tippy="{zIndex: 999999999, arrow: true, theme: 'mm'}"
                         :disabled="processing"
                         :class="{'is-active': isUsed(item)}"
                         :title="getTitle(item)"
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import chunk     from 'lodash/chunk'
+import chunk from 'lodash/chunk'
 import camelCase from 'lodash/camelCase'
 import snakeCase from 'lodash/snakeCase'
 

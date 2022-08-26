@@ -1,4 +1,3 @@
-import debounce from 'lodash/debounce'
 import Dropzone from 'dropzone'
 
 export default {
@@ -40,28 +39,34 @@ export default {
             let uploadSize = this.getResrtictedUploadSize() || 256
             let uploadTypes = this.getResrtictedUploadTypes()?.join(',') || null
             let autoProcess = {
-                    init: function () {
-                        this.on('addedfile', (file) => {
-                            manager.addToPreUploadedList(file)
-                        })
-                    }
+                init: function () {
+                    this.on('addedfile', (file) => {
+                        manager.addToPreUploadedList(file)
+                    })
                 }
+            }
 
             let options = {
                 url: manager.routes.upload,
-                parallelUploads: 10,
+                parallelUploads: 1,
                 hiddenInputContainer: '#new-upload',
-                uploadMultiple: true,
+                uploadMultiple: false,
                 forceFallback: false,
+                chunking: true,
+                forceChunking: true,
                 acceptedFiles: uploadTypes,
                 maxFilesize: uploadSize,
+                chunkSize: 1024 * 1024,
+                parallelChunkUploads: false,
+                retryChunks: true,
+                retryChunksLimit: 3,
                 headers: {
                     'X-Socket-Id': manager.browserSupport('Echo') ? Echo.socketId() : null,
                 },
                 timeout: 3600000, // 60 mins
                 autoProcessQueue: true,
                 previewsContainer: `${uploadPreview} .sidebar`,
-                accept: function (file, done) {
+                accept(file, done) {
                     if (this.getUploadingFiles().length) {
                         return done(manager.trans('upload_in_progress'))
                     }
@@ -70,26 +75,43 @@ export default {
                         return done(manager.trans('already_exists'))
                     }
 
-                    allFiles++
+                    allFiles++;
                     done()
                 },
-                sending: function (file, xhr, formData) {
-                    uploadProgress += parseFloat(100 / allFiles)
-                    manager.progressCounter = `${Math.round(uploadProgress)}%`
-
+                sending(file, xhr, formData) {
                     formData.append('upload_folder', manager.files.folder)
                     formData.append('random_names', manager.useRandomNamesForUpload)
-
-                    // send files custom options
                     formData.append('custom_attrs', JSON.stringify(manager.uploadPreviewOptionsList))
+                },
+                uploadprogress(file, progress, bytesSent) {
+                    uploadProgress = progress;
+                    manager.progressCounter = `${Math.round(uploadProgress)}%`
+                },
+                processing() {
+                    manager.showProgress = true
                 },
                 processingmultiple() {
                     manager.showProgress = true
                 },
+                success(file) {
+                    const items = JSON.parse(file.xhr.response);
+                    items.map((item) => {
+                        uploaded++
+                        if (item.success) {
+                            last = item.file_name
+                            let msg = manager.restrictModeIsOn
+                              ? `"${item.file_name}"`
+                              : `"${item.file_name}" at "${manager.files.path}"`
+
+                            manager.showNotif(`${manager.trans('upload_success')} ${msg}`)
+                        } else {
+                            manager.showNotif(item.message, 'danger')
+                        }
+                    })
+                },
                 successmultiple(files, res) {
                     res.map((item) => {
                         uploaded++
-
                         if (item.success) {
                             last = item.file_name
                             let msg = manager.restrictModeIsOn
@@ -102,12 +124,18 @@ export default {
                         }
                     })
                 },
-                errormultiple: function (file, res) {
+                error(file) {
+                    console.log(file);
                     file = Array.isArray(file) ? file[0] : file
                     manager.showNotif(`"${file.name}" ${res}`, 'danger')
                     this.removeFile(file)
                 },
-                queuecomplete: function () {
+                errormultiple(file, res) {
+                    file = Array.isArray(file) ? file[0] : file
+                    manager.showNotif(`"${file.name}" ${res}`, 'danger')
+                    this.removeFile(file)
+                },
+                queuecomplete() {
                     if (uploaded == this.files.length) {
                         manager.progressCounter = '100%'
                         manager.hideProgress()

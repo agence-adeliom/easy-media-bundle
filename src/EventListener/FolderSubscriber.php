@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Adeliom\EasyMediaBundle\EventListener;
 
 use Adeliom\EasyMediaBundle\Entity\Folder;
@@ -7,25 +9,19 @@ use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
-use League\Flysystem\Filesystem;
-use League\Flysystem\Local\LocalFilesystemAdapter;
-use League\Flysystem\UnixVisibility\PortableVisibilityConverter;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use League\Flysystem\FilesystemException;
 
 class FolderSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var EasyMediaManager
-     */
-    protected $manager;
-
+    protected \Adeliom\EasyMediaBundle\Service\EasyMediaManager $manager;
 
     public function __construct(EasyMediaManager $manager)
     {
-        $this->manager = $manager;
     }
 
+    /**
+     * @return string[]
+     */
     public function getSubscribedEvents(): array
     {
         return [
@@ -34,7 +30,7 @@ class FolderSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @throws \League\Flysystem\FilesystemException
+     * @throws FilesystemException
      */
     public function preUpdate(PreUpdateEventArgs $args): void
     {
@@ -44,15 +40,15 @@ class FolderSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if($args->hasChangedField("parent")){
-            $oldPath = ($args->getOldValue("parent") ? $args->getOldValue("parent")->getPath() : "") . DIRECTORY_SEPARATOR . $folder->getSlug();
-            $newPath = ($args->getNewValue("parent") ? $args->getNewValue("parent")->getPath() : "") . DIRECTORY_SEPARATOR . $folder->getSlug();
+        if ($args->hasChangedField('parent')) {
+            $oldPath = ($args->getOldValue('parent') ? $args->getOldValue('parent')->getPath() : '').DIRECTORY_SEPARATOR.$folder->getSlug();
+            $newPath = ($args->getNewValue('parent') ? $args->getNewValue('parent')->getPath() : '').DIRECTORY_SEPARATOR.$folder->getSlug();
             $this->manager->move($oldPath, $newPath);
         }
 
-        if($args->hasChangedField("slug")){
-            $oldPath = basename($folder->getPath()) . DIRECTORY_SEPARATOR . $args->getOldValue("slug");
-            $newPath = basename($folder->getPath()) . DIRECTORY_SEPARATOR . $args->getNewValue("slug");
+        if ($args->hasChangedField('slug')) {
+            $oldPath = basename($folder->getPath()).DIRECTORY_SEPARATOR.$args->getOldValue('slug');
+            $newPath = basename($folder->getPath()).DIRECTORY_SEPARATOR.$args->getNewValue('slug');
             $this->manager->move($oldPath, $newPath);
         }
     }

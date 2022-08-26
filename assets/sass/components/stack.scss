@@ -1,6 +1,6 @@
 .__stack{
   &-container {
-    @apply flex overflow-hidden relative bg-white transition-all duration-200 z-1;
+    @apply flex overflow-hidden relative bg-body transition-all duration-200 z-1;
     @apply accelerate-3D;
     min-height: 60vh;
     @screen sm{

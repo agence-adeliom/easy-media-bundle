@@ -1,24 +1,30 @@
 .__file-box {
-  @apply rounded cursor-pointer flex m-3 overflow-hidden p-0 relative w-full transition-all duration-200 bg-theme border-theme text-theme-60 shadow-sm;
+  @apply rounded cursor-pointer flex m-3 overflow-hidden p-0;
+  @apply relative w-full transition-all duration-200 bg-theme border-theme-5 text-color-secondary;
 
   @screen md{
     @apply p-3
   }
 
+  h4{
+    @apply text-color;
+  }
+
+  i,
+  svg {
+    @apply text-color-secondary;
+  }
+
   &.selected,
   &.bulk-selected,
   &:hover {
-    @apply text-white bg-blue-500 border-blue-600;
-
+    @apply text-color-active bg-active border-active;
     h4,
     i,
     svg {
-      @apply text-white;
+      @apply text-color-active;
     }
-  }
 
-  &:hover {
-    @apply bg-blue-400 border-blue-500;
   }
 }
 
@@ -55,6 +61,12 @@
       @screen md{
         @apply transform-gpu scale-100;
       }
+    }
+
+    img{
+      object-fit: contain;
+      width: 100%;
+      height: auto;
     }
 
     .icon {

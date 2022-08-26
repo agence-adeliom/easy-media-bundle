@@ -61,7 +61,7 @@ export default {
         },
         fileTypeIs(item, val) {
             let mimes = this.config.mimeTypes
-            let type = item.type || null;
+            let type = item?.type
             if(val.includes('/*')){
                 val = val.split('/')
                 val = val[0];

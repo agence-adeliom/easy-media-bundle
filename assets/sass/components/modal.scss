@@ -44,13 +44,13 @@
 
     &-foot,
     &-head {
-      @apply items-center bg-gray-200 flex flex-shrink-0 justify-start p-5 relative;
+      @apply items-center bg-header flex flex-shrink-0 justify-start p-5 relative;
     }
     &-head{
       @apply rounded-t shadow-sm;
     }
     &-foot {
-      @apply rounded-b flex-col-reverse sm:flex-row gap-2 sm:gap-0;
+      @apply rounded-b flex-col-reverse sm:flex-row gap-2 sm:gap-0 border-0 border-t border-solid border-theme-5;
       & > .button {
         @apply w-full m-0 sm:w-auto sm:mr-2;
         &:last-child {
@@ -67,7 +67,7 @@
       .level{
         @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4;
         &-left, &-right{
-          @apply flex flex-row gap-2  ;
+          @apply flex flex-row gap-2;
         }
       }
     }
@@ -75,7 +75,10 @@
       @apply text-gray-800 flex-grow flex-shrink-0 text-2xl leading-none;
     }
     &-body{
-      @apply bg-white flex-grow flex-shrink overflow-auto p-5 scrolling-touch;
+      @apply bg-body flex-grow flex-shrink overflow-auto p-5 scrolling-touch;
+      ul{
+        @apply m-0 p-0;
+      }
     }
   }
   &-card{
@@ -84,6 +87,7 @@
     }
     &-title {
       max-width: calc(100% - 20px);
+      @apply m-0;
     }
     &-foot {
       @apply justify-end;
@@ -115,8 +119,10 @@
 
     .modal-content {
       @apply my-0 mx-auto;
-      @apply max-w-full bg-white;
-
+      @apply max-w-full bg-header;
+      .card{
+        @apply bg-header;
+      }
       @screen sm{
         max-width: 75vw;
       }
@@ -159,10 +165,11 @@
       .audio-icon {
         @apply h-full text-center w-full bg-theme;
       }
-
+      .image{
+        @apply static max-w-xs m-auto p-6;
+      }
       audio {
         @apply z-1;
-
       }
     }
 
@@ -200,10 +207,6 @@
 
   .media-manager__stack {
     @apply overflow-hidden;
-
-    &::before {
-      @apply shadow-none;
-    }
   }
 
   .__stack-sidebar {

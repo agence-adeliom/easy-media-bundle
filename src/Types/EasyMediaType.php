@@ -1,49 +1,57 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Adeliom\EasyMediaBundle\Types;
 
 use Adeliom\EasyMediaBundle\Entity\Media;
-use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\Type;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class EasyMediaType extends Type
 {
-    public const EASYMEDIATYPE = 'easy_media_type'; // modify to match your type name
-
+    /**
+     * @var string
+     */
+    public const EASYMEDIATYPE = 'easy_media_type';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
     {
-        return "TEXT";
+        return 'TEXT';
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): mixed
     {
         $listeners = $platform->getEventManager()->getListeners('getContainer');
         $listener = array_shift($listeners);
         /** @var ContainerInterface $container */
         $container = $listener->getContainer();
-        $class = $container->getParameter("easy_media.media_entity");
+        $class = $container->getParameter('easy_media.media_entity');
 
-        if($value){
-            return $container->get("doctrine.orm.entity_manager")->getRepository($class)->find($value);
+        if ($value) {
+            return $container->get('doctrine.orm.entity_manager')->getRepository($class)->find($value);
         }
+
         return null;
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
-        if($value){
+        if ($value) {
             if ($value instanceof Media) {
                 return $value->getId();
             }
+
             return $value;
         }
+
         return null;
     }
 
     public function getName(): string
     {
-        return self::EASYMEDIATYPE; // modify to match your constant name
+        return self::EASYMEDIATYPE;
     }
 
     /**

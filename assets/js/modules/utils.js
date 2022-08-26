@@ -71,7 +71,7 @@ export default {
         delOrMoveList() {
             return this.bulkItemsCount
                 ? this.bulkItemsFilter
-                : [this.selectedFile]
+                : this.selectedFile ? [this.selectedFile] : null
         },
         getListTotalSize(list) {
             let total_size = 0

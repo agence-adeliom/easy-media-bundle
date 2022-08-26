@@ -1,7 +1,8 @@
 import Vue from 'vue'
 /*                Libs                */
 import VueClipboard from 'vue-clipboard2'
-import Vue2Filters  from 'vue2-filters'
+import Vue2Filters from 'vue2-filters'
+import VueTippy from 'vue-tippy'
 
 Vue.use(Vue2Filters)
 Vue.use(VueClipboard)
@@ -15,9 +16,11 @@ if(!window.keycode){
 //window.Fuse     = require('fuse.js')
 
 // vue-tippy
-Vue.use(require('vue-tippy').default, {
+Vue.use(VueTippy, {
+
     popperOptions: {
         modifiers: {
+            zIndex: 20000000,
             hide: {enabled: false}
         }
     }

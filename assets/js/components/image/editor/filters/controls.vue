@@ -1,8 +1,8 @@
 <template>
-    <div v-tippy="{arrow: true, theme: 'mm'}"
+    <div v-tippy="{zIndex: 999999999, arrow: true, theme: 'mm'}"
          :title="getTitle(filterName)">
         <section v-if="!isControlable">
-            <button type="button" v-tippy="{html: '#contentpopup2', interactive: true, reactive: true, trigger: 'click', theme: 'mm', arrow: true}"
+            <button type="button" v-tippy="{zIndex: 999999999, html: '#contentpopup2', interactive: true, reactive: true, trigger: 'click', theme: 'mm', arrow: true}"
                     :class="{'is-active': isUsed()}"
                     :disabled="processing"
                     class="btn-plain">
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import debounce  from 'lodash/debounce'
+import debounce from 'lodash/debounce'
 import snakeCase from 'lodash/snakeCase'
 
 export default {

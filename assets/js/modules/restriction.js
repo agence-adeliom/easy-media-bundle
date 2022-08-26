@@ -1,5 +1,3 @@
-import form from "./form";
-
 export default {
     methods: {
         // hide

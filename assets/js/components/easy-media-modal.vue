@@ -1,8 +1,8 @@
 <script>
 import MediaModal from '../mixins/modal'
-import Utilities      from '../modules/utils'
-import Gestures       from '../modules/gestures'
-import Image       from '../modules/image'
+import Utilities from '../modules/utils'
+import Gestures from '../modules/gestures'
+import Image from '../modules/image'
 
 require('../packages/download.min')
 
@@ -46,6 +46,8 @@ export default {
   watch: {
     media: function (val) {
       if(val){
+        const event = new Event('change', { 'bubbles': true })
+        this.$root.$el.querySelector('input[class*="form-control"]')?.dispatchEvent(event);
         this.getInfos(val);
       }
     },
@@ -83,7 +85,7 @@ export default {
     },
     fileTypeIs(item, val) {
       let mimes = this.config.mimeTypes
-      let type = item.type || item
+      let type = item?.type
 
       if (type) {
         if (val == 'image' && mimes.image.includes(type)) {

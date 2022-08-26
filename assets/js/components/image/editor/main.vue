@@ -15,7 +15,7 @@
                              class="__left-index"/>
 
                     <!-- reset filters -->
-                    <button type="button" v-tippy="{arrow: true, theme: 'mm'}"
+                    <button type="button" v-tippy="{zIndex: 999999999, arrow: true, theme: 'mm'}"
                             :disabled="processing || !haveFilters()"
                             :title="trans('crop_reset_filters')"
                             class="btn-plain"
@@ -28,7 +28,7 @@
                     </button>
 
                     <!-- diff toggle -->
-                    <!--button type="button" v-tippy="{arrow: true, theme: 'mm'}"
+                    <!--button type="button" v-tippy="{zIndex: 999999999, arrow: true, theme: 'mm'}"
                             :disabled="(processing && !imageDiffIsReady) || diffDisable"
                             :class="{'is-active': showDiff}"
                             :title="trans('diff')"
@@ -95,7 +95,7 @@
                      class="__bottom-toolbar">
 
                     <!-- clear -->
-                    <button type="button" v-tippy="{arrow: true, theme: 'mm'}"
+                    <button type="button" v-tippy="{zIndex: 999999999, arrow: true, theme: 'mm'}"
                             :disabled="processing || !croppedByUser"
                             :title="trans('clear')"
                             class="btn-plain"
@@ -107,7 +107,7 @@
                     </button>
 
                     <!-- reset everything -->
-                    <button type="button" v-tippy="{arrow: true, theme: 'mm'}"
+                    <button type="button" v-tippy="{zIndex: 999999999, arrow: true, theme: 'mm'}"
                             :disabled="processing || !hasChanged"
                             :title="trans('crop_cancel')"
                             class="btn-plain"
@@ -120,7 +120,7 @@
                     </button>
 
                     <!-- apply -->
-                    <button type="button" v-tippy="{arrow: true, theme: 'mm'}"
+                    <button type="button" v-tippy="{zIndex: 999999999, arrow: true, theme: 'mm'}"
                             :disabled="processing || !hasChanged"
                             :title="trans('crop_apply')"
                             class="btn-plain"
@@ -138,10 +138,10 @@
 </template>
 
 <script>
-import Cropper   from 'cropperjs'
+import Cropper from 'cropperjs'
 import cloneDeep from 'lodash/cloneDeep'
-import isEmpty   from 'lodash/isEmpty'
-import omit      from 'lodash/omit'
+import isEmpty from 'lodash/isEmpty'
+import omit from 'lodash/omit'
 
 export default {
     components: {

@@ -1,4 +1,5 @@
 module.exports = {
+    important: ".media-manager",
     purge: [
         './src/**/*.html.twig',
         './src/**/*.html.twig',
@@ -13,15 +14,27 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                'theme': '#eceff1',
-                'theme-5': '#dee3e6',
+                'body': 'var(--body-bg)',
+                'header': 'var(--sidebar-bg)',
+                'color': 'var(--text-primary-color)',
+                'color-secondary': 'var(--text-secondary-color)',
+                'active': 'var(--sidebar-menu-active-item-bg)',
+                'color-active': 'var(--sidebar-menu-active-item-color)',
+                'theme': 'var(--sidebar-bg)',
+                'theme-5': 'var(--sidebar-border-color)',
+                'primary': 'var(--color-primary)',
+                'warning': 'var(--color-warning)',
+                'danger': 'var(--color-danger)',
+                'link': 'var(--color-info)',
+                'success': 'var(--color-success)',
+                'dark': '#404040',
                 'theme-10': '#d0d7dc',
                 'theme-15': '#c2ccd2',
                 'theme-25': '#a7b5be',
                 'theme-50': '#657a89',
                 'theme-60': '#50626d',
                 'theme-70': '#3c4952',
-                'theme-75': '#323d44',
+                'theme-75': 'var(--sidebar-bg)',
             },
             zIndex: {
                 '-1': '-1',

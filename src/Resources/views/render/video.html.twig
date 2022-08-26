@@ -1,0 +1,16 @@
+{% set responsive = options.responsive|default(true) %}
+<div {% for name, value in options.attributes|default({})|filter(value => value is not empty) %}{{ name }}="{{ value }}" {% endfor %}>
+
+{% if responsive %}
+    <div class="video-container" {% if options.ratio|default(null) %}style="padding-top: {{ options.ratio }}%"{% endif %}>
+{% endif %}
+    <video {% for name, value in options|default({})|filter((value, name) => (value is not empty and value is not iterable and name != 'url')) %}{{ name }}="{{ value }}" {% endfor %}>
+        {% for source in options.sources %}
+            <source {% for name, value in source|default({})|filter(value => value is not empty) %}{{ name }}="{{ value }}" {% endfor %}>
+        {% endfor %}
+        <p>Votre navigateur ne prend pas en charge les vidéos HTML5. Voici <a href="{{ options.url }}" download="">un lien pour télécharger la vidéo</a>.</p>
+    </video>
+{% if responsive %}
+    </div>
+{% endif %}
+</div>

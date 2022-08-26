@@ -84,6 +84,7 @@ import 'vue-awesome/icons/low-vision'
 
 // custom
 import Icon from 'vue-awesome/components/Icon'
+
 Icon.register({
     pill: {
         width  : 21,

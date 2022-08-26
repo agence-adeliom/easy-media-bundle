@@ -8,17 +8,13 @@
         <defaults autowire="true" autoconfigure="true"/>
 
         <service id="easy_media.controller" class="Adeliom\EasyMediaBundle\Controller\MediaController" public="true" autowire="true">
-            <argument key="$container" type="service" id="service_container"/>
             <argument key="$manager" type="service" id="easy_media.manager"/>
             <tag name="controller.service_arguments"/>
-            <call method="setContainer">
-                <argument type="service" id="service_container"/>
-            </call>
         </service>
         <service id="Adeliom\EasyMediaBundle\Controller\MediaController" alias="easy_media.controller" public="true"/>
 
         <service id="easy_media.manager" class="Adeliom\EasyMediaBundle\Service\EasyMediaManager" public="true" autowire="true">
-            <argument key="$filesystemManager" type="service" id="easy_media.service.filesystem"/>
+            <argument key="$filesystem" type="service" id="easy_media.service.filesystem"/>
             <argument key="$helper" type="service" id="easy_media.helper"/>
             <argument key="$em" type="service" id="doctrine.orm.entity_manager"/>
             <argument key="$parameters" type="service" id="parameter_bag"/>
@@ -33,8 +29,9 @@
         <service id="Adeliom\EasyMediaBundle\Service\EasyMediaHelper" alias="easy_media.manager" public="true"/>
 
         <service id="easy_media.service.filesystem" class="Adeliom\EasyMediaBundle\Service\EasyMediaFilesystem" public="true" autowire="true">
-            <argument type="string">%easy_media.storage%</argument>
+            <argument type="service" id="easy_media.storage"/>
         </service>
+
 
         <service id="easy_media.form.media" class="Adeliom\EasyMediaBundle\Form\EasyMediaType" public="true" autowire="true">
             <argument key="$manager" type="service" id="easy_media.manager"/>
@@ -54,6 +51,19 @@
         <service id="easy_media.twig.easy_media_extension" class="Adeliom\EasyMediaBundle\Twig\EasyMediaExtension" public="true" autowire="true">
             <argument key="$manager" type="service" id="easy_media.manager"/>
             <tag name="twig.extension" />
+        </service>
+
+        <service id="easy_media.twig.easy_media_runtime" class="Adeliom\EasyMediaBundle\Twig\EasyMediaRuntime" public="true" autowire="true">
+            <argument key="$manager" type="service" id="easy_media.manager"/>
+            <argument key="$twig" type="service" id="twig"/>
+            <argument key="$filterManager" type="service" id="liip_imagine.filter.manager"/>
+            <tag name="twig.runtime" />
+        </service>
+
+        <service id="easy_media.imagine.data.loader" class="Adeliom\EasyMediaBundle\Imagine\Data\EasyMediaDataLoader" public="true" autowire="true">
+            <tag name="liip_imagine.binary.loader" loader="easy_media_data_loader" />
+            <argument type="service" id="easy_media.storage" />
+            <argument type="service" id="liip_imagine.extension_guesser" />
         </service>
 
         <service id="easy_media.event_listener.folder" class="Adeliom\EasyMediaBundle\EventListener\FolderSubscriber" public="true" autowire="true">

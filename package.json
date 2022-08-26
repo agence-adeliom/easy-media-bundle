@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "buffer": "^6.0.3",
-    "laravel-mix": "^6.0.25",
+    "laravel-mix": "^6.0.49",
     "laravel-mix-polyfill": "^3.0.1",
     "process": "^0.11.10",
     "resolve-url-loader": "^4.0.0",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "annyang": "^2.6.1",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "cropperjs": "^1.5.12",
     "dropzone": "^5.9.2",
     "fuse.js": "^6.4.6",
@@ -32,8 +32,6 @@
     "lottie-web": "^5.7.11",
     "music-metadata-browser": "^2.2.6",
     "notie": "^4.3.1",
-    "npm": "^7.19.1",
-    "npx": "^10.2.2",
     "plyr": "^3.6.8",
     "tailwindcss": "^2.2.4",
     "vue": "^2.6.14",

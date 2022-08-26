@@ -2,24 +2,27 @@
   @apply items-center flex gap-x-4 w-full mb-4;
 
   &-left{
-    @apply w-8;
+    @apply w-8 m-0;
+  }
+  &-right{
+    @apply m-0;
   }
   &-content{
     @apply flex-1;
 
     .title {
-      @apply text-lg font-bold text-theme-50;
+      @apply text-lg font-bold text-color m-0;
     }
 
     .subtitle{
-      @apply text-base font-normal text-theme-25;
+      @apply text-base font-normal text-color-secondary m-0;
     }
   }
   &.link {
     @apply rounded mt-2 p-2 border-2 border-dashed border-transparent transition-all duration-400 ease-in-out;
 
     &:hover {
-      @apply border-theme-5;
+      @apply border-active;
       transform: translateY(-0.15rem);
     }
   }
