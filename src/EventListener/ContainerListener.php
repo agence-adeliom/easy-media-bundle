@@ -15,6 +15,7 @@ class ContainerListener
 
     public function __construct(ContainerInterface $container)
     {
+        $this->container = $container;
     }
 
     public function getContainer(): ContainerInterface
