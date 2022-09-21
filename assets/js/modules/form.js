@@ -22,7 +22,11 @@ export default {
             }).then(({data}) => {
                 // folder doesnt exist
                 if (data.error) {
-                    return this.showNotif(data.error, 'danger')
+                    this.showNotif(data.error, 'danger');
+                    this.foldersIds.pop();
+                    this.folders.pop();
+                    return this.getFiles(prev_folder, prev_file);
+                    //return this.showNotif(data.error, 'danger')
                 }
 
                 // return data
@@ -36,7 +40,6 @@ export default {
 
             }).catch((err) => {
                 console.error(err)
-
                 this.isLoading = false
                 this.loadingFiles('hide')
                 this.ajaxError()
