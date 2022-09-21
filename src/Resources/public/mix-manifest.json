@@ -3,5 +3,11 @@
     "/workers/db.js": "/workers/db.js",
     "/workers/audio.js": "/workers/audio.js",
     "/style/style.css": "/style/style.css",
-    "/dist/noPreview.jpg": "/dist/noPreview.jpg"
+    "/dist/lottie/avalanche.json": "/dist/lottie/avalanche.json",
+    "/dist/lottie/ice_cream.json": "/dist/lottie/ice_cream.json",
+    "/dist/lottie/world.json": "/dist/lottie/world.json",
+    "/dist/lottie/zero.json": "/dist/lottie/zero.json",
+    "/dist/noPreview.jpg": "/dist/noPreview.jpg",
+    "/dist/patterns/gif/5b98026bab87a.gif": "/dist/patterns/gif/5b98026bab87a.gif",
+    "/dist/patterns/still/nyc-candy.png": "/dist/patterns/still/nyc-candy.png"
 }
