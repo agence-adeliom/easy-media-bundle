@@ -85,7 +85,7 @@ class EasyMediaType extends AbstractType
                     throw new TransformationFailedException(sprintf('An media with id "%s" does not exist!', $mediaId));
                 }
 
-                return $mediaId;
+                return $media;
             }
         ));
     }
