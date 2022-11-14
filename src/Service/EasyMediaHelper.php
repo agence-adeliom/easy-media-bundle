@@ -68,16 +68,12 @@ class EasyMediaHelper
     /**
      * resolve url for "file/dir path" instead of laravel builtIn.
      * which needs to make extra call just to resolve the url.
-     *
-     * @param [type] $path [description]
-     *
-     * @return [type] [description]
      */
-    public function resolveUrl(Media $media)
+    public function resolveUrl(Media $media, ?int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): array|string
     {
         return $this->clearDblSlash($this->router->generate('media.file_download', [
             'path' => $media->getPath(),
-        ], UrlGeneratorInterface::ABSOLUTE_URL));
+        ], $referenceType));
     }
 
     /**
