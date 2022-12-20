@@ -12,9 +12,7 @@ use Doctrine\ORM\Events;
 
 class MediaSubscriber implements EventSubscriberInterface
 {
-    protected \Adeliom\EasyMediaBundle\Service\EasyMediaManager $manager;
-
-    public function __construct(EasyMediaManager $manager)
+    public function __construct(protected readonly EasyMediaManager $manager)
     {
     }
 
