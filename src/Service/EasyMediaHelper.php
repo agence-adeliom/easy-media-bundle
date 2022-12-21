@@ -314,7 +314,8 @@ class EasyMediaHelper
         $mimes = $this->parameters->get('easy_media.extended_mimes');
         if ($type) {
             if ((($type && str_contains((string) $type, 'image')) || in_array($type, $mimes['image'] ?? [])) && 'image' !== $compare) {
-                return true;
+                // FIX UPSTREAM - should be return false;
+                return false;
             }
 
             if (($type && str_contains((string) $type, 'video')) || in_array($type, $mimes['video'] ?? [])) {
