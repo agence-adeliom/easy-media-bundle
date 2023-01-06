@@ -7,13 +7,17 @@ namespace Adeliom\EasyMediaBundle\Service;
 use Adeliom\EasyMediaBundle\Entity\Media;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 class EasyMediaHelper
 {
-    public function __construct(protected ContainerBagInterface $parameters, protected EntityManagerInterface $em, protected RouterInterface $router)
+    public function __construct(protected ContainerBagInterface $parameters,
+                                protected EntityManagerInterface $em,
+                                protected RouterInterface $router)
     {
     }
 
@@ -42,11 +46,6 @@ class EasyMediaHelper
         return $this->parameters->get('easy_media.base_url');
     }
 
-    /**
-     * sanitize input.
-     *
-     * @return [type] [description]
-     */
     public function getRandomString()
     {
         return call_user_func($this->parameters->get('easy_media.sanitized_text'));
@@ -60,6 +59,10 @@ class EasyMediaHelper
         return $text ?: $this->getRandomString();
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function getItemTime($time): ?string
     {
         return $time ? (new \DateTime(sprintf('@%s', $time)))->format($this->parameters->get('easy_media.last_modified_format')) : null;
@@ -77,7 +80,7 @@ class EasyMediaHelper
     }
 
     /**
-     * @return mixed[]|string
+     * @return array|string
      */
     public function clearDblSlash($str): array|string
     {
@@ -313,41 +316,33 @@ class EasyMediaHelper
     {
         $mimes = $this->parameters->get('easy_media.extended_mimes');
         if ($type) {
-            if ((($type && str_contains((string) $type, 'image')) || in_array($type, $mimes['image'] ?? [])) && 'image' !== $compare) {
-                return true;
-            }
 
-            if (($type && str_contains((string) $type, 'video')) || in_array($type, $mimes['video'] ?? [])) {
-                return 'video' === $compare;
-            }
-
-            if (($type && str_contains((string) $type, 'audio')) || in_array($type, $mimes['audio'] ?? [])) {
-                return 'audio' === $compare;
-            }
-
-            // because "oembed" shows up as "application" type.includes('oembed')
-            if (($type && str_contains((string) $type, 'oembed')) && 'oembed' !== $compare) {
-                return false;
-            }
-
-            // because "pdf" shows up as "application" type.includes('pdf')
-            if (($type && str_contains((string) $type, 'pdf')) && 'pdf' !== $compare) {
-                return false;
+            foreach (['image', 'video', 'audio'] as $test){
+                if (((str_contains((string) $type, $test)) || in_array($type, $mimes[$test] ?? [])) && $test !== $compare) {
+                    return true;
+                }
             }
 
             // because "archive" shows up as "application"
-            if (($type && str_contains((string) $type, 'compressed')) || in_array($type, $mimes['archive'])) {
-                return 'compressed' === $compare;
+            if (((str_contains((string) $type, 'compressed')) || in_array($type, $mimes['archive'] ?? [])) && 'compressed' !== $compare) {
+                return true;
             }
 
-            return $type && str_contains((string) $type, (string) $compare);
+            foreach (['oembed', 'pdf'] as $test){
+                if ((str_contains((string) $type, $test)) && $test !== $compare) {
+                    return false;
+                }
+            }
+
+
+            return str_contains((string) $type, (string) $compare);
         }
 
         return false;
     }
 
-    protected function filePattern($item)
+    protected function filePattern($item): string
     {
-        return '/(script.*?\/script)|[^('.$item.')a-zA-Z0-9]+/ius';
+        return sprintf('/(script.*?\/script)|[^(%s)a-zA-Z0-9]+/ius', $item);
     }
 }

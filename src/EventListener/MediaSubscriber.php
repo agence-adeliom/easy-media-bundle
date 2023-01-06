@@ -9,12 +9,11 @@ use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
+use League\Flysystem\FilesystemException;
 
 class MediaSubscriber implements EventSubscriberInterface
 {
-    protected \Adeliom\EasyMediaBundle\Service\EasyMediaManager $manager;
-
-    public function __construct(EasyMediaManager $manager)
+    public function __construct(private EasyMediaManager $manager)
     {
     }
 

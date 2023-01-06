@@ -30,7 +30,6 @@ trait GetContent
                 $path = $folder->getPath();
             }
         }
-
         if (!empty($data['folder']) && !$folder) {
             return new JsonResponse([
                 'error' => $this->translator->trans('MediaManager::messages.error.doesnt_exist', ['attr' => $path]),
