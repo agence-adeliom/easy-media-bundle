@@ -18,11 +18,10 @@ trait GlobalSearch
                 $path = $file->path();
                 $time = $file->lastModified();
                 $mimeType = $file->mimeType();
-
                 return [
                     'name' => basename($file->path()),
                     'type' => $mimeType,
-                    'path' => $this->helper->resolveUrl($path),
+                    'path' => $path,
                     'dir_path' => dirname($file->path()) ?: '/',
                     'storage_path' => $path,
                     'size' => $file->fileSize(),

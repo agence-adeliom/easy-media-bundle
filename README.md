@@ -242,7 +242,7 @@ fos_ck_editor:
 ```yaml
 #config/packages/liip_imagine.yaml
 liip_imagine:
-  data_loader: easy_media.imagine.data.loader
+  data_loader: easy_media_data_loader
 ```
 
 ```php
