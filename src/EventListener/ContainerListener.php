@@ -8,14 +8,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ContainerListener
 {
-    /**
-     * @readonly
-     */
-    private \Symfony\Component\DependencyInjection\ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function getContainer(): ContainerInterface

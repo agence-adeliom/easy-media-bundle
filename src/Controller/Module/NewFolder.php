@@ -29,10 +29,11 @@ trait NewFolder
         $message = '';
 
         try {
-            $this->manager->createFolder($new_folder_name, $currentFolder ? $currentFolder->getPath() : null);
+            $this->manager->createFolder($new_folder_name, $currentFolder?->getPath());
         } catch (AlreadyExist $alreadyExist) {
             $message = $alreadyExist->getMessage();
-        } catch (\Exception|FilesystemException) {
+        } catch (\Exception|FilesystemException $exception) {
+            dump($exception);
             $message = $this->translator->trans('error.creating_dir', [], 'EasyMediaBundle');
         }
 

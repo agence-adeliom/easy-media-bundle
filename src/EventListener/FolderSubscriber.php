@@ -13,9 +13,7 @@ use League\Flysystem\FilesystemException;
 
 class FolderSubscriber implements EventSubscriberInterface
 {
-    protected \Adeliom\EasyMediaBundle\Service\EasyMediaManager $manager;
-
-    public function __construct(EasyMediaManager $manager)
+    public function __construct(private EasyMediaManager $manager)
     {
     }
 
