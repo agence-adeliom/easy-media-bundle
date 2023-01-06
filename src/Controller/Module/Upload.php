@@ -71,8 +71,6 @@ trait Upload
                     'file_name' => $media->getName(),
                 ];
             } catch (\Exception $exception) {
-                dump($exception);
-
                 $result[] = [
                     'success' => false,
                     'message' => $exception->getMessage(),

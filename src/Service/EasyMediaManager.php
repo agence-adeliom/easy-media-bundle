@@ -23,6 +23,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -45,6 +46,33 @@ class EasyMediaManager
     public function getHelper(): EasyMediaHelper
     {
         return $this->helper;
+    }
+
+    public function getPath(Media $media): string
+    {
+        return $this->getHelper()->getPath($media);
+    }
+
+    public function publicUrl(Media $media, ?int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): array|string
+    {
+        try {
+            $publicUrl = $this->getFilesystem()->publicUrl($this->getPath($media));
+            if(strpos($this->helper->getBaseUrl() ,'://') !== false){
+                $baseUrlPath = parse_url($this->helper->getBaseUrl(), PHP_URL_PATH);
+                $baseUrl = str_replace($baseUrlPath, "", $this->helper->getBaseUrl());
+                $filePath = parse_url($publicUrl, PHP_URL_PATH);
+                $path = array_filter(explode("/", $baseUrlPath) + explode("/", $filePath));
+                $publicUrl = $this->helper->clearDblSlash(sprintf('%s/%s', $baseUrl, implode("/", $path)));
+            }
+            return $publicUrl;
+        }catch (\Exception $exception){
+            return $this->helper->clearDblSlash(sprintf('%s/%s', $this->helper->getBaseUrl(), $this->getPath($media)));
+        }
+    }
+
+    public function downloadUrl(Media $media, ?int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): array|string
+    {
+        return $this->getHelper()->downloadUrl($media, $referenceType);
     }
 
     public function getFolder($id): ?Folder

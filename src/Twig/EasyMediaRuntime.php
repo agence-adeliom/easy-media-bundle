@@ -69,7 +69,8 @@ class EasyMediaRuntime implements RuntimeExtensionInterface
             'name' => $media->getName(),
             'type' => $media->getMime(),
             'size' => $media->getSize(),
-            'path' => $this->buildPath($media),
+            'path' => $this->path($media),
+            'download_url' => $this->downloadUrl($media),
             'storage_path' => $path,
             'last_modified' => $time,
             'last_modified_formated' => $time ? $this->manager->getHelper()->getItemTime($time) : null,
@@ -163,7 +164,7 @@ class EasyMediaRuntime implements RuntimeExtensionInterface
     /**
      * @param mixed[]|string $format
      */
-    public function path(int|string|Media $media, array|string $format = 'reference'): string
+    public function path(int|string|Media $media, array|string $format = 'reference'): ?string
     {
         $media = $this->getMedia($media);
         if (!$media instanceof \Adeliom\EasyMediaBundle\Entity\Media) {
@@ -182,16 +183,26 @@ class EasyMediaRuntime implements RuntimeExtensionInterface
             return $media->getMeta('url');
         }
 
-        return $this->buildPath($media);
+        return $this->manager->getPath($media);
+    }
+
+    public function downloadUrl(int|string|Media $media): string
+    {
+        $media = $this->getMedia($media);
+        if (!$media instanceof \Adeliom\EasyMediaBundle\Entity\Media) {
+            return '';
+        }
+
+        return $this->manager->downloadUrl($media);
     }
 
     private function getVideoHelperProperties(Media $media, string $format = 'reference', array $options = []): array
     {
         $params = [
-            'url' => $this->buildPath($media),
+            'url' => $this->path($media, $format),
             'sources' => [
                 [
-                    'src' => $this->buildPath($media),
+                    'src' => $this->path($media, $format),
                     'type' => $media->getMime(),
                 ],
             ],

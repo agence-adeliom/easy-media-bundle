@@ -9,6 +9,7 @@ use Adeliom\EasyMediaBundle\Entity\Media;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 trait GetContent
 {
@@ -67,7 +68,8 @@ trait GetContent
                 'name' => $media->getName(),
                 'type' => $media->getMime(),
                 'size' => $media->getSize(),
-                'path' => $this->helper->resolveUrl($media),
+                'path' => $this->manager->publicUrl($file),
+                'download_url' => $this->helper->downloadUrl($file, UrlGeneratorInterface::ABSOLUTE_URL),
                 'storage_path' => $path,
                 'last_modified' => $time,
                 'last_modified_formated' => $this->helper->getItemTime($time),
@@ -119,7 +121,8 @@ trait GetContent
                 'name' => $file->getName(),
                 'type' => $file->getMime(),
                 'size' => $file->getSize(),
-                'path' => $this->helper->resolveUrl($file),
+                'path' => $this->manager->publicUrl($file),
+                'download_url' => $this->helper->downloadUrl($file, UrlGeneratorInterface::ABSOLUTE_URL),
                 'storage_path' => $path,
                 'last_modified' => $time,
                 'last_modified_formated' => $this->helper->getItemTime($time),

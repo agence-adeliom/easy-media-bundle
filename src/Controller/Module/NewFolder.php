@@ -33,7 +33,6 @@ trait NewFolder
         } catch (AlreadyExist $alreadyExist) {
             $message = $alreadyExist->getMessage();
         } catch (\Exception|FilesystemException $exception) {
-            dump($exception);
             $message = $this->translator->trans('error.creating_dir', [], 'EasyMediaBundle');
         }
 

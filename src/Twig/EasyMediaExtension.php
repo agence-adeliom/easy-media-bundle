@@ -32,6 +32,7 @@ class EasyMediaExtension extends AbstractExtension
             new TwigFunction('file_is_type', [EasyMediaRuntime::class, 'fileIsType']),
             new TwigFunction('easy_media', [EasyMediaRuntime::class, 'media'], ['is_safe' => ['html']]),
             new TwigFunction('easy_media_path', [EasyMediaRuntime::class, 'path']),
+            new TwigFunction('easy_media_download_url', [EasyMediaRuntime::class, 'downloadUrl']),
         ];
     }
 }
