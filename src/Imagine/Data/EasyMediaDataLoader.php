@@ -3,8 +3,8 @@
 namespace Adeliom\EasyMediaBundle\Imagine\Data;
 
 use League\Flysystem\FileAttributes;
-use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator;
 use Liip\ImagineBundle\Binary\BinaryInterface;
 use Liip\ImagineBundle\Binary\Loader\LoaderInterface;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
@@ -14,7 +14,7 @@ use Symfony\Component\Mime\MimeTypesInterface;
 class EasyMediaDataLoader implements LoaderInterface
 {
     public function __construct(
-        private FilesystemAdapter $filesystem,
+        private FilesystemOperator $filesystem,
         protected MimeTypesInterface $extensionGuesser
     ) {
     }
