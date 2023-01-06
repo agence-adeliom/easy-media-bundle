@@ -19,7 +19,7 @@ class Configuration implements ConfigurationInterface
         $rootNode = $builder->getRootNode();
         $rootNode->children()
             ->scalarNode('storage_name')
-            ->defaultValue('flysystem.adapter.default.storage')
+            ->defaultValue('default.storage')
             ->end()
             ->scalarNode('base_url')
             ->defaultValue('/upload/')
