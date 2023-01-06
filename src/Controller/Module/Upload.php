@@ -42,7 +42,7 @@ trait Upload
 
                 if ($request->request->get('dzuuid')) {
                     $chunksRes = self::resumableUpload($request, $one->getRealPath(), $orig_name, $this->chunksDir);
-                    dump($chunksRes);
+
                     if (!$chunksRes['final']) {
                         return new JsonResponse($chunksRes);
                     }
