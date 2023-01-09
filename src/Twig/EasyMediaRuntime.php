@@ -28,7 +28,7 @@ class EasyMediaRuntime implements RuntimeExtensionInterface
             return null;
         }
 
-        return $this->buildPath($media);
+        return $this->manager->getPath($media);
     }
 
     /**
@@ -117,11 +117,6 @@ class EasyMediaRuntime implements RuntimeExtensionInterface
         }
 
         return $media;
-    }
-
-    private function buildPath($media)
-    {
-        return $this->manager->getHelper()->resolveUrl($media);
     }
 
     /**
