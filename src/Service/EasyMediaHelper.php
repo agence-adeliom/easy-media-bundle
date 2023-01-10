@@ -77,18 +77,6 @@ class EasyMediaHelper
         return $media->getPath();
     }
 
-    public function publicUrl(Media $media, ?int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): array|string
-    {
-        return "";
-    }
-
-    public function downloadUrl(Media $media, ?int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): array|string
-    {
-        return $this->clearDblSlash($this->router->generate('media.file_download', [
-            'path' => $media->getPath(),
-        ], $referenceType));
-    }
-
     /**
      * @return array|string
      */

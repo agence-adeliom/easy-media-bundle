@@ -53,7 +53,7 @@ class EasyMediaManager
         return $this->getHelper()->getPath($media);
     }
 
-    public function publicUrl(Media $media, ?int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): array|string
+    public function publicUrl(Media $media): array|string
     {
         try {
             $publicUrl = $this->getFilesystem()->publicUrl($this->getPath($media));
@@ -70,9 +70,9 @@ class EasyMediaManager
         }
     }
 
-    public function downloadUrl(Media $media, ?int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): array|string
+    public function downloadUrl(Media $media): array|string
     {
-        return $this->getHelper()->downloadUrl($media, $referenceType);
+        return $this->publicUrl($media);
     }
 
     public function getFolder($id): ?Folder
