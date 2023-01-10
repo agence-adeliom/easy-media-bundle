@@ -28,7 +28,7 @@ class EasyMediaRuntime implements RuntimeExtensionInterface
             return null;
         }
 
-        return $this->manager->publicUrl($media);
+        return $this->manager->getPath($media);
     }
 
     /**
