@@ -178,7 +178,7 @@ class EasyMediaRuntime implements RuntimeExtensionInterface
             return $media->getMeta('url');
         }
 
-        return $this->manager->getPath($media);
+        return $this->manager->publicUrl($media);
     }
 
     public function downloadUrl(int|string|Media $media): string
