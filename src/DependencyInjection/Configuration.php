@@ -22,7 +22,7 @@ class Configuration implements ConfigurationInterface
             ->defaultValue('default.storage')
             ->end()
             ->scalarNode('base_url')
-            ->defaultValue('/upload/')
+            ->defaultValue('/')
             ->end()
             ->scalarNode('media_entity')
             ->isRequired()
