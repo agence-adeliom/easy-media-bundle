@@ -13,7 +13,7 @@
 
     &:before,
     &:after{
-      @apply bg-black block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45;
+      @apply bg-white block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45;
       content: "";
     }
     &:before{

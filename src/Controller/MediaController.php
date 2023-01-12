@@ -18,7 +18,7 @@ use Adeliom\EasyMediaBundle\Service\EasyMediaHelper;
 use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
-use League\Flysystem\FilesystemOperator;
+use League\Flysystem\Filesystem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,7 +44,7 @@ class MediaController extends AbstractController
     protected string $ignoreFiles;
     protected string $chunksDir;
     protected $paginationAmount;
-    protected FilesystemOperator $filesystem;
+    protected Filesystem $filesystem;
     protected ObjectManager $em;
     protected EasyMediaHelper $helper;
     protected EasyMediaManager $manager;
