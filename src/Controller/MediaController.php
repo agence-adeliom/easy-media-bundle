@@ -75,7 +75,7 @@ class MediaController extends AbstractController
     {
         $data = [
             'provider' => $request->query->get('provider'),
-            'restrict' => $request->query->get('restrict'),
+            'restrict' => $request->query->all('restrict'),
             'CKEditor' => $request->query->get('CKEditor'),
             'CKEditorFuncNum' => $request->query->get('CKEditorFuncNum'),
             'langCode' => $request->query->get('langCode', 'en'),
