@@ -40,6 +40,9 @@ label.input-label{
     &:last-child:not(:first-child){
       @apply ml-1 -mr-2;
     }
+    svg {
+      @apply fill-current;
+    }
   }
   &[disabled],
   &.disabled{
@@ -109,6 +112,9 @@ button.delete,
       &.has-icons-right{
         .icon{
           @apply absolute top-0 h-10 w-10 text-gray-300;
+          svg {
+            @apply fill-current;
+          }
         }
       }
       &.has-icons-left{

@@ -12,7 +12,7 @@
 
   i,
   svg {
-    @apply text-color-secondary;
+    @apply text-color-secondary fill-current;
   }
 
   &.selected,
@@ -22,7 +22,7 @@
     h4,
     i,
     svg {
-      @apply text-color-active;
+      @apply text-color-active fill-current;
     }
 
   }
@@ -57,7 +57,7 @@
     }
 
     svg {
-      @apply transform-gpu scale-125;
+      @apply transform-gpu scale-125 fill-current;
       @screen md{
         @apply transform-gpu scale-100;
       }

@@ -29,6 +29,9 @@
       }
       .icon{
         @apply mr-1;
+        svg {
+          @apply fill-current;
+        }
       }
       .level{
         @apply flex;

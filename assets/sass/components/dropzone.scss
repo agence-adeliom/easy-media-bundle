@@ -37,11 +37,11 @@
     }
 
     .circle {
-      @apply text-header;
+      @apply text-header fill-current;
     }
 
     .anchor {
-      @apply text-color
+      @apply text-color fill-current;
     }
 
     &:hover {
@@ -50,7 +50,7 @@
       }
 
       .circle {
-        @apply text-header
+        @apply text-header;
       }
     }
   }
@@ -138,6 +138,9 @@
     @apply block absolute bottom-4 right-4;
     .button{
       @apply rounded-none;
+      svg {
+        @apply fill-current;
+      }
     }
   }
 
