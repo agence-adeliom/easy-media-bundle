@@ -16,6 +16,8 @@
         min-width: unset !important;
         overflow: unset !important;
 
+        svg { @apply fill-current }
+
         .top,
         .mid {
             @apply flex;
