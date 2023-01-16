@@ -16,14 +16,11 @@ use Embed\Embed;
 use Illuminate\Support\Str;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
-use League\Flysystem\UnableToCopyFile;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -34,8 +31,7 @@ class EasyMediaManager
                                 public EntityManagerInterface $em,
                                 protected ContainerBagInterface $parameters,
                                 protected TranslatorInterface $translator
-    )
-    {
+    ) {
     }
 
     public function getFilesystem(): FilesystemOperator
@@ -57,15 +53,19 @@ class EasyMediaManager
     {
         try {
             $publicUrl = $this->getFilesystem()->publicUrl($this->getPath($media));
-            if(strpos($this->helper->getBaseUrl() ,'://') !== false){
+            if (false !== strpos($this->helper->getBaseUrl(), '://')) {
                 $baseUrlPath = parse_url($this->helper->getBaseUrl(), PHP_URL_PATH);
-                $baseUrl = str_replace($baseUrlPath, "", $this->helper->getBaseUrl());
+                $baseUrl = '/';
+                if ($baseUrlPath) {
+                    $baseUrl = str_replace($baseUrlPath, '', $this->helper->getBaseUrl());
+                }
                 $filePath = parse_url($publicUrl, PHP_URL_PATH);
-                $path = array_filter(explode("/", $baseUrlPath) + explode("/", $filePath));
-                $publicUrl = $this->helper->clearDblSlash(sprintf('%s/%s', $baseUrl, implode("/", $path)));
+                $path = array_filter(explode('/', $baseUrlPath) + explode('/', $filePath));
+                $publicUrl = $this->helper->clearDblSlash(sprintf('%s/%s', $baseUrl, implode('/', $path)));
             }
+
             return $publicUrl;
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             return $this->helper->clearDblSlash(sprintf('%s/%s', $this->helper->getBaseUrl(), $this->getPath($media)));
         }
     }
@@ -86,8 +86,8 @@ class EasyMediaManager
     }
 
     /**
-     * @param string|null $path
      * @return Folder|false
+     *
      * @throws FilesystemException
      */
     public function folderByPath(?string $path): Folder|null|false
@@ -121,7 +121,9 @@ class EasyMediaManager
      */
     public function createFolder(?string $name, ?string $path = null): ?Folder
     {
-        if($path === '.'){ $path = ""; }
+        if ('.' === $path) {
+            $path = '';
+        }
 
         $class = $this->getHelper()->getFolderClassName();
         /** @var Folder $entity */
@@ -140,7 +142,7 @@ class EasyMediaManager
             throw new AlreadyExist($this->translator->trans('error.already_exists', [], 'EasyMediaBundle'));
         }
 
-        if(!$this->filesystem->directoryExists($entity->getPath())){
+        if (!$this->filesystem->directoryExists($entity->getPath())) {
             $this->filesystem->createDirectory($entity->getPath(), []);
         }
 
@@ -151,10 +153,6 @@ class EasyMediaManager
     }
 
     /**
-     * @param $source
-     * @param string|null $path
-     * @param string|null $name
-     * @return Media
      * @throws AlreadyExist
      * @throws ContainerExceptionInterface
      * @throws ExtNotAllowed
@@ -180,7 +178,6 @@ class EasyMediaManager
         }
 
         $entity->setFolder($folder ?: null);
-
 
         if (str_starts_with((string) $source, 'data:')) {
             $entity = $this->createFromBase64($entity, $source);
@@ -506,11 +503,12 @@ class EasyMediaManager
 
                 $entity->setMetas($datas);
             }
-        } catch (\Exception) {}
+        } catch (\Exception) {
+        }
 
         // check unexistence
         if (!$this->filesystem->fileExists($this->helper->clearDblSlash($entity->getPath()))) {
-            //throw new AlreadyExist($this->translator->trans('error.already_exists', [], 'EasyMediaBundle'));
+            // throw new AlreadyExist($this->translator->trans('error.already_exists', [], 'EasyMediaBundle'));
             $stream = fopen($source->getRealPath(), 'rb+');
             $this->filesystem->writeStream($entity->getPath(), $stream);
             fclose($stream);
