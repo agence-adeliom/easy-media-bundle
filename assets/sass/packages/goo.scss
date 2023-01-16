@@ -4,7 +4,7 @@
 
     .floating-btn {
         @apply rounded-full text-white cursor-pointer transition-all bg-indigo-600;
-
+        svg{@apply fill-current}
         &:hover {
             @apply shadow transform-gpu -translate-y-2;
         }
@@ -40,6 +40,9 @@
 
             .button{
                 @apply bg-transparent p-0;
+                svg {
+                    @apply fill-current;
+                }
             }
         }
     }

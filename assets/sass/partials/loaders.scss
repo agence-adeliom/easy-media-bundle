@@ -24,6 +24,7 @@
 
         svg {
             transform: scale(1.5) !important;
+            @apply fill-current;
         }
     }
 
@@ -41,6 +42,7 @@
 
     svg {
         transform: scale(3) !important;
+        @apply fill-current;
     }
 }
 
