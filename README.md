@@ -123,7 +123,7 @@ flysystem:
         directory: '%kernel.project_dir%/var/storage/medias'
 
 easy_media:
-  storage_name: flysystem.adapter.medias.storage
+  storage_name: medias.storage
   media_entity: App\Entity\EasyMedia\Media
   folder_entity: App\Entity\EasyMedia\Folder
 ```
