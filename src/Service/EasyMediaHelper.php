@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityRepository;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 class EasyMediaHelper
@@ -77,9 +76,6 @@ class EasyMediaHelper
         return $media->getPath();
     }
 
-    /**
-     * @return array|string
-     */
     public function clearDblSlash($str): array|string
     {
         $str = preg_replace('#\/+#', '/', $str);
@@ -310,30 +306,31 @@ class EasyMediaHelper
         return 'fa-file-o';
     }
 
-    public function fileIsType($type, string $compare)
+    public function fileIsType(string|Media $type, string $compare): bool
     {
+        if ($type instanceof Media) {
+            $type = $type->getMime();
+        }
         $mimes = $this->parameters->get('easy_media.extended_mimes');
         if ($type) {
-
-            foreach (['image', 'video', 'audio'] as $test){
-                if (((str_contains((string) $type, $test)) || in_array($type, $mimes[$test] ?? [])) && $test !== $compare) {
+            foreach (['image', 'video', 'audio'] as $test) {
+                if ((str_contains($type, $test) || in_array($type, $mimes[$test] ?? [])) && $test === $compare) {
                     return true;
                 }
             }
 
             // because "archive" shows up as "application"
-            if (((str_contains((string) $type, 'compressed')) || in_array($type, $mimes['archive'] ?? [])) && 'compressed' !== $compare) {
+            if ((str_contains($type, 'compressed') || in_array($type, $mimes['archive'] ?? [])) && 'compressed' !== $compare) {
                 return true;
             }
 
-            foreach (['oembed', 'pdf'] as $test){
-                if ((str_contains((string) $type, $test)) && $test !== $compare) {
+            foreach (['oembed', 'pdf'] as $test) {
+                if (str_contains($type, $test) && $test !== $compare) {
                     return false;
                 }
             }
 
-
-            return str_contains((string) $type, (string) $compare);
+            return str_contains($type, $compare);
         }
 
         return false;
