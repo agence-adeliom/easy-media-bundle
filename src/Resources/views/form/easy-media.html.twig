@@ -113,10 +113,7 @@
     <script type="text/javascript" src="{{ asset('bundles/easymedia/js/app.js') }}"></script>
 
     <script type="text/javascript">
-        var vueElement = document.querySelector(".easy-media-widget[data-widget='{{ form.vars.id }}']");
-        if(vueElement && !vueElement.__vue__){
-            new Vue({ el: vueElement });
-        }
+        new Vue({ el: ".easy-media-widget[data-widget='{{ form.vars.id }}']" })
     </script>
 </div>
 {% endblock %}
