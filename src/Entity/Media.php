@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
 #[ORM\MappedSuperclass]
-class Media
+class Media implements \Stringable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -131,5 +131,10 @@ class Media
         }
 
         return trim($tree, $separator);
+    }
+
+    public function __toString()
+    {
+        return (string) ($this->id ?? '');
     }
 }

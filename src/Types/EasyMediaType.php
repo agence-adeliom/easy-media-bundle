@@ -30,7 +30,7 @@ class EasyMediaType extends Type
         $class = $container->getParameter('easy_media.media_entity');
 
         if ($value) {
-            return $container->get('doctrine.orm.entity_manager')->getRepository($class)->find($value);
+            return $container->get('doctrine.orm.entity_manager')->getReference($class, $value);
         }
 
         return null;
