@@ -383,7 +383,7 @@ In your entity
 class Article
 {
     #[ORM\Column(type: 'easy_media_type', nullable: true)]
-    private $file;
+    private Media|string|null $file;
     
     ...
 ```
