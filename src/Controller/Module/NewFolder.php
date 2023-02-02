@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Adeliom\EasyMediaBundle\Controller\Module;
 
-use Adeliom\EasyMediaBundle\Exception\AlreadyExist;
+use Adeliom\EasyMediaBundle\Exception\FolderAlreadyExist;
 use League\Flysystem\FilesystemException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +30,7 @@ trait NewFolder
 
         try {
             $this->manager->createFolder($new_folder_name, $currentFolder?->getPath());
-        } catch (AlreadyExist $alreadyExist) {
+        } catch (FolderAlreadyExist $alreadyExist) {
             $message = $alreadyExist->getMessage();
         } catch (\Exception|FilesystemException $exception) {
             $message = $this->translator->trans('error.creating_dir', [], 'EasyMediaBundle');

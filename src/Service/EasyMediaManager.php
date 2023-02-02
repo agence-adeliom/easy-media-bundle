@@ -8,6 +8,7 @@ use Adeliom\EasyMediaBundle\Entity\Folder;
 use Adeliom\EasyMediaBundle\Entity\Media;
 use Adeliom\EasyMediaBundle\Exception\AlreadyExist;
 use Adeliom\EasyMediaBundle\Exception\ExtNotAllowed;
+use Adeliom\EasyMediaBundle\Exception\FolderAlreadyExist;
 use Adeliom\EasyMediaBundle\Exception\FolderNotExist;
 use Adeliom\EasyMediaBundle\Exception\NoFile;
 use Adeliom\EasyMediaBundle\Exception\ProviderNotFound;
@@ -117,7 +118,7 @@ class EasyMediaManager
     }
 
     /**
-     * @throws FilesystemException|FolderNotExist|AlreadyExist
+     * @throws FilesystemException|FolderNotExist|FolderAlreadyExist
      */
     public function createFolder(?string $name, ?string $path = null): ?Folder
     {
@@ -139,7 +140,7 @@ class EasyMediaManager
         }
 
         if (!empty($this->getHelper()->getFolderRepository()->findBy(['parent' => $folder, 'name' => $name]))) {
-            throw new AlreadyExist($this->translator->trans('error.already_exists', [], 'EasyMediaBundle'));
+            throw new FolderAlreadyExist($this->translator->trans('error.already_exists', [], 'EasyMediaBundle'));
         }
 
         if (!$this->filesystem->directoryExists($entity->getPath())) {
@@ -154,6 +155,7 @@ class EasyMediaManager
 
     /**
      * @throws AlreadyExist
+     * @throws FolderAlreadyExist
      * @throws ContainerExceptionInterface
      * @throws ExtNotAllowed
      * @throws FilesystemException
