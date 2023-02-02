@@ -20,7 +20,7 @@ trait Utils
 
         $page = $currentPage;
         $total = count($items); // total items in array
-        $totalPages = ceil($total / $perPage); // calculate total pages
+        $totalPages = (int) ceil($total / $perPage); // calculate total pages
         $page = max($page, 1); // get 1 page when $_GET['page'] <= 0
         $page = min($page, $totalPages);
         // get last page when $_GET['page'] > $totalPages
