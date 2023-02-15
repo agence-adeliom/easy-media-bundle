@@ -55,7 +55,7 @@ class EasyMediaManager
         try {
             $publicUrl = $this->getFilesystem()->publicUrl($this->getPath($media));
             if (false !== strpos($this->helper->getBaseUrl(), '://')) {
-                $baseUrlPath = parse_url($this->helper->getBaseUrl(), PHP_URL_PATH);
+                $baseUrlPath = parse_url($this->helper->getBaseUrl(), PHP_URL_PATH) ?? "";
                 $baseUrl = '/';
                 if ($baseUrlPath) {
                     $baseUrl = str_replace($baseUrlPath, '', $this->helper->getBaseUrl());
