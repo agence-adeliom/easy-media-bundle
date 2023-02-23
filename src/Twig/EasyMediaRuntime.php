@@ -7,6 +7,7 @@ namespace Adeliom\EasyMediaBundle\Twig;
 use Adeliom\EasyMediaBundle\Entity\Media;
 use Adeliom\EasyMediaBundle\Service\EasyMediaHelper;
 use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
+use Doctrine\Persistence\Proxy;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Liip\ImagineBundle\Imagine\Filter\FilterManager;
 use Twig\Environment;

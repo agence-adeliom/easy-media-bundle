@@ -7,6 +7,7 @@ namespace Adeliom\EasyMediaBundle\Service;
 use Adeliom\EasyMediaBundle\Entity\Media;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\Proxy;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
@@ -76,6 +77,7 @@ class EasyMediaHelper
         if (!($media instanceof Media) || $media instanceof Proxy) {
             $media = $this->getMediaRepository()->find((int) $media);
         }
+
         if($media){
             return $media->getPath();
         }
