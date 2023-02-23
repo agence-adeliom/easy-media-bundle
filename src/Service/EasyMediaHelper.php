@@ -74,8 +74,12 @@ class EasyMediaHelper
      */
     public function getPath(Media $media): ?string
     {
-        if (!($media instanceof Media) || $media instanceof Proxy) {
-            $media = $this->getMediaRepository()->find((int) $media);
+        if($media instanceof Proxy){
+            $media = $media->getId();
+        }
+
+        if (!($media instanceof Media)) {
+            $media = $this->getMediaRepository()->find($media);
         }
 
         if($media){

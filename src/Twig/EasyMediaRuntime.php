@@ -109,7 +109,11 @@ class EasyMediaRuntime implements RuntimeExtensionInterface
             throw new \TypeError(sprintf('Media parameter must be either an identifier or the media itself for Twig functions, "%s" given.', \is_object($media) ? 'instance of '.$media::class : \gettype($media)));
         }
 
-        if (!($media instanceof $class) || $media instanceof Proxy) {
+        if($media instanceof Proxy){
+            $media = $media->getId();
+        }
+
+        if (!($media instanceof $class)) {
             $media = $this->manager->getMedia($media);
         }
 
