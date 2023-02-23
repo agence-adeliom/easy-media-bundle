@@ -71,7 +71,7 @@ class EasyMediaHelper
      * resolve url for "file/dir path" instead of laravel builtIn.
      * which needs to make extra call just to resolve the url.
      */
-    public function getPath(Media $media): string
+    public function getPath(Media $media): ?string
     {
         if (!($media instanceof Media) || $media instanceof Proxy) {
             $media = $this->getMediaRepository()->find((int) $media);
@@ -80,7 +80,7 @@ class EasyMediaHelper
             return $media->getPath();
         }
 
-        return;
+        return null;
     }
 
     public function clearDblSlash($str): array|string

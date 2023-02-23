@@ -45,33 +45,37 @@ class EasyMediaManager
         return $this->helper;
     }
 
-    public function getPath(Media $media): string
+    public function getPath(Media $media): ?string
     {
         return $this->getHelper()->getPath($media);
     }
 
-    public function publicUrl(Media $media): array|string
+    public function publicUrl(Media $media): array|string|null
     {
-        try {
-            $publicUrl = $this->getFilesystem()->publicUrl($this->getPath($media));
-            if (false !== strpos($this->helper->getBaseUrl(), '://')) {
-                $baseUrlPath = parse_url($this->helper->getBaseUrl(), PHP_URL_PATH) ?? "";
-                $baseUrl = '/';
-                if ($baseUrlPath) {
-                    $baseUrl = str_replace($baseUrlPath, '', $this->helper->getBaseUrl());
+        if($mediaPath = $this->getPath($media)) {
+            try {
+                $publicUrl = $this->getFilesystem()->publicUrl($mediaPath);
+                if (false !== strpos($this->helper->getBaseUrl(), '://')) {
+                    $baseUrlPath = parse_url($this->helper->getBaseUrl(), PHP_URL_PATH) ?? "";
+                    $baseUrl = '/';
+                    if ($baseUrlPath) {
+                        $baseUrl = str_replace($baseUrlPath, '', $this->helper->getBaseUrl());
+                    }
+                    $filePath = parse_url($publicUrl, PHP_URL_PATH);
+                    $path = array_filter(explode('/', $baseUrlPath) + explode('/', $filePath));
+                    $publicUrl = $this->helper->clearDblSlash(sprintf('%s/%s', $baseUrl, implode('/', $path)));
                 }
-                $filePath = parse_url($publicUrl, PHP_URL_PATH);
-                $path = array_filter(explode('/', $baseUrlPath) + explode('/', $filePath));
-                $publicUrl = $this->helper->clearDblSlash(sprintf('%s/%s', $baseUrl, implode('/', $path)));
-            }
 
-            return $publicUrl;
-        } catch (\Exception $exception) {
-            return $this->helper->clearDblSlash(sprintf('%s/%s', $this->helper->getBaseUrl(), $this->getPath($media)));
+                return $publicUrl;
+            } catch (\Exception $exception) {
+                return $this->helper->clearDblSlash(sprintf('%s/%s', $this->helper->getBaseUrl(), $mediaPath));
+            }
         }
+
+        return null;
     }
 
-    public function downloadUrl(Media $media): array|string
+    public function downloadUrl(Media $media): array|string|null
     {
         return $this->publicUrl($media);
     }
