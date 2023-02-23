@@ -78,17 +78,16 @@ class EasyMediaHelper
             if($media instanceof Proxy){
                 $media->__load();
             }
-            if (!($media instanceof $class)) {
+            if (!($media instanceof Media)) {
                 $media = $this->getMediaRepository()->find($media);
             }
-            if (!$media instanceof $class) {
+            if (!$media instanceof Media) {
                 return null;
             }
             if($media){
                 return $media->getPath();
             }
             return null;
-
         }catch (\Exception){
             return null;
         }
