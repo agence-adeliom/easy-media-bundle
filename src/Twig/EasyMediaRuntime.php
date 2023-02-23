@@ -110,17 +110,23 @@ class EasyMediaRuntime implements RuntimeExtensionInterface
         }
 
         try {
-            if($media instanceof Proxy){
-                $media->__load();
-            }
-            if (!($media instanceof $class)) {
+            if (!is_object($media) && !($media instanceof $class)) {
                 $media = $this->manager->getMedia($media);
             }
+
+            if($media instanceof Proxy){
+                $media->__load();
+                if(!$media->__isInitialized()){
+                    return null;
+                }
+            }
+
             if (!$media instanceof $class) {
                 return null;
             }
+
             return $media;
-        }catch (\Exception){
+        }catch (\Exception $e){
             return null;
         }
     }
