@@ -74,19 +74,24 @@ class EasyMediaHelper
      */
     public function getPath(Media $media): ?string
     {
-        if($media instanceof Proxy){
-            $media = $media->getId();
-        }
+        try {
+            if($media instanceof Proxy){
+                $media->__load();
+            }
+            if (!($media instanceof $class)) {
+                $media = $this->getMediaRepository()->find($media);
+            }
+            if (!$media instanceof $class) {
+                return null;
+            }
+            if($media){
+                return $media->getPath();
+            }
+            return null;
 
-        if (!($media instanceof Media)) {
-            $media = $this->getMediaRepository()->find($media);
+        }catch (\Exception){
+            return null;
         }
-
-        if($media){
-            return $media->getPath();
-        }
-
-        return null;
     }
 
     public function clearDblSlash($str): array|string
