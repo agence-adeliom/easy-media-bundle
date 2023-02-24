@@ -23,17 +23,22 @@ class EasyMediaType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): mixed
     {
-        $listeners = $platform->getEventManager()->getListeners('getContainer');
-        $listener = array_shift($listeners);
-        /** @var ContainerInterface $container */
-        $container = $listener->getContainer();
-        $class = $container->getParameter('easy_media.media_entity');
+        try {
+            $listeners = $platform->getEventManager()->getListeners('getContainer');
+            $listener = array_shift($listeners);
+            /** @var ContainerInterface $container */
+            $container = $listener->getContainer();
+            $class = $container->getParameter('easy_media.media_entity');
 
-        if ($value) {
-            return $container->get('doctrine.orm.entity_manager')->getReference($class, $value);
+            if ($value) {
+                return $container->get('doctrine.orm.entity_manager')->getRepository($class)->find($value);
+            }
+
+            return null;
+        } catch (\Exception) {
+            return null;
         }
 
-        return null;
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
