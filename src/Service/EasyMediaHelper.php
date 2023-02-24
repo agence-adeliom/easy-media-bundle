@@ -68,26 +68,40 @@ class EasyMediaHelper
         return $time ? (new \DateTime(sprintf('@%s', $time)))->format($this->parameters->get('easy_media.last_modified_format')) : null;
     }
 
+    public function getMedia(int|string|Media $media): ?Media
+    {
+        $class = $this->getMediaClassName();
+        if (!is_numeric($media) && !$media instanceof $class) {
+            throw new \TypeError(sprintf('Media parameter must be either an identifier or the media itself for Twig functions, "%s" given.', \is_object($media) ? 'instance of '.$media::class : \gettype($media)));
+        }
+
+        try {
+            if (is_numeric($media)) {
+                $media = $this->getMediaRepository()->find($media);
+            }
+
+            if($media instanceof Proxy){
+                $media = $this->getMediaRepository()->find($media->getId());
+            }
+
+            if (!$media instanceof $class) {
+                return null;
+            }
+
+            return $media;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
     /**
      * resolve url for "file/dir path" instead of laravel builtIn.
      * which needs to make extra call just to resolve the url.
      */
-    public function getPath(Media $media): ?string
+    public function getPath(int|string|Media $media): ?string
     {
         try {
-            if (!is_object($media) && !($media instanceof Media)) {
-                $media = $this->manager->getMedia($media);
-            }
-
-            if($media instanceof Proxy){
-                $media = $this->manager->getMedia($media->getId());
-            }
-
-            if (!$media instanceof Media) {
-                return null;
-            }
-
-            if($media){
+            if($media = $this->getMedia($media)){
                 return $media->getPath();
             }
             return null;

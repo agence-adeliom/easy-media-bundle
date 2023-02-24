@@ -104,28 +104,7 @@ class EasyMediaRuntime implements RuntimeExtensionInterface
 
     private function getMedia(int|string|Media $media): ?Media
     {
-        $class = $this->manager->getHelper()->getMediaClassName();
-        if (!\is_int($media) && !\is_string($media) && !$media instanceof $class) {
-            throw new \TypeError(sprintf('Media parameter must be either an identifier or the media itself for Twig functions, "%s" given.', \is_object($media) ? 'instance of '.$media::class : \gettype($media)));
-        }
-
-        try {
-            if (!is_object($media) && !($media instanceof $class)) {
-                $media = $this->manager->getMedia($media);
-            }
-
-            if($media instanceof Proxy){
-                $media = $this->manager->getMedia($media->getId());
-            }
-
-            if (!$media instanceof $class) {
-                return null;
-            }
-
-            return $media;
-        }catch (\Exception $e){
-            return null;
-        }
+        return $this->manager->getMedia($media);
     }
 
     /**

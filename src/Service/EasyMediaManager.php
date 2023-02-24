@@ -85,9 +85,9 @@ class EasyMediaManager
         return $this->getHelper()->getFolderRepository()->find($id);
     }
 
-    public function getMedia($id): ?Media
+    public function getMedia(int|string|Media $media): ?Media
     {
-        return $this->getHelper()->getMediaRepository()->find($id);
+        return $this->getHelper()->getMedia($media);
     }
 
     /**
