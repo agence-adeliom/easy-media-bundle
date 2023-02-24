@@ -80,15 +80,11 @@ class EasyMediaHelper
                 $media = $this->getMediaRepository()->find($media);
             }
 
-            if($media instanceof Proxy){
-                $media = $this->getMediaRepository()->find($media->getId());
+            if($media instanceof $class){
+                return $this->getMediaRepository()->find($media->getId());
             }
 
-            if (!$media instanceof $class) {
-                return null;
-            }
-
-            return $media;
+            return null;
         }catch (\Exception $e){
             return null;
         }
