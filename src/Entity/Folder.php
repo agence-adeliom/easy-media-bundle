@@ -21,9 +21,6 @@ class Folder
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     protected ?string $name = null;
 
-    /**
-     * @Gedmo\Slug(fields={"name"}, updatable=false)
-     */
     #[ORM\Column(length: 100)]
     protected ?string $slug = null;
 

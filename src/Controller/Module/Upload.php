@@ -56,7 +56,6 @@ trait Upload
                 }
 
                 $file_options = empty($custom_attr) ? [] : $custom_attr['options'];
-
                 $media = $this->manager->createMedia($one, $folder ? $folder->getPath() : null, $name);
                 if ($one instanceof File) {
                     $filesystem = new Filesystem();
