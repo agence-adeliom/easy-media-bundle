@@ -147,11 +147,12 @@ class EasyMediaManager
             throw new FolderAlreadyExist($this->translator->trans('error.already_exists', [], 'EasyMediaBundle'));
         }
 
+        $entity->setParent($folder ?: null);
+
         if (!$this->filesystem->directoryExists($entity->getPath())) {
             $this->filesystem->createDirectory($entity->getPath(), []);
         }
 
-        $entity->setParent($folder ?: null);
         $this->save($entity);
 
         return $entity;
