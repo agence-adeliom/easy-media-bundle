@@ -80,10 +80,7 @@ class EasyMediaHelper
             }
 
             if($media instanceof Proxy){
-                $media->__load();
-                if(!$media->__isInitialized()){
-                    return null;
-                }
+                $media = $this->manager->getMedia($media->getId());
             }
 
             if (!$media instanceof Media) {
