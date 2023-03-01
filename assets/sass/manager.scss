@@ -1,5 +1,5 @@
 @import './tailwind';
-@import '~plyr/dist/plyr.css';
+@import 'plyr/dist/plyr.css';
 
 @mixin state-colors {
   &.is-warning { @apply bg-warning }

@@ -71,9 +71,9 @@ export default {
                         return done(manager.trans('upload_in_progress'))
                     }
 
-                    if (manager.checkPreUploadedList(file)) {
-                        return done(manager.trans('already_exists'))
-                    }
+                    //if (manager.checkPreUploadedList(file)) {
+                    //    return done(manager.trans('already_exists'))
+                    //}
 
                     allFiles++;
                     done()

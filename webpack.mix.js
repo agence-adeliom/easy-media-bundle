@@ -1,5 +1,6 @@
 // webpack.mix.js
 
+const path = require('path');
 let mix = require('laravel-mix');
 let webpack = require('webpack');
 let tailwindcss = require('tailwindcss');
@@ -14,6 +15,10 @@ mix.polyfill();
 mix.options({
     postCss: [ tailwindcss('./tailwind.config.js') ],
 })
+
+mix.alias({
+    '@': path.resolve(__dirname, 'node_modules/'),
+});
 
 mix.webpackConfig({
     output: {
