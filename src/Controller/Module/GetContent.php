@@ -40,7 +40,7 @@ trait GetContent
         return new JsonResponse([
             'files' => [
                 'path' => $path,
-                'items' => $this->paginate($this->getData($folder), $this->paginationAmount),
+                'items' => $this->paginate($this->getData($folder, $data['search'] ?? null), $this->paginationAmount),
             ],
         ]);
     }
@@ -89,10 +89,10 @@ trait GetContent
      *
      * @param mixed $dir
      */
-    protected function getData(?Folder $dir)
+    protected function getData(?Folder $dir, ?string $search = null)
     {
         $list = [];
-        $dirList = $this->getFolderContent($dir);
+        $dirList = $this->getFolderContent($dir, false, $search);
         $storageFolders = array_filter($this->getFolderListByType($dirList, 'dir'), [$this, 'ignoreFiles']);
         $storageFiles = array_filter($this->getFolderListByType($dirList, 'file'), [$this, 'ignoreFiles']);
 
@@ -136,21 +136,47 @@ trait GetContent
     /**
      * get directory data.
      */
-    protected function getFolderContent($folder, bool $rec = false)
+    protected function getFolderContent($folder = null, bool $rec = false, ?string $search = null)
     {
         if (!empty($folder)) {
             /** @var Folder $folder */
             $folder = $this->manager->getFolder($folder);
-            $folders = $folder->getChildren();
-            $medias = $folder->getMedias();
-
-            return array_merge($folders->toArray(), $medias->toArray());
         }
 
-        $folders = $this->helper->getFolderRepository()->findBy(['parent' => null]);
-        $medias = $this->helper->getMediaRepository()->findBy(['folder' => null]);
+        $folderQuery = $this->helper->getFolderRepository()->createQueryBuilder('f');
+        $mediaQuery = $this->helper->getMediaRepository()->createQueryBuilder('m');
 
-        return array_merge($folders, $medias);
+        if($folder === null){
+            $folderQuery->andWhere("f.parent IS NULL");
+            $mediaQuery->andWhere("m.folder IS NULL");
+        }else{
+            $folderQuery->andWhere("f.parent = :folder")->setParameter('folder', $folder);
+            $mediaQuery->andWhere("m.folder = :folder")->setParameter('folder', $folder);
+        }
+
+        if(!empty($search)){
+            if(!$rec){
+                $folderQuery->andWhere("f.name LIKE :search")->setParameter('search', '%'.trim($search).'%');
+            }
+            $mediaQuery->andWhere("m.name LIKE :search")->setParameter('search', '%'.trim($search).'%');
+        }
+
+        $folders = $folderQuery->getQuery()->getResult();
+        $medias = $mediaQuery->getQuery()->getResult();
+
+        $results = array_merge($folders, $medias);
+        if($rec){
+            foreach ($folders as $f){
+                $results = array_merge($results, $this->getFolderContent($f, $rec, $search));
+            }
+        }
+
+        if($rec){
+            $results = array_filter($results, static function($item) {
+                return $item instanceof Media;
+            });
+        }
+        return $results;
     }
 
     protected function ignoreFiles($item)

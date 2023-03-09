@@ -1,3 +1,5 @@
+import debounce from 'lodash/debounce'
+
 export default {
     watch: {
         // files
@@ -95,18 +97,20 @@ export default {
         },
 
         // search
-        searchFor(val) {
+        searchFor: debounce(function (val) {
             if (!this.isBulkSelecting()) {
                 this.selectFirst()
             }
             if (val) {
+                this.searchFiles(val)
                 this.updateSearchCount()
             } else {
+                this.getFiles();
                 this.resetInput('searchItemsCount')
                 this.noSearch('hide')
                 this.selectFirstInBulkList()
             }
-        },
+        }, 500),
         searchItemsCount(val) {
             if (this.allItemsCount == undefined || val == this.allItemsCount) {
                 this.resetInput('searchItemsCount')

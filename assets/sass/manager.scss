@@ -85,6 +85,9 @@
       }
       &_second{
         @apply flex items-center justify-between w-full sm:w-auto sm:static sm:inset-auto sm:ml-6 sm:pr-0 gap-4;
+        .level-item {
+          @apply flex gap-3;
+        }
       }
     }
   }
@@ -143,7 +146,8 @@
     }
 
     section.content-body,div#media-holder {
-      @apply h-full;
+      min-height: calc(100vh - 56px);
+      height: calc(100vh - 56px);
     }
 
     .media-manager.hide-native-scrollbar {

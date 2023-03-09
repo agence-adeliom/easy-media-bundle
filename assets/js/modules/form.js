@@ -45,6 +45,42 @@ export default {
                 this.ajaxError()
             })
         },
+        searchFiles(value) {
+            this.files.next = null
+            this.resetInput(['sortName', 'filterName', 'selectedFile', 'currentFileIndex'])
+            this.noFiles('hide')
+            this.destroyPlyr()
+
+            if (!this.loading_files) {
+                this.isLoading = true
+                this.infoSidebar = false
+                this.loadingFiles('show')
+            }
+            let id = null;
+            if(this.foldersIds.length){
+                id = this.foldersIds[this.foldersIds.length - 1];
+            }
+            // get data
+            return axios.post(this.routes.files, {
+                folder: id,
+                search: value
+            }).then(({data}) => {
+                // return data
+                this.files = {
+                    folder: id,
+                    path: data.files.path,
+                    items: data.files.items.data,
+                    next: data.files.items.next_page_url
+                }
+                this.filesListCheck(null, null)
+
+            }).catch((err) => {
+                console.error(err)
+                this.isLoading = false
+                this.loadingFiles('hide')
+                this.ajaxError()
+            })
+        },
         loadPaginatedFiles($state) {
             return axios.post(this.files.next, {
                 path: this.files.path || '/'

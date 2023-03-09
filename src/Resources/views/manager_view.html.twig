@@ -11,7 +11,13 @@
     </div>
 {% endblock %}
 
-{% block body_class %}{{- parent() -}} easy-media-admin{% endblock %}
+
+
+{% block body %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body_class %}{{- parent() -}} ea-content-width-full easy-media-admin{% endblock %}
 
 {# styles #}
 {% block head_stylesheets %}
