@@ -236,8 +236,8 @@ class EasyMediaManager
      */
     public function move($oldPath, $newPath): void
     {
-        if ($this->filesystem->fileExists($this->helper->clearDblSlash($oldPath))) {
-            $this->filesystem->move($this->helper->clearDblSlash($oldPath), $this->helper->clearDblSlash($newPath));
+        if ($this->getFilesystem()->fileExists($this->helper->clearDblSlash($oldPath)) || $this->getFilesystem()->directoryExists($this->helper->clearDblSlash($oldPath))) {
+            $this->getFilesystem()->move($this->helper->clearDblSlash($oldPath), $this->helper->clearDblSlash($newPath));
         }
     }
 

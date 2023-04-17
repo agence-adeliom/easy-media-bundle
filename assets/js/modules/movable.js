@@ -18,18 +18,11 @@ export default {
         },
         // helpers
         addToMovableList(item = null) {
-            if(!item && this.selectedFile){
-                item = this.selectedFile;
-            }
             let list = [].concat(
                 this.movableList,
-                item ? [item] : (this.bulkList ?? [])
+                !this.isBulkSelecting() ? [item ?? this.selectedFile] : (this.bulkList ?? [])
             )
             this.movableList = uniq(list)
-
-            if (this.isBulkSelecting()) {
-                return this.$refs.bulkSelect.click()
-            }
         },
         removeFromMovableList(i) {
             return this.movableList.splice(i, 1)

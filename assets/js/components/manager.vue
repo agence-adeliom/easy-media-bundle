@@ -462,7 +462,6 @@ export default {
             }
         },
         // end of short cuts
-
         refresh() {
             EventHub.fire('clear-global-search')
             this.resetInput('searchFor')
@@ -476,6 +475,13 @@ export default {
                 this.ajaxError(false)
                 this.showNotif('Cache Cleared')
             }
+        },
+        addToMoveList() {
+          this.$nextTick(() => {
+            if (this.$refs.move.disabled) return
+
+            this.addToMovableList()
+          })
         },
         moveItem() {
             this.$nextTick(() => {

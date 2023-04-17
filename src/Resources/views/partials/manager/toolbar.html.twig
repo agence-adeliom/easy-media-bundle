@@ -38,6 +38,18 @@
                     {# middle #}
                     <div class="level-item">
                         <div class="field has-addons">
+                            {# addToList #}
+                            <div class="control" v-if="allItemsCount && !isLoading && !waitingForUpload && !inMovableList() && selectedFile">
+                                <button type="button" class="button is-link"
+                                        ref="addToMoveList"
+                                        :disabled="isLoading"
+                                        v-tippy="{arrow: true}"
+                                        :title="'{{ 'add.list'|trans }} (c / x)'"
+                                        @click.stop="addToMovableList()">
+                                    <span class="icon"><icon name="plus" scale="0.8"></icon></span>
+                                </button>
+                            </div>
+
                             {# move #}
                             <div class="control" v-if="enableMove" v-show="isBulkSelecting() || !(isLoading || !movableItemsCount)">
                                 <button type="button" class="button is-link"
