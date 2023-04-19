@@ -59,6 +59,8 @@ export default {
             this.selectedFile = file
             this.currentFileIndex = index
 
+            EventHub.fire('file-selected', file);
+
             // bulk selection
             if (this.isBulkSelecting()) {
                 this.pushtoBulkList(file)

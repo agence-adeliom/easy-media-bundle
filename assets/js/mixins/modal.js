@@ -10,7 +10,7 @@ export default {
     methods: {
         toggleModalFor(name) {
             this.inputName = name
-            EventHub.fire('modal-show')
+            EventHub.fire('modal-show', this.$el)
         },
         hideInputModal() {
             this.inputName = ''
