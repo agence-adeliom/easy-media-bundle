@@ -71,12 +71,12 @@ class EasyMediaHelper
     public function getMedia(int|string|Media $media): ?Media
     {
         $class = $this->getMediaClassName();
-        if (!is_numeric($media) && !$media instanceof $class) {
+        if (!is_string($media) && !is_numeric($media) && !$media instanceof $class) {
             throw new \TypeError(sprintf('Media parameter must be either an identifier or the media itself for Twig functions, "%s" given.', \is_object($media) ? 'instance of '.$media::class : \gettype($media)));
         }
 
         try {
-            if (is_numeric($media)) {
+            if (is_numeric($media) || is_string($media)) {
                 $media = $this->getMediaRepository()->find($media);
             }
 
