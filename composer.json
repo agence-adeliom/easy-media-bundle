@@ -2,7 +2,12 @@
     "name": "agence-adeliom/easy-media-bundle",
     "type": "symfony-bundle",
     "description": "A Symfony Media manager bundle for EasyAdmin",
-    "keywords": ["symfony", "easyadmin", "media", "media-manager"],
+    "keywords": [
+        "symfony",
+        "easyadmin",
+        "media",
+        "media-manager"
+    ],
     "homepage": "https://github.com/agence-adeliom/easy-media-bundle",
     "license": "MIT",
     "authors": [
@@ -25,7 +30,7 @@
         "symfony/property-access": "^5.4 || ^6.0",
         "symfony/filesystem": "^5.4 || ^6.0",
         "easycorp/easyadmin-bundle": "^3.4 || ^v4.0",
-        "agence-adeliom/easy-common-bundle": "^2.1",
+        "agence-adeliom/easy-common-bundle": "^2.0.96",
         "league/flysystem-bundle": "^3.0",
         "liip/imagine-bundle": "^2.8",
         "maennchen/zipstream-php": "^2.1.0",
