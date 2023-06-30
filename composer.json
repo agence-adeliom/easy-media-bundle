@@ -30,7 +30,7 @@
         "symfony/property-access": "^5.4 || ^6.0",
         "symfony/filesystem": "^5.4 || ^6.0",
         "easycorp/easyadmin-bundle": "^3.4 || ^v4.0",
-        "agence-adeliom/easy-common-bundle": "^2.1",
+        "agence-adeliom/easy-common-bundle": "^2.0.97",
         "league/flysystem-bundle": "^3.0",
         "liip/imagine-bundle": "^2.8",
         "maennchen/zipstream-php": "^2.1.0",
