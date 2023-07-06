@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Adeliom\EasyMediaBundle\Controller\Module;
 
+use Adeliom\EasyMediaBundle\Event\EasyMediaBeforeFileCreated;
 use Adeliom\EasyMediaBundle\Event\EasyMediaFileSaved;
 use Adeliom\EasyMediaBundle\Event\EasyMediaFileUploaded;
 use Symfony\Component\Filesystem\Filesystem;
@@ -56,6 +57,8 @@ trait Upload
                 }
 
                 $file_options = empty($custom_attr) ? [] : $custom_attr['options'];
+                $beforeFileCreatedEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeFileCreated($one, $folder ? $folder->getPath() : null, $name), EasyMediaBeforeFileCreated::NAME);
+                $one = $beforeFileCreatedEvent->getData();
                 $media = $this->manager->createMedia($one, $folder ? $folder->getPath() : null, $name);
                 if ($one instanceof File) {
                     $filesystem = new Filesystem();
@@ -108,6 +111,8 @@ trait Upload
             $name_only = pathinfo((string) $original, PATHINFO_FILENAME).'_'.$this->helper->getRandomString();
 
             try {
+                $beforeFileCreatedEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeFileCreated($data['data'], $upload_path, $name_only), EasyMediaBeforeFileCreated::NAME);
+                $data['data'] = $beforeFileCreatedEvent->getData();
                 $media = $this->manager->createMedia($data['data'], $upload_path, $name_only);
                 $this->eventDispatcher->dispatch(new EasyMediaFileSaved($media->getPath(), $media->getMime()), EasyMediaFileSaved::NAME);
                 $result = [
@@ -152,6 +157,8 @@ trait Upload
                 $random_name = filter_var($data['random_names'], FILTER_VALIDATE_BOOLEAN);
                 $name = $random_name ? $this->helper->getRandomString() : null;
 
+                $beforeFileCreatedEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeFileCreated($url, $folder ? $folder->getPath() : null, $name), EasyMediaBeforeFileCreated::NAME);
+                $url = $beforeFileCreatedEvent->getData();
                 $media = $this->manager->createMedia($url, $folder ? $folder->getPath() : null, $name);
                 $this->eventDispatcher->dispatch(new EasyMediaFileSaved($media->getPath(), $media->getMime()), EasyMediaFileSaved::NAME);
 
