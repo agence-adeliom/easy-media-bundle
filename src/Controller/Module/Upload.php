@@ -59,7 +59,9 @@ trait Upload
                 $file_options = empty($custom_attr) ? [] : $custom_attr['options'];
                 $beforeFileCreatedEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeFileCreated($one, $folder ? $folder->getPath() : null, $name), EasyMediaBeforeFileCreated::NAME);
                 $one = $beforeFileCreatedEvent->getData();
-                $media = $this->manager->createMedia($one, $folder ? $folder->getPath() : null, $name);
+                $folderPath = $beforeFileCreatedEvent->getFolderPath();
+                $name = $beforeFileCreatedEvent->getName();
+                $media = $this->manager->createMedia($one, $folderPath, $name);
                 if ($one instanceof File) {
                     $filesystem = new Filesystem();
                     $filesystem->remove(Path::normalize($one->getRealPath()));
@@ -113,6 +115,8 @@ trait Upload
             try {
                 $beforeFileCreatedEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeFileCreated($data['data'], $upload_path, $name_only), EasyMediaBeforeFileCreated::NAME);
                 $data['data'] = $beforeFileCreatedEvent->getData();
+                $upload_path = $beforeFileCreatedEvent->getFolderPath();
+                $name_only = $beforeFileCreatedEvent->getName();
                 $media = $this->manager->createMedia($data['data'], $upload_path, $name_only);
                 $this->eventDispatcher->dispatch(new EasyMediaFileSaved($media->getPath(), $media->getMime()), EasyMediaFileSaved::NAME);
                 $result = [
@@ -159,7 +163,9 @@ trait Upload
 
                 $beforeFileCreatedEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeFileCreated($url, $folder ? $folder->getPath() : null, $name), EasyMediaBeforeFileCreated::NAME);
                 $url = $beforeFileCreatedEvent->getData();
-                $media = $this->manager->createMedia($url, $folder ? $folder->getPath() : null, $name);
+                $folderPath = $beforeFileCreatedEvent->getFolderPath();
+                $name = $beforeFileCreatedEvent->getName();
+                $media = $this->manager->createMedia($url, $folderPath, $name);
                 $this->eventDispatcher->dispatch(new EasyMediaFileSaved($media->getPath(), $media->getMime()), EasyMediaFileSaved::NAME);
 
                 $result = [
