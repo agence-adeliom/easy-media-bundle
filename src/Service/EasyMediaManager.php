@@ -143,9 +143,9 @@ class EasyMediaManager
             $folder = $this->createFolder(basename($path), dirname($path));
         }
 
-        if (!empty($this->getHelper()->getFolderRepository()->findBy(['parent' => $folder, 'name' => $name]))) {
-            throw new FolderAlreadyExist($this->translator->trans('error.already_exists', [], 'EasyMediaBundle'));
-        }
+        //if (null !== $folder && !empty($this->getHelper()->getFolderRepository()->findBy(['parent' => $folder, 'name' => $name]))) {
+        //    throw new FolderAlreadyExist($this->translator->trans('error.already_exists', [], 'EasyMediaBundle'));
+        //}
 
         $entity->setParent($folder ?: null);
 
