@@ -7,6 +7,7 @@ namespace Adeliom\EasyMediaBundle\Controller\Module;
 use Adeliom\EasyMediaBundle\Entity\Folder;
 use Adeliom\EasyMediaBundle\Entity\Media;
 use Doctrine\Common\Collections\ArrayCollection;
+use League\Flysystem\FilesystemException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -29,6 +30,18 @@ trait GetContent
             $folder = $this->manager->getFolder($data['folder']);
             if ($folder) {
                 $path = $folder->getPath();
+            }
+        }
+        if (empty($data['folder']) && !empty($data['path'])) {
+            try {
+                $folder = $this->manager->folderByPath($data['path']);
+                if ($folder) {
+                    $path = $folder->getPath();
+                }
+            } catch (FilesystemException $e) {
+                return new JsonResponse([
+                    'error' => $this->translator->trans($e->getMessage(), ['attr' => $path]),
+                ]);
             }
         }
         if (!empty($data['folder']) && !$folder) {
