@@ -40,7 +40,7 @@
         <service id="easy_media.event_listener.doctrine_mapping_listener" class="Adeliom\EasyMediaBundle\EventListener\DoctrineMappingListener" public="true" autowire="true">
             <argument type="string">%easy_media.media_entity%</argument>
             <argument type="string">%easy_media.folder_entity%</argument>
-            <tag name="doctrine.event_subscriber"/>
+            <tag name="doctrine.event_listener" event="loadClassMetadata"/>
         </service>
 
         <service id="easy_media.twig.easy_media_extension" class="Adeliom\EasyMediaBundle\Twig\EasyMediaExtension" public="true" autowire="true">
@@ -63,12 +63,12 @@
 
         <service id="easy_media.event_listener.folder" class="Adeliom\EasyMediaBundle\EventListener\FolderSubscriber" public="true" autowire="true">
             <argument key="$manager" type="service" id="easy_media.manager"/>
-            <tag name="doctrine.event_subscriber"/>
+            <tag name="doctrine.event_listener" event="preUpdate"/>
         </service>
 
         <service id="easy_media.event_listener.media" class="Adeliom\EasyMediaBundle\EventListener\MediaSubscriber" public="true" autowire="true">
             <argument key="$manager" type="service" id="easy_media.manager"/>
-            <tag name="doctrine.event_subscriber"/>
+            <tag name="doctrine.event_listener" event="preUpdate"/>
         </service>
 
     </services>

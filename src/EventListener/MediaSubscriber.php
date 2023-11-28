@@ -6,25 +6,16 @@ namespace Adeliom\EasyMediaBundle\EventListener;
 
 use Adeliom\EasyMediaBundle\Entity\Media;
 use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
-use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use League\Flysystem\FilesystemException;
 
-class MediaSubscriber implements EventSubscriberInterface
+#[AsDoctrineListener(Events::preUpdate)]
+class MediaSubscriber
 {
     public function __construct(private EasyMediaManager $manager)
     {
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getSubscribedEvents(): array
-    {
-        return [
-            Events::preUpdate,
-        ];
     }
 
     /**
