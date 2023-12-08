@@ -133,7 +133,7 @@ class Media implements \Stringable
         return trim($tree, $separator);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return (string) ($this->id ?? '');
     }
