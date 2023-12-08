@@ -7,7 +7,6 @@ namespace Adeliom\EasyMediaBundle\Types;
 use Adeliom\EasyMediaBundle\Entity\Media;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class EasyMediaType extends Type
 {
@@ -23,22 +22,7 @@ class EasyMediaType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): mixed
     {
-        try {
-            $listeners = $platform->getEventManager()->getListeners('getContainer');
-            $listener = array_shift($listeners);
-            /** @var ContainerInterface $container */
-            $container = $listener->getContainer();
-            $class = $container->getParameter('easy_media.media_entity');
-
-            if ($value) {
-                return $container->get('doctrine.orm.entity_manager')->getRepository($class)->find($value);
-            }
-
-            return null;
-        } catch (\Exception) {
-            return null;
-        }
-
+        return $value;
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed

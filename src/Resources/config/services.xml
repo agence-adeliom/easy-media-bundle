@@ -68,7 +68,12 @@
 
         <service id="easy_media.event_listener.media" class="Adeliom\EasyMediaBundle\EventListener\MediaSubscriber" public="true" autowire="true">
             <argument key="$manager" type="service" id="easy_media.manager"/>
+            <argument key="$entityManager" type="service" id="doctrine.orm.entity_manager"/>
+            <argument key="$parameterBag" type="service" id="parameter_bag"/>
+            <argument key="$propertyAccessor" type="service" id="property_accessor"/>
             <tag name="doctrine.event_listener" event="preUpdate"/>
+            <tag name="doctrine.event_listener" event="loadClassMetadata"/>
+            <tag name="doctrine.event_listener" event="postLoad"/>
         </service>
 
     </services>
