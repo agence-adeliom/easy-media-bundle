@@ -6,6 +6,8 @@ namespace Adeliom\EasyMediaBundle\Service;
 
 use Adeliom\EasyMediaBundle\Entity\Folder;
 use Adeliom\EasyMediaBundle\Entity\Media;
+use Adeliom\EasyMediaBundle\Event\EasyMediaBeforeFileCreated;
+use Adeliom\EasyMediaBundle\Event\EasyMediaBeforeSetMetas;
 use Adeliom\EasyMediaBundle\Exception\AlreadyExist;
 use Adeliom\EasyMediaBundle\Exception\ExtNotAllowed;
 use Adeliom\EasyMediaBundle\Exception\FolderAlreadyExist;
@@ -20,6 +22,7 @@ use League\Flysystem\FilesystemOperator;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -31,7 +34,8 @@ class EasyMediaManager
                                 protected EasyMediaHelper $helper,
                                 public EntityManagerInterface $em,
                                 protected ContainerBagInterface $parameters,
-                                protected TranslatorInterface $translator
+                                protected TranslatorInterface $translator,
+                                protected EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -250,7 +254,7 @@ class EasyMediaManager
             $name = $entity->getName() ?: $oembed->get('title');
             $entity->setName($name);
             $entity->setMime('application/json+oembed');
-            $entity->setMetas([
+            $beforeSetMetasEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeSetMetas($entity, $source, [
                 'provider' => [
                     'name' => $infos->providerName,
                     'url' => (string) $infos->providerUrl,
@@ -270,7 +274,8 @@ class EasyMediaManager
                     'height' => $infos->code?->height,
                     'ratio' => $infos->code?->ratio,
                 ],
-            ]);
+            ]), EasyMediaBeforeSetMetas::NAME);
+            $entity->setMetas($beforeSetMetasEvent->getMetas());
         } else {
             throw new ProviderNotFound($this->translator->trans('error.provider_not_found', [], 'EasyMediaBundle'));
         }
@@ -318,13 +323,14 @@ class EasyMediaManager
 
             $path = stream_get_meta_data($tmp)['uri'];
             [$width, $height] = getimagesize($path);
-            $entity->setMetas([
+            $beforeSetMetasEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeSetMetas($entity, $source, [
                 'dimensions' => [
                     'width' => $width,
                     'height' => $height,
                     'ratio' => $height / $width * 100,
                 ],
-            ]);
+            ]), EasyMediaBeforeSetMetas::NAME);
+            $entity->setMetas($beforeSetMetasEvent->getMetas());
         }
 
         return $entity;
@@ -372,13 +378,14 @@ class EasyMediaManager
             }
 
             [$width, $height] = getimagesize($source);
-            $entity->setMetas([
+            $beforeSetMetasEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeSetMetas($entity, $source, [
                 'dimensions' => [
                     'width' => $width,
                     'height' => $height,
                     'ratio' => $height / $width * 100,
                 ],
-            ]);
+            ]), EasyMediaBeforeSetMetas::NAME);
+            $entity->setMetas($beforeSetMetasEvent->getMetas());
 
             $entity->setSize($this->filesystem->fileSize($entity->getPath()));
             $entity->setLastModified($this->filesystem->lastModified($entity->getPath()));
@@ -460,13 +467,14 @@ class EasyMediaManager
 
         if (@exif_imagetype($source->getPathname())) {
             [$width, $height] = getimagesize($source->getPathname());
-            $entity->setMetas([
+            $beforeSetMetasEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeSetMetas($entity, $source, [
                 'dimensions' => [
                     'width' => $width,
                     'height' => $height,
                     'ratio' => $height / $width * 100,
                 ],
-            ]);
+            ]), EasyMediaBeforeSetMetas::NAME);
+            $entity->setMetas($beforeSetMetasEvent->getMetas());
         }
 
         try {
@@ -508,7 +516,8 @@ class EasyMediaManager
                     }
                 }
 
-                $entity->setMetas($datas);
+                $beforeSetMetasEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeSetMetas($entity, $datas), EasyMediaBeforeSetMetas::NAME);
+                $entity->setMetas($beforeSetMetasEvent->getMetas());
             }
         } catch (\Exception) {
         }
