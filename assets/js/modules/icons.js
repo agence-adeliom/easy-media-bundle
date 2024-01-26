@@ -54,6 +54,7 @@ import 'vue-awesome/icons/layer-group'
 import 'vue-awesome/icons/list-ul'
 import 'vue-awesome/icons/i-cursor'
 import 'vue-awesome/icons/folder-plus'
+import 'vue-awesome/icons/tags'
 // cropperjs
 import 'vue-awesome/icons/crop'
 import 'vue-awesome/icons/ban'

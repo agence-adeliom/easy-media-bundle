@@ -9,6 +9,7 @@
     'hideFilesExt' : easy_media.hide_files_ext,
     'mimeTypes' : easy_media.extended_mimes,
     'broadcasting' : easy_media.enable_broadcasting,
+    'generatingAlts' : easy_media.enable_generating_alts,
 } %}
 
 {% set routes = {
@@ -127,7 +128,11 @@
     'seo.title' : 'seo.title'|trans,
     'seo.alt' : 'seo.alt'|trans,
     'seo.description' : 'seo.description'|trans,
-    'edit_metas_success' : 'seo.edit_metas'|trans
+    'edit_metas_success' : 'seo.edit_metas'|trans,
+    'generate_alt' : 'alt.generate_alt'|trans,
+    'generate_alt_success' : 'alt.generate_alt_success'|trans,
+    'generate_alt_no_change' : 'alt.generate_alt_no_change'|trans,
+    'generate_all_alt' : 'alt.generate_alt'|trans,
 } %}
 
 <media-manager inline-template
@@ -149,6 +154,7 @@
                :enable-metas="{{ (metas is defined and not metas) ? 'false' : 'true' }}"
                :enable-delete="{{ (delete is defined and not delete) ? 'false' : 'true' }}"
                :enable-bulk-selection="{{ (bulk_selection is defined and not bulk_selection) ? 'false' : 'true' }}"
+               :enable-generating-alts="{{ easy_media.enable_generating_alts ? 'true' : 'false' }}"
 >
 
     <div class="media-manager" >

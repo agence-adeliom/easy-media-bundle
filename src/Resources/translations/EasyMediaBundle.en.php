@@ -228,4 +228,19 @@ return [
         'lock' => 'Lock',
         'visibility' => 'Visibility',
     ],
+    'alt' => [
+        'generate_alt' => 'Generate alt text',
+        'generate_alt_success' => 'Alt text generated',
+        'generate_alt_no_change' => 'No change in alt text',
+        'generate_alt_group' => 'Generate alt text for the chosen files',
+        'generate_alt_group_title' => 'Generate alt text for the chosen files',
+        'generate_alt_group_content' => 'Click the button below to generate alt text for the chosen files. The task will run in the background and take some time to finish. However, you can continue with your operations.',
+        'generate_alt_group_submit' => 'Yes, I want to generate alt text for the chosen files',
+        'generating_alt_group' => 'Generating...',
+        'generate_all_alt' => 'Generate alt text for all files',
+        'generate_all_alt_title' => 'Generate alt text for all files',
+        'generate_all_alt_content' => 'Click the button below to generate alt text for all files. The task will run in the background and take some time to finish. However, you can continue with your operations.',
+        'generate_all_alt_submit' => 'Yes, I want to generate alt text for all files',
+        'generating_all_alt' => 'Generating...',
+    ]
 ];

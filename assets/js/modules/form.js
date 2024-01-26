@@ -235,6 +235,56 @@ export default {
                 this.ajaxError()
             })
         },
+        // generate one alt
+        GenerateAlt(event) {
+            let action = event.target.closest("[action]").dataset.generateAltAction;
+            console.log(action);
+
+            let selected = this.selectedFile
+
+            this.toggleLoading()
+
+            axios.post(action, {
+                file: selected,
+                path: this.files.path
+            }).then(({data}) => {
+                this.toggleLoading()
+
+                if (data.error) {
+                    return this.showNotif(data.error, 'danger')
+                }
+
+                if (selected.metas.alt !== data.alt) {
+                    this.showNotif(`${this.trans('generate_alt_success')}`)
+                    selected.metas.alt = data.alt
+                } else {
+                    this.showNotif(this.trans('generate_alt_no_change'), 'info')
+                }
+
+            }).catch((err) => {
+                console.error(err)
+                this.ajaxError()
+            })
+        },
+        // generate all alts
+        GenerateAllAlt(event) {
+            let action = event.target.closest("[action]").getAttribute("action");
+
+            this.toggleLoading()
+            axios.post(action).then(({data}) => {
+                this.toggleLoading()
+                this.toggleModal()
+
+                if (data.error) {
+                    return this.showNotif(data.error, 'danger')
+                } else {
+                    this.showNotif(this.trans('alt.generating_all_alt'), 'info')
+                }
+            }).catch((err) => {
+                console.error(err)
+                this.ajaxError()
+            })
+        },
 
         // rename
         RenameFileForm(event) {
@@ -342,6 +392,34 @@ export default {
 
                 this.db('clr')
 
+            }).catch((err) => {
+                console.error(err)
+                this.ajaxError()
+            })
+        },
+
+        // delete
+        GenerateAltGroup(event) {
+            let action = event.target.closest("[action]").getAttribute("action");
+
+            let gls_item = this.global_search_item
+            let files =  gls_item ? [gls_item] : this.delOrMoveList()
+
+            if (!files.length) {
+                return this.toggleModal()
+            }
+
+            this.toggleLoading()
+
+            axios.post(action, {files: files.map(file => file.id)}).then(({data}) => {
+                this.toggleLoading()
+                this.toggleModal()
+
+                if (data.error) {
+                    return this.showNotif(data.error, 'danger')
+                } else {
+                    this.showNotif(this.trans('alt.generating_alt_group'), 'info')
+                }
             }).catch((err) => {
                 console.error(err)
                 this.ajaxError()

@@ -71,7 +71,8 @@ export default {
         'enableRename',
         'enableMetas',
         'enableDelete',
-        'enableBulkSelection'
+        'enableBulkSelection',
+        'enableGeneratingAlts'
     ],
     data() {
         return {
@@ -527,8 +528,20 @@ export default {
                 this.toggleModal('confirm_delete_modal')
             })
         },
+      generateAltGroup() {
+        this.$nextTick(() => {
+          if (!this.globalSearchPanelIsVisible) {
+            if (this.$refs.generate_alt_group.disabled) return
+          }
+
+          this.toggleModal('generate_alt_group_modal')
+        })
+      },
         createNewFolder() {
             this.toggleModal('new_folder_modal')
+        },
+        generateAllAlt() {
+            this.toggleModal('generate_all_alt_modal')
         }
     },
     render() {}
