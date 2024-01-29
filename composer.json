@@ -30,7 +30,7 @@
         "symfony/property-access": "^5.4 || ^6.0 || ^7.0",
         "symfony/filesystem": "^5.4 || ^6.0 || ^7.0",
         "easycorp/easyadmin-bundle": "^3.4 || ^v4.0",
-        "agence-adeliom/easy-common-bundle": "*",
+        "agence-adeliom/easy-common-bundle": "dev-patch-1",
         "league/flysystem-bundle": "^3.0",
         "liip/imagine-bundle": "^2.8",
         "maennchen/zipstream-php": "^2.1.0",
@@ -41,6 +41,12 @@
         "embed/embed": "^4.2",
         "james-heinrich/getid3": "^1.9"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:cedriclombardot/easy-common-bundle.git"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Adeliom\\EasyMediaBundle\\": "src/"
