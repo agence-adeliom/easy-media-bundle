@@ -34,7 +34,7 @@
         "league/flysystem-bundle": "^3.0",
         "liip/imagine-bundle": "^2.8",
         "maennchen/zipstream-php": "^2.1.0",
-        "illuminate/support": "^9.2",
+        "illuminate/support": "^9.2 || 11.x-dev",
         "stof/doctrine-extensions-bundle": "^1.6",
         "symfony/psr-http-message-bridge": "^2.0 || ^7.0",
         "nyholm/psr7": "^1.4",
