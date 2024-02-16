@@ -516,7 +516,7 @@ class EasyMediaManager
                     }
                 }
 
-                $beforeSetMetasEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeSetMetas($entity, $datas), EasyMediaBeforeSetMetas::NAME);
+                $beforeSetMetasEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeSetMetas($entity, $source, $datas), EasyMediaBeforeSetMetas::NAME);
                 $entity->setMetas($beforeSetMetasEvent->getMetas());
             }
         } catch (\Exception) {

@@ -117,7 +117,7 @@
                 <button type="button" class="delete" @click.stop="toggleModal()"></button>
             </header>
 
-            <div action="{{ path('media.edit_metas_file') }}" {{ easy_media.enable_generating_alts | default(false) ? 'data-generate-alt-action="' ~ path('media.generate_alt_file') ~ '"' : '' }}>
+            <div action="{{ path('media.edit_metas_file') }}" {{ easy_media.enable_generating_alts | default(false) ? 'data-generate-alt-action=' ~ path('media.generate_alt_file') : '' }}>
                 <section class="modal-card-body">
                     <div class="">
                         <label class="input-label">{{ 'seo.title'|trans }}</label>
