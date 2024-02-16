@@ -36,7 +36,7 @@
         "maennchen/zipstream-php": "^2.1.0",
         "illuminate/support": "^9.2",
         "stof/doctrine-extensions-bundle": "^1.6",
-        "symfony/psr-http-message-bridge": "^2.0",
+        "symfony/psr-http-message-bridge": "^2.0 || ^6.4",
         "nyholm/psr7": "^1.4",
         "embed/embed": "^4.2",
         "james-heinrich/getid3": "^1.9"
