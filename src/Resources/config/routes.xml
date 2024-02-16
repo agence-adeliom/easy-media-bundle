@@ -37,6 +37,15 @@
     <route methods="POST" id="media.edit_metas_file"
            controller="Adeliom\EasyMediaBundle\Controller\MediaController::editMetasItem"
            path="/easymedia/medias/edit-metas-file"/>
+    <route methods="POST" id="media.generate_alt_file"
+           controller="Adeliom\EasyMediaBundle\Controller\MediaController::generateAltItem"
+           path="/easymedia/medias/generate-alt-file"/>
+    <route methods="POST" id="media.generate_alt_group"
+           controller="Adeliom\EasyMediaBundle\Controller\MediaController::generateAltGroup"
+           path="/easymedia/medias/generate-alt-group"/>
+    <route methods="POST" id="media.generate_all_alt"
+           controller="Adeliom\EasyMediaBundle\Controller\MediaController::generateAllAlt"
+           path="/easymedia/medias/generate-all-alt"/>
 
     <route methods="GET" id="media.global_search"
            controller="Adeliom\EasyMediaBundle\Controller\MediaController::globalSearch"

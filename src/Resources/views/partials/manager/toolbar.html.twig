@@ -8,7 +8,7 @@
                 <div class="__toolbar-level_main">
                     {# first #}
                     <div class="level-item" v-if="enableUpload">
-                        <div class="field" :class="{'has-addons': !isBulkSelecting()}">
+                        <div class="field" :class="{'has-addons': !isBulkSelecting() || enableGeneratingAlts}">
                             {# upload #}
                             <div class="control" v-if="!isBulkSelecting()">
                                 <button type="button" class="button"
@@ -30,6 +30,18 @@
                                         v-tippy="{arrow: true}"
                                         title="{{ 'add.folder'|trans }} (n)">
                                     <span class="icon"><icon name="folder-plus"></icon></span>
+                                </button>
+                            </div>
+
+                            {# generate all alts #}
+                            <div class="control" v-if="enableGeneratingAlts">
+                                <button type="button" class="button"
+                                        ref="generate_all_alt"
+                                        :disabled="isLoading"
+                                        @click.stop="generateAllAlt()"
+                                        v-tippy="{arrow: true}"
+                                        title="{{ 'alt.generate_all_alt'|trans }}">
+                                    <span class="icon"><icon name="tags"></icon></span>
                                 </button>
                             </div>
                         </div>
@@ -108,6 +120,18 @@
                                         title="{{ 'delete.main'|trans }} (d / del)"
                                         @click.stop="deleteItem()">
                                     <span class="icon"><icon name="regular/trash-alt"></icon></span>
+                                </button>
+                            </div>
+
+                            {# delete #}
+                            <div class="control" v-if="enableGeneratingAlts && isBulkSelecting()">
+                                <button type="button" class="button is-link"
+                                        ref="generate_alt_group"
+                                        :disabled="ops_btn_disable"
+                                        v-tippy="{arrow: true}"
+                                        title="{{ 'alt.generate_alt_group'|trans }}"
+                                        @click.stop="generateAltGroup()">
+                                    <span class="icon"><icon name="tags"></icon></span>
                                 </button>
                             </div>
                         </div>

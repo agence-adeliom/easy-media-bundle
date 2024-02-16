@@ -117,7 +117,7 @@
                 <button type="button" class="delete" @click.stop="toggleModal()"></button>
             </header>
 
-            <div action="{{ path('media.edit_metas_file') }}" >
+            <div action="{{ path('media.edit_metas_file') }}" {{ easy_media.enable_generating_alts | default(false) ? 'data-generate-alt-action=' ~ path('media.generate_alt_file') : '' }}>
                 <section class="modal-card-body">
                     <div class="">
                         <label class="input-label">{{ 'seo.title'|trans }}</label>
@@ -145,6 +145,13 @@
                     </div>
                 </section>
                 <footer class="modal-card-foot">
+                    {% if easy_media.enable_generating_alts | default(false) %}
+                    <button type="reset" class="button" @click.stop="GenerateAlt($event)"
+                            :disabled="isLoading"
+                            :class="{'is-loading': isLoading}">
+                        {{ 'alt.generate_alt'|trans }}
+                    </button>
+                    {% endif %}
                     <button type="reset" class="button" @click.stop="toggleModal()">
                         {{ 'cancel'|trans }}
                     </button>
@@ -305,4 +312,75 @@
             </div>
         </div>
     </div>
+
+    {# confirm_delete_modal #}
+    <div class="modal mm-animated fadeIn"
+         :class="{'is-active': isActiveModal('generate_alt_group_modal')}" v-if="enableDelete">
+        <div class="modal-background link" @click.stop="toggleModal()"></div>
+        <div class="modal-card mm-animated fadeInDown">
+            <header class="modal-card-head is-warning">
+                <p class="modal-card-title">
+                    <span>{{ 'alt.generate_alt_group_title'|trans }}</span>
+                </p>
+                <button type="button" class="delete" @click.stop="toggleModal()"></button>
+            </header>
+
+            <div action="{{ path('media.generate_alt_group') }}" >
+                <section class="modal-card-body">
+                    <label class="input-label">{{ 'alt.generate_alt_group_content'|trans }}</label>
+                    {% include '@EasyMedia/partials/modal/del-files-info.html.twig' %}
+                </section>
+
+                <footer class="modal-card-foot">
+                    <button type="reset" class="button" @click.stop="toggleModal()">
+                        {{ 'cancel'|trans }}
+                    </button>
+                    <button type="submit"
+                            ref="generate_alt_group__submit"
+                            class="button is-warning"
+                            :disabled="isLoading"
+                            :class="{'is-loading': isLoading}"
+                            @click.prevent="GenerateAltGroup($event)">
+                        {{ 'alt.generate_alt_group_submit'|trans }}
+                    </button>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+
+    {# generate_all_alt_modal #}
+    {% if easy_media.enable_generating_alts | default(false) %}
+    <div class="modal mm-animated fadeIn"
+         :class="{'is-active': isActiveModal('generate_all_alt_modal')}"
+         v-if="enableRename">
+        <div class="modal-background link" @click.stop="toggleModal()"></div>
+        <div class="modal-card mm-animated fadeInDown">
+            <header class="modal-card-head is-warning">
+                <p class="modal-card-title">
+                    <span>{{ 'alt.generate_all_alt_title'|trans }}</span>
+                </p>
+                <button type="button" class="delete" @click.stop="toggleModal()"></button>
+            </header>
+
+            <div action="{{ path('media.generate_all_alt') }}" >
+                <section class="modal-card-body">
+                    <label class="input-label">{{ 'alt.generate_all_alt_content'|trans }}</label>
+                </section>
+                <footer class="modal-card-foot">
+                    <button type="reset" class="button" @click.stop="toggleModal()">
+                        {{ 'cancel'|trans }}
+                    </button>
+                    <button type="submit"
+                            class="button is-warning"
+                            :disabled="isLoading"
+                            :class="{'is-loading': isLoading}"
+                            @click.prevent="GenerateAllAlt($event)">
+                        {{ 'alt.generate_all_alt_submit'|trans }}
+                    </button>
+                </footer>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </section>

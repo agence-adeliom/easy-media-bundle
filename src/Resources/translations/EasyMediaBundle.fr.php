@@ -241,4 +241,19 @@ return [
         'lock' => 'Verrou',
         'visibility' => 'Visibilité',
     ],
+    'alt' => [
+        'generate_alt' => 'Générer le texte alt',
+        'generate_alt_success' => 'Texte alt généré',
+        'generate_alt_no_change' => 'Pas de changement de texte alt',
+        'generate_alt_group' => 'Générer le texte alt pour les fichiers choisis',
+        'generate_alt_group_title' => 'Générer le texte alt pour les fichiers choisis',
+        'generate_alt_group_content' => 'Cliquez sur le bouton ci-dessous pour générer le texte alt pour les fichiers choisis. La tâche sera lancé en fond et prendra un certain temps à se finir. Vous pouvez cependant continuer vos opérations.',
+        'generate_alt_group_submit' => 'Oui, je souhaite générer le texte alt pour les fichiers choisis',
+        'generating_alt_group' => 'Génération en cours...',
+        'generate_all_alt' => 'Générer le texte alt pour tous les fichiers',
+        'generate_all_alt_title' => 'Générer le texte alt pour tous les fichiers',
+        'generate_all_alt_content' => 'Cliquez sur le bouton ci-desso pour générer le texte alt pour tous les fichiers. La tâche sera lancé en fond et prendra un certain temps à se finir. Vous pouvez cependant continuer vos opérations.',
+        'generate_all_alt_submit' => 'Oui, je souhaite générer le texte alt pour tous les fichiers',
+        'generating_all_alt' => 'Génération en cours...',
+    ]
 ];
