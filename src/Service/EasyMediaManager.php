@@ -299,7 +299,9 @@ class EasyMediaManager
             throw new NoFile($this->translator->trans('error.no_file', [], 'EasyMediaBundle'));
         }
 
-        $entity->setName($this->helper->cleanName(''));
+        if (empty($entity->getName())) {
+            $entity->setName($this->helper->cleanName(''));
+        }
         $filename = strtolower((new AsciiSlugger())->slug(strtolower((string) $entity->getName()))->toString().'.'.EasyMediaHelper::mime2ext($infos['mime']));
         $entity->setSlug($filename);
 
