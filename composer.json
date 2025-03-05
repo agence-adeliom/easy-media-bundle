@@ -17,8 +17,7 @@
         }
     ],
     "require": {
-        "php": ">=8.0.2",
-        "ext-json": "*",
+        "php": ">=8.2",
         "symfony/config": "^6.4 || ^7.0",
         "symfony/dependency-injection": "^6.4 || ^7.0",
         "symfony/deprecation-contracts": "^2.2 || ^v3.0",
@@ -30,20 +29,30 @@
         "symfony/property-access": "^6.4 || ^7.0",
         "symfony/filesystem": "^6.4 || ^7.0",
         "easycorp/easyadmin-bundle": "^3.4 || ^v4.0",
-        "agence-adeliom/easy-common-bundle": "^2.1",
+        "agence-adeliom/easy-common-bundle": "^3.0",
         "league/flysystem-bundle": "^3.0",
-        "liip/imagine-bundle": "^2.8",
+        "liip/imagine-bundle": "^2.13",
         "maennchen/zipstream-php": "^2.1.0",
-        "illuminate/support": "^9.2",
-        "stof/doctrine-extensions-bundle": "^1.6",
-        "symfony/psr-http-message-bridge": "^2.0",
-        "nyholm/psr7": "^1.4",
-        "embed/embed": "^4.2",
+        "illuminate/support": "^12.0",
+        "stof/doctrine-extensions-bundle": "^1.13",
+        "symfony/psr-http-message-bridge": "^7.2",
+        "nyholm/psr7": "^1.8",
+        "embed/embed": "^4.4",
         "james-heinrich/getid3": "^1.9"
     },
     "autoload": {
         "psr-4": {
             "Adeliom\\EasyMediaBundle\\": "src/"
         }
-    }
+    },
+    "minimum-stability" : "dev",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../easy-common-bundle",
+            "options": {
+                "symlink": true
+            }
+        }
+    ]
 }
