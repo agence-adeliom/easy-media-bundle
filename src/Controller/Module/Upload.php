@@ -238,7 +238,7 @@ trait Upload
             $errors[] = ['text' => 'Move error', 'name' => $filename, 'index' => $chunkInd];
         }
 
-        if (0 === count($errors) && $newPath = self::checkAllParts($fileChunksFolder, $filename, $extension, $totalSize, $totalChunks, $chunksDir, $successes, $errors, $warnings)) {
+        if ([] === $errors && $newPath = self::checkAllParts($fileChunksFolder, $filename, $extension, $totalSize, $totalChunks, $chunksDir, $successes, $errors, $warnings)) {
             return ['final' => true, 'path' => $newPath, 'successes' => $successes, 'errors' => $errors, 'warnings' => $warnings];
         }
 

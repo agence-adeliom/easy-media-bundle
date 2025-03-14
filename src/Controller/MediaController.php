@@ -40,20 +40,26 @@ class MediaController extends AbstractController
     use GlobalSearch;
 
     protected TranslatorInterface $translator;
-    protected EventDispatcherInterface $eventDispatcher;
-    protected string $ignoreFiles;
-    protected string $chunksDir;
-    protected $paginationAmount;
-    protected FilesystemOperator $filesystem;
-    protected ObjectManager $em;
-    protected EasyMediaHelper $helper;
-    protected EasyMediaManager $manager;
-    protected ManagerRegistry $managerRegistry;
 
-    public function __construct(EasyMediaManager $manager, ManagerRegistry $managerRegistry, ParameterBagInterface $bag, EventDispatcherInterface $dispatcher, TranslatorInterface $translator)
+    protected EventDispatcherInterface $eventDispatcher;
+
+    protected string $ignoreFiles;
+
+    protected string $chunksDir;
+
+    protected $paginationAmount;
+
+    protected FilesystemOperator $filesystem;
+
+    protected ObjectManager $em;
+
+    protected EasyMediaHelper $helper;
+
+    protected EasyMediaManager $manager;
+
+    public function __construct(EasyMediaManager $manager, protected ManagerRegistry $managerRegistry, ParameterBagInterface $bag, EventDispatcherInterface $dispatcher, TranslatorInterface $translator)
     {
         $this->manager = $manager;
-        $this->managerRegistry = $managerRegistry;
         $this->em = $this->managerRegistry->getManager();
 
         $this->ignoreFiles = $bag->get('easy_media.ignore_files');

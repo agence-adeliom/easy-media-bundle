@@ -14,7 +14,7 @@ use Symfony\Component\Mime\MimeTypesInterface;
 class EasyMediaDataLoader implements LoaderInterface
 {
     public function __construct(
-        private FilesystemOperator $filesystem,
+        private readonly FilesystemOperator $filesystem,
         protected MimeTypesInterface $extensionGuesser
     ) {
     }

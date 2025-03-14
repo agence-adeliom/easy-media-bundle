@@ -262,7 +262,7 @@ class EasyMediaRuntime implements RuntimeExtensionInterface
 
                 unset($options['srcset'], $options['picture']);
 
-                if (!empty($pictureParams)) {
+                if ($pictureParams !== []) {
                     $params['src'] = $this->path($media, isset($formats[$format]) ? $format : 'reference');
                     usort($pictureParams['source'], static fn ($a, $b) => ($a['width'] ?: 9_999_999) <=> ($b['width'] ?: 9_999_999));
                     if (isset($params['ratio'])) {

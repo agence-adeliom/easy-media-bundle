@@ -15,11 +15,8 @@ class EasyMediaGenerateAllAlt extends Event
      */
     public const NAME = 'em.file.alt.generate_all';
 
-    private Request $request;
-
-    public function __construct(Request $request)
+    public function __construct(private readonly Request $request)
     {
-        $this->request = $request;
     }
 
     public function getRequest(): Request

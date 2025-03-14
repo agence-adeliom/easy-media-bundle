@@ -17,10 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class EasyMediaType extends AbstractType
 {
     public function __construct(
-        /**
-         * @readonly
-         */
-        private EasyMediaManager $manager
+        private readonly EasyMediaManager $manager
     ) {
     }
 

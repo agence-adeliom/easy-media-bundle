@@ -14,17 +14,8 @@ class EasyMediaGenerateAlt extends Event
      */
     public const NAME = 'em.file.alt.generate';
 
-    public Media $entity;
-
-    public string $filePath;
-
-    public string $alt;
-
-    public function __construct($entity, $filePath, $alt = null)
+    public function __construct(public Media $entity, public string $filePath, public string $alt = null)
     {
-        $this->entity = $entity;
-        $this->filePath = $filePath;
-        $this->alt = $alt;
     }
 
     public function getEntity(): Media

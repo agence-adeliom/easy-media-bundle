@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 #[AsDoctrineListener(Events::loadClassMetadata)]
 class DoctrineMappingListener
 {
-    public function __construct(private string $mediaClass, private string $folderClass)
+    public function __construct(private readonly string $mediaClass, private readonly string $folderClass)
     {
     }
 

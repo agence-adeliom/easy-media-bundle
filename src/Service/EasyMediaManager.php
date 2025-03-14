@@ -59,19 +59,20 @@ class EasyMediaManager
         if($mediaPath = $this->getPath($media)) {
             try {
                 $publicUrl = $this->getFilesystem()->publicUrl($mediaPath);
-                if (false !== strpos($this->helper->getBaseUrl(), '://')) {
-                    $baseUrlPath = parse_url($this->helper->getBaseUrl(), PHP_URL_PATH) ?? "";
+                if (str_contains((string) $this->helper->getBaseUrl(), '://')) {
+                    $baseUrlPath = parse_url((string) $this->helper->getBaseUrl(), PHP_URL_PATH) ?? "";
                     $baseUrl = '/';
                     if ($baseUrlPath) {
                         $baseUrl = str_replace($baseUrlPath, '', $this->helper->getBaseUrl());
                     }
+
                     $filePath = parse_url($publicUrl, PHP_URL_PATH);
                     $path = array_filter(explode('/', $baseUrlPath) + explode('/', $filePath));
                     $publicUrl = $this->helper->clearDblSlash(sprintf('%s/%s', $baseUrl, implode('/', $path)));
                 }
 
                 return $publicUrl;
-            } catch (\Exception $exception) {
+            } catch (\Exception) {
                 return $this->helper->clearDblSlash(sprintf('%s/%s', $this->helper->getBaseUrl(), $mediaPath));
             }
         }
@@ -143,7 +144,7 @@ class EasyMediaManager
         }
 
         $folder = $this->folderByPath($path);
-        if (false === $folder && !empty($path)) {
+        if (false === $folder && ($path !== null && $path !== '' && $path !== '0')) {
             $folder = $this->createFolder(basename($path), dirname($path));
         }
 
@@ -185,7 +186,7 @@ class EasyMediaManager
 
         $folder = $this->folderByPath($path);
         if (false === $folder) {
-            $folder = $this->createFolder(basename($path), dirname($path));
+            $folder = $this->createFolder(basename((string) $path), dirname((string) $path));
         }
 
         $entity->setFolder($folder ?: null);
@@ -250,7 +251,7 @@ class EasyMediaManager
         $embed = new Embed();
         $infos = $embed->get($source);
 
-        if (($oembed = $infos->getOEmbed()) && !empty($infos->getOEmbed()->all())) {
+        if (($oembed = $infos->getOEmbed()) && $infos->getOEmbed()->all() !== []) {
             $name = $entity->getName() ?: $oembed->get('title');
             $entity->setName($name);
             $entity->setMime('application/json+oembed');
@@ -315,7 +316,7 @@ class EasyMediaManager
         $entity->setLastModified($this->filesystem->lastModified($entity->getPath()));
         $entity->setMime($this->filesystem->mimeType($entity->getPath()));
 
-        if (str_contains($entity->getMime(), 'image/')) {
+        if (str_contains((string) $entity->getMime(), 'image/')) {
             $tmp = tmpfile();
             if (false !== $tmp) {
                 fwrite($tmp, $this->filesystem->read($entity->getPath()));

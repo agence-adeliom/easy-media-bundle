@@ -54,7 +54,7 @@ class EasyMediaHelper
     public function cleanName($text, $folder = false)
     {
         $pattern = $this->filePattern($this->parameters->get(sprintf('easy_media.%s', $folder ? 'allowed_folderNames_chars' : 'allowed_fileNames_chars')));
-        $text = preg_replace($pattern, '', $text);
+        $text = preg_replace($pattern, '', (string) $text);
 
         return $text ?: $this->getRandomString();
     }
@@ -85,7 +85,7 @@ class EasyMediaHelper
             }
 
             return null;
-        }catch (\Exception $e){
+        }catch (\Exception){
             return null;
         }
     }
@@ -97,9 +97,10 @@ class EasyMediaHelper
     public function getPath(int|string|Media $media): ?string
     {
         try {
-            if($media = $this->getMedia($media)){
+            if(($media = $this->getMedia($media)) instanceof \Adeliom\EasyMediaBundle\Entity\Media){
                 return $media->getPath();
             }
+
             return null;
         }catch (\Exception){
             return null;
@@ -108,7 +109,7 @@ class EasyMediaHelper
 
     public function clearDblSlash($str): array|string
     {
-        $str = preg_replace('#\/+#', '/', $str);
+        $str = preg_replace('#\/+#', '/', (string) $str);
 
         return str_replace(':/', '://', (string) $str);
     }
@@ -341,26 +342,27 @@ class EasyMediaHelper
         if ($type instanceof Media) {
             $type = $type->getMime();
         }
+
         $mimes = $this->parameters->get('easy_media.extended_mimes');
         if ($type) {
             foreach (['image', 'video', 'audio'] as $test) {
-                if ((str_contains($type, $test) || in_array($type, $mimes[$test] ?? [])) && $test === $compare) {
+                if ((str_contains((string) $type, $test) || in_array($type, $mimes[$test] ?? [])) && $test === $compare) {
                     return true;
                 }
             }
 
             // because "archive" shows up as "application"
-            if ((str_contains($type, 'compressed') || in_array($type, $mimes['archive'] ?? [])) && 'compressed' !== $compare) {
+            if ((str_contains((string) $type, 'compressed') || in_array($type, $mimes['archive'] ?? [])) && 'compressed' !== $compare) {
                 return true;
             }
 
             foreach (['oembed', 'pdf'] as $test) {
-                if (str_contains($type, $test) && $test !== $compare) {
+                if (str_contains((string) $type, $test) && $test !== $compare) {
                     return false;
                 }
             }
 
-            return str_contains($type, $compare);
+            return str_contains((string) $type, $compare);
         }
 
         return false;

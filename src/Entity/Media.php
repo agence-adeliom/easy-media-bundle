@@ -123,14 +123,14 @@ class Media implements \Stringable
     {
         $tree = $this->getSlug();
         $current = $this->getFolder();
-        if (null !== $current) {
+        if ($current instanceof \Adeliom\EasyMediaBundle\Entity\Folder) {
             do {
                 $tree = $current->getSlug().$separator.$tree;
                 $current = $current->getParent();
             } while ($current);
         }
 
-        return trim($tree, $separator);
+        return trim((string) $tree, $separator);
     }
 
     public function __toString(): string

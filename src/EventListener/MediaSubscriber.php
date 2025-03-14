@@ -14,7 +14,7 @@ use League\Flysystem\FilesystemException;
 #[AsDoctrineListener(Events::preUpdate)]
 class MediaSubscriber
 {
-    public function __construct(private EasyMediaManager $manager)
+    public function __construct(private readonly EasyMediaManager $manager)
     {
     }
 

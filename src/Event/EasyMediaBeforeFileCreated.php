@@ -14,17 +14,8 @@ class EasyMediaBeforeFileCreated extends Event
      */
     public const NAME = 'em.before.file.created';
 
-    private File | string $data;
-
-    private ?string $folderPath;
-
-    private ?string $name;
-
-    public function __construct(File | string $data, ?string $folderPath = null, ?string $name = null)
+    public function __construct(private File | string $data, private ?string $folderPath = null, private ?string $name = null)
     {
-        $this->data = $data;
-        $this->folderPath = $folderPath;
-        $this->name = $name;
     }
 
     public function getData(): string|File

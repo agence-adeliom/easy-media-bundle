@@ -32,7 +32,7 @@ trait NewFolder
             $this->manager->createFolder($new_folder_name, $currentFolder?->getPath());
         } catch (FolderAlreadyExist $alreadyExist) {
             $message = $alreadyExist->getMessage();
-        } catch (\Exception|FilesystemException $exception) {
+        } catch (\Exception|FilesystemException) {
             $message = $this->translator->trans('error.creating_dir', [], 'EasyMediaBundle');
         }
 

@@ -32,6 +32,7 @@ trait GetContent
                 $path = $folder->getPath();
             }
         }
+
         if (empty($data['folder']) && !empty($data['path'])) {
             try {
                 $folder = $this->manager->folderByPath($data['path']);
@@ -44,6 +45,7 @@ trait GetContent
                 ]);
             }
         }
+
         if (!empty($data['folder']) && !$folder) {
             return new JsonResponse([
                 'error' => $this->translator->trans('MediaManager::messages.error.doesnt_exist', ['attr' => $path]),
@@ -167,10 +169,11 @@ trait GetContent
             $mediaQuery->andWhere("m.folder = :folder")->setParameter('folder', $folder);
         }
 
-        if(!empty($search)){
+        if($search !== null && $search !== '' && $search !== '0'){
             if(!$rec){
                 $folderQuery->andWhere("f.name LIKE :search")->setParameter('search', '%'.trim($search).'%');
             }
+
             $mediaQuery->andWhere("m.name LIKE :search")->setParameter('search', '%'.trim($search).'%');
         }
 
@@ -185,10 +188,9 @@ trait GetContent
         }
 
         if($rec){
-            $results = array_filter($results, static function($item) {
-                return $item instanceof Media;
-            });
+            $results = array_filter($results, static fn($item) => $item instanceof Media);
         }
+
         return $results;
     }
 

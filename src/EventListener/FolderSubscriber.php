@@ -14,7 +14,7 @@ use League\Flysystem\FilesystemException;
 #[AsDoctrineListener(Events::preUpdate)]
 class FolderSubscriber
 {
-    public function __construct(private EasyMediaManager $manager)
+    public function __construct(private readonly EasyMediaManager $manager)
     {
     }
 
@@ -36,8 +36,8 @@ class FolderSubscriber
         }
 
         if ($args->hasChangedField('slug')) {
-            $oldPath = basename($folder->getPath()).DIRECTORY_SEPARATOR.$args->getOldValue('slug');
-            $newPath = basename($folder->getPath()).DIRECTORY_SEPARATOR.$args->getNewValue('slug');
+            $oldPath = basename((string) $folder->getPath()).DIRECTORY_SEPARATOR.$args->getOldValue('slug');
+            $newPath = basename((string) $folder->getPath()).DIRECTORY_SEPARATOR.$args->getNewValue('slug');
             $this->manager->move($oldPath, $newPath);
         }
     }

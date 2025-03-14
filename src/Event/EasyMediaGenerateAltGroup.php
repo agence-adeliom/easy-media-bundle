@@ -13,12 +13,11 @@ class EasyMediaGenerateAltGroup extends Event
      */
     public const NAME = 'em.file.alt.generate_alt_group';
 
-    /** @var array<int> $files */
-    private array $files;
-
-    public function __construct(array $files)
+    public function __construct(
+        /** @var array<int> $files */
+        private readonly array $files
+    )
     {
-        $this->files = $files;
     }
 
     public function getFiles(): array
