@@ -52,7 +52,7 @@ class DoctrineMappingListener
                     [
                         'name' => 'parent_id',
                         'referencedColumnName' => 'id',
-                        'nullable' => 'true',
+                        'nullable' => true,
                         'onDelete' => 'SET NULL',
                     ],
                 ],
