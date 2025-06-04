@@ -174,7 +174,7 @@ class EasyMediaManager
      * @throws NotFoundExceptionInterface
      * @throws ProviderNotFound
      */
-    public function createMedia($source, ?string $path = null, ?string $name = null): Media
+    public function createMedia($source, ?string $path = null, ?string $name = null, ?Folder $folder = null): Media
     {
         $class = $this->getHelper()->getMediaClassName();
         /** @var Media $entity */
@@ -184,9 +184,11 @@ class EasyMediaManager
             $entity->setName($this->helper->cleanName($name));
         }
 
-        $folder = $this->folderByPath($path);
-        if (false === $folder) {
-            $folder = $this->createFolder(basename((string) $path), dirname((string) $path));
+        if (! $folder) {
+            $folder = $this->folderByPath($path);
+            if (false === $folder) {
+                $folder = $this->createFolder(basename((string) $path), dirname((string) $path));
+            }
         }
 
         $entity->setFolder($folder ?: null);
