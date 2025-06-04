@@ -37,7 +37,7 @@ class EasyMediaRuntime implements RuntimeExtensionInterface
      *
      * @return array|mixed|null
      */
-    public function mediaMeta(int|string|Media $media, ?string $key = null, $default = null)
+    public function mediaMeta(int|string|Media $media, ?string $key = null, mixed $default = null)
     {
         $media = $this->getMedia($media);
         if (!$media instanceof \Adeliom\EasyMediaBundle\Entity\Media) {

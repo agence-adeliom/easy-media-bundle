@@ -99,7 +99,7 @@ class Media implements \Stringable
         return $this->metas;
     }
 
-    public function getMeta(string $key, $default = null)
+    public function getMeta(string $key, mixed $default = null)
     {
         return $this->metas[$key] ?? $default;
     }

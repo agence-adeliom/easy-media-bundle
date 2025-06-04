@@ -195,7 +195,7 @@ trait Upload
      *
      * @return bool [boolean]
      */
-    protected function allowUpload($file = null): bool
+    protected function allowUpload(mixed $file = null): bool
     {
         return true;
     }
