@@ -348,7 +348,7 @@ export default {
 
                             // new folder
                             if (key == 'n') {
-                              setInterval(()=>{
+                              setTimeout(()=>{
                                 this.$refs.new_folder.click()
                               },1);
                             }
