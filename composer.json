@@ -35,7 +35,7 @@
         "maennchen/zipstream-php": "^3.0",
         "illuminate/support": "^12.0",
         "stof/doctrine-extensions-bundle": "^1.13",
-        "symfony/psr-http-message-bridge": "^7.2",
+        "symfony/psr-http-message-bridge": "^6.4 || ^7.0",
         "nyholm/psr7": "^1.8",
         "embed/embed": "^4.4",
         "james-heinrich/getid3": "^1.9"
@@ -48,11 +48,8 @@
     "minimum-stability": "dev",
     "repositories": [
         {
-            "type": "path",
-            "url": "../easy-common-bundle",
-            "options": {
-                "symlink": true
-            }
+            "type": "vcs",
+            "url": "git@github.com:agence-adeliom/easy-common-bundle"
         }
     ]
 }
