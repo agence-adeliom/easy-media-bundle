@@ -131,6 +131,12 @@ return [
         'by' => 'Filter By attr',
         'filtration' => 'Filters & Sorting',
     ],
+    'oembed' => [
+        'provider' => 'Provider',
+        'author' => 'Author',
+        'type' => "Embed type",
+        'url' => 'Media Link',
+    ],
     'find' => 'Find...',
     'folder' => 'Folder',
     'found' => 'Found',
@@ -181,6 +187,7 @@ return [
         'title' => 'Title',
         'alt' => 'Alt',
         'description' => 'Description',
+        'edit_metas' => 'Metadata updated',
     ],
     'save' => [
         'link' => 'Upload Image From Url',
