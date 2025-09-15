@@ -124,7 +124,7 @@ export default {
                         }
                     })
                 },
-                error(file) {
+                error(file, res) {
                     console.log(file);
                     file = Array.isArray(file) ? file[0] : file
                     manager.showNotif(`"${file.name}" ${res}`, 'danger')
