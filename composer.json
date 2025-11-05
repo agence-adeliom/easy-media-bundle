@@ -14,6 +14,10 @@
         {
             "name": "Arnaud RITTI",
             "homepage": "https://github.com/arnaud-ritti"
+        },
+        {
+            "name": "Jean-David Daviet",
+            "homepage": "https://github.com/JeanDavidDaviet"
         }
     ],
     "require": {
