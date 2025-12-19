@@ -16,7 +16,6 @@ use Adeliom\EasyMediaBundle\Exception\NoFile;
 use Adeliom\EasyMediaBundle\Exception\ProviderNotFound;
 use Doctrine\ORM\EntityManagerInterface;
 use Embed\Embed;
-use Illuminate\Support\Str;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Psr\Container\ContainerExceptionInterface;
@@ -368,7 +367,7 @@ class EasyMediaManager
         $ignore = array_merge($this->parameters->get('easy_media.unallowed_mimes'), ['application/octet-stream']);
 
         // check for mime type
-        if (Str::contains($file_type, $ignore)) {
+        if ($this->str_contains($file_type, $ignore)) {
             throw new ExtNotAllowed($this->translator->trans('not_allowed_file_ext', [], 'EasyMediaBundle'));
         }
 
@@ -461,12 +460,12 @@ class EasyMediaManager
         $entity->setLastModified($source->getMTime());
 
         // check for mime type
-        if (Str::contains($entity->getMime(), $this->parameters->get('easy_media.unallowed_mimes'))) {
+        if ($this->str_contains($entity->getMime(), $this->parameters->get('easy_media.unallowed_mimes'))) {
             throw new ExtNotAllowed($this->translator->trans('not_allowed_file_ext', [], 'EasyMediaBundle'));
         }
 
         // check for extension
-        if (Str::contains($ext_only, $this->parameters->get('easy_media.unallowed_ext'))) {
+        if ($this->str_contains($ext_only, $this->parameters->get('easy_media.unallowed_ext'))) {
             throw new ExtNotAllowed($this->translator->trans('not_allowed_file_ext', [], 'EasyMediaBundle'));
         }
 
@@ -540,5 +539,38 @@ class EasyMediaManager
         }
 
         return $entity;
+    }
+
+    /**
+     * @param  string  $haystack
+     * @param  string|iterable<string>  $needles
+     * @param  bool  $ignoreCase
+     * @return bool
+     */
+    public static function str_contains(string $haystack, $needles, bool $ignoreCase = false): bool
+    {
+        if (is_null($haystack)) {
+            return false;
+        }
+
+        if ($ignoreCase) {
+            $haystack = mb_strtolower($haystack);
+        }
+
+        if (! is_iterable($needles)) {
+            $needles = (array) $needles;
+        }
+
+        foreach ($needles as $needle) {
+            if ($ignoreCase) {
+                $needle = mb_strtolower($needle);
+            }
+
+            if ($needle !== '' && str_contains($haystack, $needle)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
