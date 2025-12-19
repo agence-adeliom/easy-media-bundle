@@ -394,7 +394,7 @@ class Article
 ```yaml
 # config/packages/easy_media.yaml
 easy_media:
-    storage:              '%kernel.project_dir%/public/upload'
+    storage_name:         uploads.storage # refers to a League\Flysystem\FilesystemOperator
     base_url:             /upload/
     
     # ignore any file starts with "."
