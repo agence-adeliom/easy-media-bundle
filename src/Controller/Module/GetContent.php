@@ -177,6 +177,19 @@ trait GetContent
             $mediaQuery->andWhere("m.name LIKE :search")->setParameter('search', '%'.trim($search).'%');
         }
 
+        if ($this->defaultSort) {
+            $field = $this->defaultSort['field'];
+            $order = $this->defaultSort['order'];
+
+            // Media supports all fields
+            $mediaQuery->orderBy('m.' . $field, $order);
+
+            // Folder: restrict fields
+            if (in_array($field, ['id', 'name'], true)) {
+                $folderQuery->orderBy('f.' . $field, $order);
+            }
+        }
+
         $folders = $folderQuery->getQuery()->getResult();
         $medias = $mediaQuery->getQuery()->getResult();
 

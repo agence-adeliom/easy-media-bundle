@@ -49,6 +49,8 @@ class MediaController extends AbstractController
 
     protected $paginationAmount;
 
+    protected $defaultSort;
+
     protected FilesystemOperator $filesystem;
 
     protected ObjectManager $em;
@@ -64,6 +66,7 @@ class MediaController extends AbstractController
 
         $this->ignoreFiles = $bag->get('easy_media.ignore_files');
         $this->paginationAmount = $bag->get('easy_media.pagination_amount');
+        $this->defaultSort = $bag->get('easy_media.default_sort');
         $this->chunksDir = $bag->get('kernel.project_dir').'/var/chunks_upload';
         $this->helper = $manager->getHelper();
         $this->filesystem = $manager->getFilesystem();
