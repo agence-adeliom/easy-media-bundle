@@ -276,7 +276,7 @@ class EasyMediaManager
                     'height' => $infos->code?->height,
                     'ratio' => $infos->code?->ratio,
                 ],
-            ]), EasyMediaBeforeSetMetas::NAME);
+            ]));
             $entity->setMetas($beforeSetMetasEvent->getMetas());
         } else {
             throw new ProviderNotFound($this->translator->trans('error.provider_not_found', [], 'EasyMediaBundle'));
@@ -333,7 +333,7 @@ class EasyMediaManager
                     'height' => $height,
                     'ratio' => $height / $width * 100,
                 ],
-            ]), EasyMediaBeforeSetMetas::NAME);
+            ]));
             $entity->setMetas($beforeSetMetasEvent->getMetas());
         }
 
@@ -391,7 +391,7 @@ class EasyMediaManager
                 'height' => $height,
                 'ratio' => $width > 0 ? $height / $width * 100 : 0,
             ],
-        ]), EasyMediaBeforeSetMetas::NAME);
+        ]));
         $entity->setMetas($beforeSetMetasEvent->getMetas());
 
         try {
@@ -481,7 +481,7 @@ class EasyMediaManager
                     'height' => $height,
                     'ratio' => $height / $width * 100,
                 ],
-            ]), EasyMediaBeforeSetMetas::NAME);
+            ]));
             $entity->setMetas($beforeSetMetasEvent->getMetas());
         }
 
@@ -524,7 +524,7 @@ class EasyMediaManager
                     }
                 }
 
-                $beforeSetMetasEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeSetMetas($entity, $source, $datas), EasyMediaBeforeSetMetas::NAME);
+                $beforeSetMetasEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeSetMetas($entity, $source, $datas));
                 $entity->setMetas($beforeSetMetasEvent->getMetas());
             }
         } catch (\Exception) {

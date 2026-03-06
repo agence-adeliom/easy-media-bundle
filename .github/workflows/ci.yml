@@ -1,0 +1,37 @@
+name: Run tests
+
+on:
+  pull_request:
+    branches:
+      - 3.x
+  push:
+    branches:
+      - 3.x
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.2', '8.4']
+        symfony-version: ['6.4.*', '7.4.*']
+        composer-prefs: ['--prefer-stable', '--prefer-lowest']
+    name: 'PHPUnit - PHP/${{ matrix.php-version }} - SF/${{ matrix.symfony-version }} ${{ matrix.composer-prefs }}'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+      - run: composer global config --no-plugins allow-plugins.symfony/flex true
+      - run: composer global require --no-progress --no-scripts --no-plugins symfony/flex
+      - name: Install Dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.COMPOSER_AUTH }}"}}'
+          SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
+        run: composer update --prefer-dist --no-interaction ${{ matrix.composer-prefs }}
+      - name: PHPUnit
+        run: vendor/bin/phpunit tests

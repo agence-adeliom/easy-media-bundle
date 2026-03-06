@@ -54,5 +54,8 @@
             "type": "vcs",
             "url": "git@github.com:agence-adeliom/easy-common-bundle"
         }
-    ]
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    }
 }

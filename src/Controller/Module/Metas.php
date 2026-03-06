@@ -61,7 +61,6 @@ trait Metas
 
             $event = $this->eventDispatcher->dispatch(
                 new EasyMediaGenerateAlt($object, $data['path'] ?? '', $oldAlt),
-                EasyMediaGenerateAlt::NAME
             );
             $newAlt = $event->getAlt();
             if (!empty($newAlt) && $newAlt !== $oldAlt) {
@@ -89,7 +88,6 @@ trait Metas
             $files = json_decode($request->getContent(), true, 512, \JSON_BIGINT_AS_STRING | \JSON_THROW_ON_ERROR);
             $this->eventDispatcher->dispatch(
                 new EasyMediaGenerateAltGroup($files['files']),
-                EasyMediaGenerateAltGroup::NAME
             );
             return new JsonResponse(['error' => null, 'data' => 'generating']);
         } catch (\Exception $exception) {
@@ -105,7 +103,7 @@ trait Metas
     public function generateAllAlt(Request $request): JsonResponse
     {
         try {
-            $this->eventDispatcher->dispatch(new EasyMediaGenerateAllAlt($request), EasyMediaGenerateAllAlt::NAME);
+            $this->eventDispatcher->dispatch(new EasyMediaGenerateAllAlt($request));
             return new JsonResponse(['error' => null, 'data' => 'generating']);
         } catch (\Exception $exception) {
             return new JsonResponse(['error' => $exception->getMessage(), 'data' => '']);

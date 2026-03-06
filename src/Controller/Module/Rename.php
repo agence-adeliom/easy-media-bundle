@@ -31,7 +31,7 @@ trait Rename
             $old_filename = $object->getName();
             $object->setName($new_filename);
             $this->manager->save($object);
-            $this->eventDispatcher->dispatch(new EasyMediaFileRenamed($old_filename, $new_filename), EasyMediaFileRenamed::NAME);
+            $this->eventDispatcher->dispatch(new EasyMediaFileRenamed($old_filename, $new_filename));
         } catch (\Exception $exception) {
             $message = $exception->getMessage();
         }

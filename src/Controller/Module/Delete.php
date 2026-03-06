@@ -45,7 +45,7 @@ trait Delete
                     $result[] = array_merge($defaults, ['success' => true]);
                     $toBroadCast[] = $defaults;
 
-                    $this->eventDispatcher->dispatch(new EasyMediaFileDeleted($item_path, 'folder' === $type), EasyMediaFileDeleted::NAME);
+                    $this->eventDispatcher->dispatch(new EasyMediaFileDeleted($item_path, 'folder' === $type));
                 }
             } catch (\Exception) {
                 $result[] = array_merge($defaults, [

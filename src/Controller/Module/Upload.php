@@ -57,7 +57,7 @@ trait Upload
                 }
 
                 $file_options = empty($custom_attr) ? [] : $custom_attr['options'];
-                $beforeFileCreatedEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeFileCreated($one, $folder ? $folder->getPath() : null, $name), EasyMediaBeforeFileCreated::NAME);
+                $beforeFileCreatedEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeFileCreated($one, $folder ? $folder->getPath() : null, $name));
                 $one = $beforeFileCreatedEvent->getData();
                 $folderPath = $beforeFileCreatedEvent->getFolderPath();
                 $name = $beforeFileCreatedEvent->getName();
@@ -69,7 +69,7 @@ trait Upload
 
                 $media->setMetas(array_merge($media->getMetas(), $file_options));
                 $this->manager->save($media);
-                $this->eventDispatcher->dispatch(new EasyMediaFileUploaded($media->getPath(), $media->getMime(), $media->getMetas()), EasyMediaFileUploaded::NAME);
+                $this->eventDispatcher->dispatch(new EasyMediaFileUploaded($media->getPath(), $media->getMime(), $media->getMetas()));
                 $result[] = [
                     'success' => true,
                     'file_name' => $media->getName(),
@@ -113,12 +113,12 @@ trait Upload
             $name_only = pathinfo((string) $original, PATHINFO_FILENAME).'_'.$this->helper->getRandomString();
 
             try {
-                $beforeFileCreatedEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeFileCreated($data['data'], $upload_path, $name_only), EasyMediaBeforeFileCreated::NAME);
+                $beforeFileCreatedEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeFileCreated($data['data'], $upload_path, $name_only));
                 $data['data'] = $beforeFileCreatedEvent->getData();
                 $upload_path = $beforeFileCreatedEvent->getFolderPath();
                 $name_only = $beforeFileCreatedEvent->getName();
                 $media = $this->manager->createMedia($data['data'], $upload_path, $name_only);
-                $this->eventDispatcher->dispatch(new EasyMediaFileSaved($media->getPath(), $media->getMime()), EasyMediaFileSaved::NAME);
+                $this->eventDispatcher->dispatch(new EasyMediaFileSaved($media->getPath(), $media->getMime()));
                 $result = [
                     'success' => true,
                     'message' => $media->getName(),
@@ -161,12 +161,12 @@ trait Upload
                 $random_name = filter_var($data['random_names'], FILTER_VALIDATE_BOOLEAN);
                 $name = $random_name ? $this->helper->getRandomString() : null;
 
-                $beforeFileCreatedEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeFileCreated($url, $folder ? $folder->getPath() : null, $name), EasyMediaBeforeFileCreated::NAME);
+                $beforeFileCreatedEvent = $this->eventDispatcher->dispatch(new EasyMediaBeforeFileCreated($url, $folder ? $folder->getPath() : null, $name));
                 $url = $beforeFileCreatedEvent->getData();
                 $folderPath = $beforeFileCreatedEvent->getFolderPath();
                 $name = $beforeFileCreatedEvent->getName();
                 $media = $this->manager->createMedia($url, $folderPath, $name);
-                $this->eventDispatcher->dispatch(new EasyMediaFileSaved($media->getPath(), $media->getMime()), EasyMediaFileSaved::NAME);
+                $this->eventDispatcher->dispatch(new EasyMediaFileSaved($media->getPath(), $media->getMime()));
 
                 $result = [
                     'success' => true,

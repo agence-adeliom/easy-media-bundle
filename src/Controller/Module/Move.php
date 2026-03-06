@@ -69,7 +69,7 @@ trait Move
                         $toBroadCast[] = $defaults;
 
                         // fire event
-                        $this->eventDispatcher->dispatch(new EasyMediaFileMoved($defaults['old_path'], $defaults['new_path']), EasyMediaFileMoved::NAME);
+                        $this->eventDispatcher->dispatch(new EasyMediaFileMoved($defaults['old_path'], $defaults['new_path']));
                     } catch (\Exception $exception) {
                         throw new \Exception($this->translator->trans('error.moving', [], 'EasyMediaBundle'), $exception->getCode(), $exception);
                     }

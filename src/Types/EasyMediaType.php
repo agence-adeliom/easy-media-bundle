@@ -17,10 +17,16 @@ class EasyMediaType extends Type
     public const EASYMEDIATYPE = 'easy_media_type';
 
     private static ?ContainerInterface $container = null;
+    private static $mediaResolver = null;
 
-    public static function setContainer(ContainerInterface $container): void
+    public static function setContainer(?ContainerInterface $container): void
     {
         self::$container = $container;
+    }
+
+    public static function setMediaResolver(?callable $mediaResolver): void
+    {
+        self::$mediaResolver = $mediaResolver;
     }
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
@@ -30,6 +36,18 @@ class EasyMediaType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): mixed
     {
+        if (!$value) {
+            return null;
+        }
+
+        if (\is_callable(self::$mediaResolver)) {
+            try {
+                return (self::$mediaResolver)($value);
+            } catch (\Throwable) {
+                return null;
+            }
+        }
+
         $container = self::$container;
 
         if (!$container instanceof ContainerInterface) {
@@ -38,11 +56,7 @@ class EasyMediaType extends Type
 
         $class = $container->getParameter('easy_media.media_entity');
 
-        if ($value) {
-            return $container->get('doctrine.orm.entity_manager')->getRepository($class)->find($value);
-        }
-
-        return null;
+        return $container->get('doctrine.orm.entity_manager')->getRepository($class)->find($value);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
