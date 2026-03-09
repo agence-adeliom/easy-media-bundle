@@ -11,6 +11,9 @@ on:
 jobs:
   phpunit:
     runs-on: ubuntu-latest
+    env:
+      COMPOSER_AUTH: >-
+        {"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}
     strategy:
       fail-fast: false
       matrix:
@@ -30,7 +33,6 @@ jobs:
       - run: composer global require --no-progress --no-scripts --no-plugins symfony/flex
       - name: Install Dependencies
         env:
-          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.COMPOSER_AUTH }}"}}'
           SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
         run: composer update --prefer-dist --no-interaction ${{ matrix.composer-prefs }}
       - name: PHPUnit
