@@ -10,7 +10,7 @@ use Adeliom\EasyMediaBundle\Tests\Fixtures\Entity\TestMedia;
 use Adeliom\EasyMediaBundle\Types\EasyMediaType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -37,7 +37,7 @@ final class EasyMediaBundleTest extends TestCase
         $property = new \ReflectionProperty($media, 'id');
         $property->setValue($media, 33);
 
-        $repository = $this->createMock(ObjectRepository::class);
+        $repository = $this->createMock(EntityRepository::class);
         $repository->expects(self::once())
             ->method('find')
             ->with(33)

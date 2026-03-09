@@ -50,7 +50,10 @@ final class EasyMediaManagerTest extends TestCase
         $media = new TestMedia();
         $media->setName('Hero.jpg');
 
-        $filesystem = $this->createMock(Filesystem::class);
+        $filesystem = $this->getMockBuilder(Filesystem::class)
+            ->disableOriginalConstructor()
+            ->addMethods(['publicUrl'])
+            ->getMock();
         $filesystem->expects(self::exactly(2))
             ->method('publicUrl')
             ->with('gallery/hero-jpg')
@@ -71,17 +74,12 @@ final class EasyMediaManagerTest extends TestCase
         self::assertSame('https://cdn.example.com/uploads/gallery/hero-jpg', $manager->downloadUrl($media));
     }
 
-    public function testPublicUrlFallsBackToBaseUrlWhenFilesystemCannotGenerateOne(): void
+    public function testPublicUrlFallsBackToBaseUrlWhenFilesystemDoesNotSupportPublicUrls(): void
     {
         $media = new TestMedia();
         $media->setName('Hero.jpg');
 
-        $filesystem = $this->createMock(Filesystem::class);
-        $filesystem->expects(self::once())
-            ->method('publicUrl')
-            ->with('gallery/hero-jpg')
-            ->willThrowException(new \RuntimeException('Cannot generate URL'));
-
+        $filesystem = $this->createMock(FilesystemOperator::class);
         $helper = $this->createMock(EasyMediaHelper::class);
         $helper->method('getPath')->with($media)->willReturn('gallery/hero-jpg');
         $helper->method('getBaseUrl')->willReturn('/media');

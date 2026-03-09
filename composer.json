@@ -48,6 +48,11 @@
             "Adeliom\\EasyMediaBundle\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Adeliom\\EasyMediaBundle\\Tests\\": "tests/"
+        }
+    },
     "minimum-stability": "dev",
     "repositories": [
         {

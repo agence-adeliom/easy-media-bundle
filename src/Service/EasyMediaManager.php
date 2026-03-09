@@ -55,28 +55,22 @@ class EasyMediaManager
 
     public function publicUrl(Media $media): array|string|null
     {
-        if($mediaPath = $this->getPath($media)) {
-            try {
-                $publicUrl = $this->getFilesystem()->publicUrl($mediaPath);
-                if (str_contains((string) $this->helper->getBaseUrl(), '://')) {
-                    $baseUrlPath = parse_url((string) $this->helper->getBaseUrl(), PHP_URL_PATH) ?? "";
-                    $baseUrl = '/';
-                    if ($baseUrlPath) {
-                        $baseUrl = str_replace($baseUrlPath, '', $this->helper->getBaseUrl());
-                    }
-
-                    $filePath = parse_url($publicUrl, PHP_URL_PATH);
-                    $path = array_filter(explode('/', $baseUrlPath) + explode('/', $filePath));
-                    $publicUrl = $this->helper->clearDblSlash(sprintf('%s/%s', $baseUrl, implode('/', $path)));
-                }
-
-                return $publicUrl;
-            } catch (\Exception) {
-                return $this->helper->clearDblSlash(sprintf('%s/%s', $this->helper->getBaseUrl(), $mediaPath));
-            }
+        $mediaPath = $this->getPath($media);
+        if (!$mediaPath) {
+            return null;
         }
 
-        return null;
+        try {
+            if (method_exists($this->getFilesystem(), 'publicUrl')) {
+                /** @var string $publicUrl */
+                $publicUrl = $this->getFilesystem()->publicUrl($mediaPath);
+
+                return $this->normalizePublicUrl($publicUrl);
+            }
+        } catch (\Exception) {
+        }
+
+        return $this->helper->clearDblSlash(sprintf('%s/%s', $this->helper->getBaseUrl(), $mediaPath));
     }
 
     public function downloadUrl(Media $media): array|string|null
@@ -245,6 +239,24 @@ class EasyMediaManager
         if ($this->getFilesystem()->fileExists($this->helper->clearDblSlash($oldPath)) || $this->getFilesystem()->directoryExists($this->helper->clearDblSlash($oldPath))) {
             $this->getFilesystem()->move($this->helper->clearDblSlash($oldPath), $this->helper->clearDblSlash($newPath));
         }
+    }
+
+    private function normalizePublicUrl(string $publicUrl): string
+    {
+        if (!str_contains((string) $this->helper->getBaseUrl(), '://')) {
+            return $publicUrl;
+        }
+
+        $baseUrlPath = parse_url((string) $this->helper->getBaseUrl(), PHP_URL_PATH) ?? '';
+        $baseUrl = '/';
+        if ($baseUrlPath !== '') {
+            $baseUrl = str_replace($baseUrlPath, '', (string) $this->helper->getBaseUrl());
+        }
+
+        $filePath = parse_url($publicUrl, PHP_URL_PATH) ?: '';
+        $path = array_filter(explode('/', $baseUrlPath) + explode('/', $filePath));
+
+        return $this->helper->clearDblSlash(sprintf('%s/%s', $baseUrl, implode('/', $path)));
     }
 
     private function createFromOembed(Media $entity, $source): Media
