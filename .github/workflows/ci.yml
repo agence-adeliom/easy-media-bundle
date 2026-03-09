@@ -36,4 +36,4 @@ jobs:
           SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
         run: composer update --prefer-dist --no-interaction ${{ matrix.composer-prefs }}
       - name: PHPUnit
-        run: vendor/bin/phpunit tests
+        run: vendor/bin/phpunit tests --display-deprecations --display-phpunit-deprecations
