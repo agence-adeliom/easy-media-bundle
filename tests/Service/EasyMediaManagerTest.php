@@ -47,14 +47,17 @@ final class EasyMediaManagerTest extends TestCase
 
     public function testPublicUrlUsesFilesystemPublicUrlAndNormalizesConfiguredBaseUrl(): void
     {
+        if (!method_exists(Filesystem::class, 'publicUrl')) {
+            $this->markTestSkipped('Filesystem::publicUrl() not available in this version of league/flysystem');
+        }
+
         $media = new TestMedia();
         $media->setName('Hero.jpg');
 
-        $filesystemBuilder = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor();
-        $filesystem = method_exists(FilesystemOperator::class, 'publicUrl')
-            ? $filesystemBuilder->onlyMethods(['publicUrl'])->getMock()
-            : $filesystemBuilder->addMethods(['publicUrl'])->getMock();
+        $filesystem = $this->getMockBuilder(Filesystem::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['publicUrl'])
+            ->getMock();
         $filesystem->expects(self::exactly(2))
             ->method('publicUrl')
             ->with('gallery/hero-jpg')
