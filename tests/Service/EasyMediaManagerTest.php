@@ -50,10 +50,11 @@ final class EasyMediaManagerTest extends TestCase
         $media = new TestMedia();
         $media->setName('Hero.jpg');
 
-        $filesystem = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['publicUrl'])
-            ->getMock();
+        $filesystemBuilder = $this->getMockBuilder(Filesystem::class)
+            ->disableOriginalConstructor();
+        $filesystem = method_exists(FilesystemOperator::class, 'publicUrl')
+            ? $filesystemBuilder->onlyMethods(['publicUrl'])->getMock()
+            : $filesystemBuilder->addMethods(['publicUrl'])->getMock();
         $filesystem->expects(self::exactly(2))
             ->method('publicUrl')
             ->with('gallery/hero-jpg')
