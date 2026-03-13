@@ -32,16 +32,11 @@ class EasyMediaManager
 {
     public function __construct(protected FilesystemOperator $filesystem,
                                 protected EasyMediaHelper $helper,
-                                protected EntityManagerProviderInterface $entityManagerProvider,
+                                public EntityManagerInterface $em,
                                 protected ContainerBagInterface $parameters,
                                 protected TranslatorInterface $translator,
                                 protected EventDispatcherInterface $eventDispatcher,
     ) {
-    }
-
-    public function getEntityManager(): EntityManagerInterface
-    {
-        return $this->entityManagerProvider->getEntityManager();
     }
 
     public function getFilesystem(): FilesystemOperator
@@ -219,7 +214,7 @@ class EasyMediaManager
      */
     public function delete($item, $flush = true): void
     {
-        $this->getEntityManager()->remove($item);
+        $this->em->remove($item);
 
         if ($item instanceof Folder) {
             $this->filesystem->deleteDirectory($item->getPath());
@@ -230,15 +225,15 @@ class EasyMediaManager
         }
 
         if ($flush) {
-            $this->getEntityManager()->flush();
+            $this->em->flush();
         }
     }
 
     public function save($item, $flush = true): void
     {
-        $this->getEntityManager()->persist($item);
+        $this->em->persist($item);
         if ($flush) {
-            $this->getEntityManager()->flush();
+            $this->em->flush();
         }
     }
 
