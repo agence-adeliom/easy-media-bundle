@@ -7,8 +7,15 @@
     <services>
         <defaults autowire="true" autoconfigure="true"/>
 
+        <service id="easy_media.entity_manager_provider"
+                 class="Adeliom\EasyMediaBundle\Service\DefaultEntityManagerProvider"
+                 public="true">
+            <argument key="$em" type="service" id="doctrine.orm.entity_manager"/>
+        </service>
+
         <service id="easy_media.controller" class="Adeliom\EasyMediaBundle\Controller\MediaController" public="true" autowire="true">
             <argument key="$manager" type="service" id="easy_media.manager"/>
+            <argument key="$entityManagerProvider" type="service" id="easy_media.entity_manager_provider"/>
             <tag name="controller.service_arguments"/>
         </service>
         <service id="Adeliom\EasyMediaBundle\Controller\MediaController" alias="easy_media.controller" public="true"/>
@@ -16,7 +23,7 @@
         <service id="easy_media.manager" class="Adeliom\EasyMediaBundle\Service\EasyMediaManager" public="true" autowire="true">
             <argument key="$filesystem" type="service" id="easy_media.storage"/>
             <argument key="$helper" type="service" id="easy_media.helper"/>
-            <argument key="$em" type="service" id="doctrine.orm.entity_manager"/>
+            <argument key="$entityManagerProvider" type="service" id="easy_media.entity_manager_provider"/>
             <argument key="$parameters" type="service" id="parameter_bag"/>
             <argument key="$translator" type="service" id="translator"/>
         </service>
@@ -24,7 +31,7 @@
 
         <service id="easy_media.helper" class="Adeliom\EasyMediaBundle\Service\EasyMediaHelper" public="true" autowire="true">
             <argument key="$parameters" type="service" id="parameter_bag"/>
-            <argument key="$em" type="service" id="doctrine.orm.entity_manager"/>
+            <argument key="$entityManagerProvider" type="service" id="easy_media.entity_manager_provider"/>
         </service>
         <service id="Adeliom\EasyMediaBundle\Service\EasyMediaHelper" alias="easy_media.manager" public="true"/>
 

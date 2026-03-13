@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Adeliom\EasyMediaBundle\Service;
 
 use Adeliom\EasyMediaBundle\Entity\Media;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\Proxy;
 use Psr\Container\ContainerExceptionInterface;
@@ -16,7 +15,7 @@ use Symfony\Component\Routing\RouterInterface;
 class EasyMediaHelper
 {
     public function __construct(protected ContainerBagInterface $parameters,
-                                protected EntityManagerInterface $em,
+                                protected EntityManagerProviderInterface $entityManagerProvider,
                                 protected RouterInterface $router)
     {
     }
@@ -28,7 +27,7 @@ class EasyMediaHelper
 
     public function getFolderRepository(): EntityRepository
     {
-        return $this->em->getRepository($this->getFolderClassName());
+        return $this->entityManagerProvider->getEntityManager()->getRepository($this->getFolderClassName());
     }
 
     public function getMediaClassName()
@@ -38,7 +37,7 @@ class EasyMediaHelper
 
     public function getMediaRepository(): EntityRepository
     {
-        return $this->em->getRepository($this->getMediaClassName());
+        return $this->entityManagerProvider->getEntityManager()->getRepository($this->getMediaClassName());
     }
 
     public function getBaseUrl()

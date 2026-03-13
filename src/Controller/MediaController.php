@@ -16,7 +16,7 @@ use Adeliom\EasyMediaBundle\Controller\Module\Upload;
 use Adeliom\EasyMediaBundle\Controller\Module\Utils;
 use Adeliom\EasyMediaBundle\Service\EasyMediaHelper;
 use Adeliom\EasyMediaBundle\Service\EasyMediaManager;
-use Doctrine\Persistence\ManagerRegistry;
+use Adeliom\EasyMediaBundle\Service\EntityManagerProviderInterface;
 use Doctrine\Persistence\ObjectManager;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -48,13 +48,11 @@ class MediaController extends AbstractController
     protected ObjectManager $em;
     protected EasyMediaHelper $helper;
     protected EasyMediaManager $manager;
-    protected ManagerRegistry $managerRegistry;
 
-    public function __construct(EasyMediaManager $manager, ManagerRegistry $managerRegistry, ParameterBagInterface $bag, EventDispatcherInterface $dispatcher, TranslatorInterface $translator)
+    public function __construct(EasyMediaManager $manager, EntityManagerProviderInterface $entityManagerProvider, ParameterBagInterface $bag, EventDispatcherInterface $dispatcher, TranslatorInterface $translator)
     {
         $this->manager = $manager;
-        $this->managerRegistry = $managerRegistry;
-        $this->em = $this->managerRegistry->getManager();
+        $this->em = $entityManagerProvider->getEntityManager();
 
         $this->ignoreFiles = $bag->get('easy_media.ignore_files');
         $this->paginationAmount = $bag->get('easy_media.pagination_amount');
