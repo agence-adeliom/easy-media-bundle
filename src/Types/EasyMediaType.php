@@ -56,7 +56,7 @@ class EasyMediaType extends Type
 
         $class = $container->getParameter('easy_media.media_entity');
 
-        return $container->get('easy_media.entity_manager_provider')->getEntityManager()->getRepository($class)->find($value);
+        return $container->get('doctrine.orm.entity_manager')->getRepository($class)->find($value);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
