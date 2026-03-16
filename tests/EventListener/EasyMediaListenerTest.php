@@ -24,44 +24,47 @@ final class EasyMediaListenerTest extends TestCase
 {
     public function testDoctrineMappingListenerMapsFolderRelationsWhenMissing(): void
     {
-        $metadata = $this->createMock(ClassMetadata::class);
-        $metadata->method('getName')->willReturn(TestFolder::class);
-        $metadata->method('hasAssociation')->willReturn(false);
-        $metadata->expects(self::once())
-            ->method('mapManyToOne')
-            ->with(self::arrayHasKey('fieldName'));
-        $metadata->expects(self::exactly(2))
-            ->method('mapOneToMany')
-            ->with(self::callback(static fn (array $mapping): bool => \in_array($mapping['fieldName'], ['children', 'medias'], true)));
-
+        $metadata = new ClassMetadata(TestFolder::class);
         $listener = new DoctrineMappingListener(TestMedia::class, TestFolder::class);
         $listener->loadClassMetadata(new LoadClassMetadataEventArgs($metadata, $this->createMock(EntityManagerInterface::class)));
+
+        $parentMapping = $metadata->getAssociationMapping('parent');
+        $childrenMapping = $metadata->getAssociationMapping('children');
+        $mediasMapping = $metadata->getAssociationMapping('medias');
+
+        self::assertSame(TestFolder::class, $parentMapping->targetEntity);
+        self::assertSame('children', $parentMapping->inversedBy);
+        self::assertTrue($parentMapping->joinColumns[0]->nullable);
+        self::assertSame('SET NULL', $parentMapping->joinColumns[0]->onDelete);
+        self::assertSame(TestFolder::class, $childrenMapping->targetEntity);
+        self::assertSame('parent', $childrenMapping->mappedBy);
+        self::assertSame(TestMedia::class, $mediasMapping->targetEntity);
+        self::assertSame('folder', $mediasMapping->mappedBy);
     }
 
     public function testDoctrineMappingListenerMapsMediaFolderRelationWhenMissing(): void
     {
-        $metadata = $this->createMock(ClassMetadata::class);
-        $metadata->method('getName')->willReturn(TestMedia::class);
-        $metadata->method('hasAssociation')->with('folder')->willReturn(false);
-        $metadata->expects(self::once())
-            ->method('mapManyToOne')
-            ->with(self::callback(static fn (array $mapping): bool => 'folder' === $mapping['fieldName'] && TestFolder::class === $mapping['targetEntity']));
-        $metadata->expects(self::never())->method('mapOneToMany');
-
+        $metadata = new ClassMetadata(TestMedia::class);
         $listener = new DoctrineMappingListener(TestMedia::class, TestFolder::class);
         $listener->loadClassMetadata(new LoadClassMetadataEventArgs($metadata, $this->createMock(EntityManagerInterface::class)));
+
+        $mapping = $metadata->getAssociationMapping('folder');
+
+        self::assertSame('folder', $mapping->fieldName);
+        self::assertSame(TestFolder::class, $mapping->targetEntity);
+        self::assertSame('medias', $mapping->inversedBy);
     }
 
     public function testDoctrineMappingListenerSkipsExistingAssociations(): void
     {
-        $metadata = $this->createMock(ClassMetadata::class);
-        $metadata->method('getName')->willReturn(TestFolder::class);
-        $metadata->method('hasAssociation')->willReturn(true);
-        $metadata->expects(self::never())->method('mapManyToOne');
-        $metadata->expects(self::never())->method('mapOneToMany');
-
         $listener = new DoctrineMappingListener(TestMedia::class, TestFolder::class);
-        $listener->loadClassMetadata(new LoadClassMetadataEventArgs($metadata, $this->createMock(EntityManagerInterface::class)));
+        $metadata = new ClassMetadata(TestFolder::class);
+        $event = new LoadClassMetadataEventArgs($metadata, $this->createMock(EntityManagerInterface::class));
+
+        $listener->loadClassMetadata($event);
+        $listener->loadClassMetadata($event);
+
+        self::assertCount(3, $metadata->getAssociationMappings());
     }
 
     public function testFolderSubscriberMovesFolderWhenParentOrSlugChanges(): void

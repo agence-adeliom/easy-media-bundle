@@ -32,6 +32,10 @@ final class EasyMediaTypeTest extends TestCase
         });
 
         self::assertNull($type->convertToPHPValue(12, $platform));
+
+        EasyMediaType::setMediaResolver(null);
+
+        self::assertNull($type->convertToPHPValue(12, $platform));
     }
 
     public function testTypeConvertsDatabaseValueMetadataAndMediaInstances(): void
@@ -48,6 +52,5 @@ final class EasyMediaTypeTest extends TestCase
         self::assertSame('42', $type->convertToDatabaseValue('42', $platform));
         self::assertNull($type->convertToDatabaseValue(null, $platform));
         self::assertSame(EasyMediaType::EASYMEDIATYPE, $type->getName());
-        self::assertTrue($type->requiresSQLCommentHint($platform));
     }
 }

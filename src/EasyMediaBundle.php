@@ -15,15 +15,21 @@ class EasyMediaBundle extends Bundle
     {
         parent::boot();
 
-        // Initialize the EasyMediaType with the container
-        if ($this->container !== null) {
-            EasyMediaType::setContainer($this->container);
+        if ($this->container === null) {
+            EasyMediaType::setMediaResolver(null);
+
+            return;
         }
+
+        $container = $this->container;
+        EasyMediaType::setMediaResolver(static function (mixed $value) use ($container): mixed {
+            $class = $container->getParameter('easy_media.media_entity');
+            $repository = $container->get('doctrine.orm.entity_manager')->getRepository($class);
+
+            return $repository->find($value);
+        });
     }
 
-    /**
-     * @return ExtensionInterface|null The container extension
-     */
     public function getContainerExtension(): ?ExtensionInterface
     {
         if (null === $this->extension) {

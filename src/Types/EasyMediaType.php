@@ -5,28 +5,19 @@ declare(strict_types=1);
 namespace Adeliom\EasyMediaBundle\Types;
 
 use Adeliom\EasyMediaBundle\Entity\Media;
+use Closure;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class EasyMediaType extends Type
 {
-    /**
-     * @var string
-     */
     public const EASYMEDIATYPE = 'easy_media_type';
 
-    private static ?ContainerInterface $container = null;
-    private static $mediaResolver = null;
-
-    public static function setContainer(?ContainerInterface $container): void
-    {
-        self::$container = $container;
-    }
+    private static ?Closure $mediaResolver = null;
 
     public static function setMediaResolver(?callable $mediaResolver): void
     {
-        self::$mediaResolver = $mediaResolver;
+        self::$mediaResolver = $mediaResolver !== null ? Closure::fromCallable($mediaResolver) : null;
     }
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
@@ -48,15 +39,7 @@ class EasyMediaType extends Type
             }
         }
 
-        $container = self::$container;
-
-        if (!$container instanceof ContainerInterface) {
-            return null;
-        }
-
-        $class = $container->getParameter('easy_media.media_entity');
-
-        return $container->get('doctrine.orm.entity_manager')->getRepository($class)->find($value);
+        return null;
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
@@ -75,13 +58,5 @@ class EasyMediaType extends Type
     public function getName(): string
     {
         return self::EASYMEDIATYPE;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
     }
 }
