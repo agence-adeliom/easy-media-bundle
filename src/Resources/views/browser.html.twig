@@ -1,40 +1,49 @@
+{% extends '@!EasyAdmin/page/login_minimal.html.twig' %}
+
 {% trans_default_domain 'EasyMediaBundle' %}
-<!DOCTYPE html>
-<html lang="{{ langCode }}">
-    <head>
-        <meta charset="utf-8">
-        <title>{{ 'title'|trans|striptags|raw }}</title>
-        <link rel="stylesheet" href="{{ asset('bundles/easyadmin/app.css') }}"/>
-        <link rel="stylesheet" href="{{ asset('bundles/easymedia/style/style.css') }}"/>
-    </head>
-    <body>
-        <div id="media-holder" class="fullscreen">
-            {% include '@EasyMedia/manager.html.twig' with {'browser': true, 'modal': true, "restrict": restrict, 'hideExt' : ["jpeg"]}  %}
-        </div>
-        <script src="{{ asset('bundles/easymedia/js/app.js') }}"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
-        <style>
-            html, body, #media-holder{
-                overflow: hidden;
-                height: 100%;
-            }
-        </style>
-        <script>
-            window.addEventListener("load", function(event) {
-                window.EventHub.listen('file_selected_datas', (datas) => {
-                    var funcNum = '{{ CKEditorFuncNum }}';
-                    var fileUrl = datas.path;
-                    var alt = datas.metas.alt ? datas.metas.alt : null;
-                    window.opener.CKEDITOR.tools.callFunction( funcNum, fileUrl, function() {
-                        var dialog = this.getDialog();
-                        if ( dialog.getName() == 'image' ) {
-                            var element = dialog.getContentElement( 'info', 'txtAlt' );
-                            if ( element && alt)
-                                element.setValue( alt );
-                        }
-                    } );
-                })
-            });
-        </script>
-    </body>
-</html>
+
+{% block page_title %}{{ 'title'|trans|striptags|raw }}{% endblock %}
+
+{% block wrapper_wrapper %}
+    <div id="media-holder" class="fullscreen">
+        {% include '@EasyMedia/manager.html.twig' with {'browser': true, 'modal': true, "restrict": restrict, 'hideExt' : ["jpeg"]}  %}
+    </div>
+{% endblock %}
+
+{% block body_class %}{{- parent() -}} ea-content-width-full easy-media-admin{% endblock %}
+
+{# styles #}
+{% block head_stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/easymedia/style/style.css') }}"/>
+    <style>
+        html, body, #media-holder{
+            overflow: hidden;
+            height: 100%;
+        }
+    </style>
+{% endblock %}
+
+{# scripts #}
+{% block head_javascript %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/easymedia/js/app.js') }}"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
+    <script>
+        window.addEventListener("load", function(event) {
+            window.EventHub.listen('file_selected_datas', (datas) => {
+                var funcNum = '{{ CKEditorFuncNum }}';
+                var fileUrl = datas.path;
+                var alt = datas.metas.alt ? datas.metas.alt : null;
+                window.opener.CKEDITOR.tools.callFunction( funcNum, fileUrl, function() {
+                    var dialog = this.getDialog();
+                    if ( dialog.getName() == 'image' ) {
+                        var element = dialog.getContentElement( 'info', 'txtAlt' );
+                        if ( element && alt)
+                            element.setValue( alt );
+                    }
+                } );
+            })
+        });
+    </script>
+{% endblock %}
